@@ -1,0 +1,70 @@
+body {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0;
+    }
+
+    th, td {
+        text-align: center;
+
+    }
+
+    .container {
+        padding-left: 15%; 
+        padding-top: 5vh;
+        width: 80%;
+    }
+    
+    .mb-3{
+        margin-bottom: 1rem;
+    }
+    
+    .mb-3 h2{
+        margin-top: 5vh;
+        max-width: 100%;
+        width: auto;
+        display: flex;
+        align-items: center;
+        font-size: 2rem;
+    }
+    
+    .custom-input, .buttons{
+        max-width: 100%;
+        width: auto;
+        max-height: 15vh;
+        height: auto;
+    }
+    .modal-footer {
+        display: flex; 
+        justify-content: flex-end; 
+        align-items: center;
+    }
+    .active{
+        color: black;
+        font-weight: bold;
+        border: none;
+    }
+    .pagination-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .pagination{
+        display: inline-flex;
+        gap: 5px;
+    }
+    
+    .pagination button{
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        background-color: white;
+        cursor: pointer;
+    }
+    .pagination button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    }
+    

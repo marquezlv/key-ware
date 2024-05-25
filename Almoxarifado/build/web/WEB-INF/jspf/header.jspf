@@ -1,0 +1,90 @@
+<%@ page pageEncoding="UTF-8" %>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Navbar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/login.css">
+    <link rel="stylesheet" href="styles/dark-mode.css">
+    <!-- <link rel="stylesheet" href="styles/page.css"> */ -->
+</head>
+<div id="session" >
+    <div v-if="loading"></div>
+    <div v-else>
+        <div v-if="data">
+            <div class="centralize-container">
+                <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" @click="toggleOffcanvas">
+                    <i class="bi bi-caret-left"></i>
+                </button>
+            </div>
+            <div :class="{ 'offcanvas offcanvas-start': true, 'dark-navbar': isDarkTheme }" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <a class="navbar-brand" href="index.jsp"><i class="bi bi-key"></i>&nbsp;Almoxarifado</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="closeOffcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.jsp">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="reservation.jsp">Reservas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="rooms.jsp">Salas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="filters.jsp">Filtros</a>
+                        </li>
+                        <li class="nav-item" v-if="data.role == 'ADMIN'">
+                            <a class="nav-link" href="users.jsp">Usuarios do sistema</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="employees.jsp">Funcionarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="subjects.jsp">Matérias e cursos</a>
+                        </li>
+                    </ul>
+                    <span class="navbar-text-login">
+                        <i class="bi bi-person"></i>{{data.name}}
+                        <button @click="logout()" class="btn btn-sm btn-danger navbar-text-login-button" type="button"><i class="bi bi-arrow-right-circle"></i></button>
+                    </span>
+                    <button class="btn btn-sm btn-secondary ms-auto" @click="toggleMode">
+                        <i class="bi bi-sun-fill" v-if="!isDarkTheme"></i>
+                        <i class="bi bi-moon-fill" v-else></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div v-else  class="login-container">
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="header-title"><i class="bi bi-key bi-style"></i>&nbsp;Almoxarifado</h1>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label">Usuário</label>
+                                <input v-model="loginUsername" type="text" class="form-control py-2">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Senha</label>
+                                <input v-model="loginPassword" type="password" class="form-control py-2">
+                            </div>
+                            <button @click="login()" type="submit" class="btn btn-primary">Entrar</button>
+                        </form>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <!-- Caso ocorra algum erro sem ser de sessão exibe na tela -->
+        <div v-if="error && error !=='No Session'" class="alert alert-danger m-2" role="alert">
+            {{error}}
+        </div> 
+    </div>      
+</div>
+<script src="scripts/session.js"></script>  

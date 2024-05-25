@@ -1,0 +1,93 @@
+body.dark-mode {
+    /* background-color: #121212; */
+    background: linear-gradient(to right, #31363F, #222831); 
+    color: #fff;
+}
+.dark-navbar {
+    background: #222831; 
+    color: #fff;
+}
+.dark-navbar .nav-link {
+    color: #fff;
+}
+
+.dark-navbar .navbar-brand{
+    color: white;
+}
+
+.dark-navbar .bi{
+    color: white;
+}
+body.dark-mode table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5;
+    color: black;
+    background-color: black;
+}
+
+body.dark-mode th,
+body.dark-mode td {
+    text-align: center;
+    color: white; 
+    background-color:  #454a52;
+    border-bottom: 1px solid #222831;
+}
+
+body.dark-mode .login-container {
+    background: linear-gradient(to right, #31363F, #222831);
+    color: #fff;
+}
+
+body.dark-mode .card {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    background-color: #222831;
+    color: #fff;
+}
+
+body.dark-mode .card-header {
+    color: #fff;
+}
+
+body.dark-mode .form-label {
+    color: #ccc;
+}
+
+body.dark-mode .form-control {
+    background-color: #454a52;
+    border-color: #555;
+    color: #fff;
+}
+
+body.dark-mode .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+body.dark-mode .alert {
+    color: #fff;
+}
+
+body.dark-mode .custom-input::placeholder{
+    color: white;
+}
+
+body.dark-mode .modal-content,
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer,
+body.dark-mode .modal-body {
+    background-color: #222831; 
+    color: white;
+    border: none;
+}
+
+body.dark-mode .form-select {   
+    color: #fff; 
+    background-color: #454a52; 
+    border: none;
+}
+
+body.dark-mode .form-select option {
+    color: #fff;
+}

@@ -1,0 +1,33 @@
+
+
+.container {
+    margin: 0;
+    padding: 0;
+}
+
+.custom-card {
+    width: 400px;
+    height: 300px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+}
+.custom-card-body {
+    text-align: left;
+    font-size: 12px;
+}
+
+.card-available {
+    background-color: lightgreen;
+    color: white;
+}
+
+.card-unavailable {
+    background-color: lightcoral;
+    color: white;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+
