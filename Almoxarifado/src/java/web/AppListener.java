@@ -18,6 +18,7 @@ import model.Employees_Subjects;
 import model.Filters_Rooms;
 import model.Reservation;
 import model.CurrentKey;
+import model.History;
 
 @WebListener
 public class AppListener implements ServletContextListener {
@@ -51,6 +52,7 @@ public class AppListener implements ServletContextListener {
 //          s.execute("DROP TABLE IF EXISTS reservations");
 //          s.execute("DROP TABLE IF EXISTS employees");
             
+            s.execute(History.getCreateStatement());
 
             initializeLog += new Date() + ": Initializing database creation;";
             s.execute(Users.getCreateStatement());

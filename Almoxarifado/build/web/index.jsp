@@ -13,7 +13,7 @@
         <%@ include file="WEB-INF/jspf/header.jspf" %>
         <div id="app" class="container">
             <div v-if="shared.session">
-                <div v-else class="page-content">                  
+                <div class="page-content">                  
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de salas</h2>
                     <div v-for="location in uniqueLocations" :key="location">
                         <h3>{{ location }}</h3>
@@ -35,7 +35,7 @@
                                             <div class="card-text"><i class="bi bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
                                             <br>
                                             <div class="form-check">
-                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room)'><i class="bi bi-key"></i><i class="bi bi-check2"></i></button>
+                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee)'><i class="bi bi-key"></i><i class="bi bi-check2"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -118,7 +118,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script src="scripts/index.js"></script>
 

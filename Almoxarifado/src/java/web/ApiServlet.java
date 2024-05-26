@@ -24,6 +24,7 @@ import model.Employees_Subjects;
 import model.Filters_Rooms;
 import model.Reservation;
 import model.CurrentKey;
+import model.History;
 import org.json.JSONArray;
 
 @WebServlet(name = "ApiServlet", urlPatterns = {"/api/*"})
@@ -67,8 +68,10 @@ public class ApiServlet extends HttpServlet {
                 processEmployeesSubjects(file, request, response);
             } else if (request.getRequestURI().endsWith("/api/keys")) {
                 processKeys(file, request, response);
+            } else if (request.getRequestURI().endsWith("/api/history")) {
+                processHistory(file, request, response);
             }
-
+ 
         } catch (Exception ex) {
             response.sendError(500, "Internal Error: " + ex.getLocalizedMessage());
         }
@@ -432,13 +435,35 @@ public class ApiServlet extends HttpServlet {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             String strDate = body.getString("start");
             Date date = dateFormat.parse(strDate);
+            History.insertHistory(employee, room, "Retirada", new Date());
             CurrentKey.insertKey(employee, room, date);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
+            Long employee = Long.parseLong(request.getParameter("employee"));
             Long room = Long.parseLong(request.getParameter("room"));
+            History.insertHistory(employee, room, "Devolvido", new Date());
             CurrentKey.deleteKey(id, room);
+        } else {
+            response.sendError(405, "Method not allowed");
+        }
+    }
+    
+    private void processHistory(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute("users") == null) {
+            response.sendError(401, "Unauthorized: No session");
+        } else if (request.getMethod().toLowerCase().equals("get")) {
+            int page = Integer.parseInt(request.getParameter("page"));
+            int itemPage = 5;
+            file.put("list", new JSONArray(History.getHistory(page, itemPage)));
+            file.put("total", History.getTotalHistory());
+        } else if (request.getMethod().toLowerCase().equals("post")) {
+            response.sendError(401, "Insert: This table cannot be inserted directly");
+        } else if (request.getMethod().toLowerCase().equals("put")) {
+            response.sendError(401, "Update: This table cannot be update");
+        } else if (request.getMethod().toLowerCase().equals("delete")) {
+            response.sendError(401, "Delete: History cannot be deleted directly");
         } else {
             response.sendError(405, "Method not allowed");
         }

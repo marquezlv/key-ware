@@ -47,6 +47,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="subjects.jsp">Matérias e cursos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="history.jsp">Historico de chaves</a>
+                        </li>
                     </ul>
                     <span class="navbar-text-login">
                         <i class="bi bi-person"></i>{{data.name}}

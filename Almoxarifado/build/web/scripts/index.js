@@ -51,9 +51,9 @@ const app = Vue.createApp({
                 this.loadList();
             }
         },
-        async returnKey(id, room) {
+        async returnKey(id, room, employee) {
             try {
-                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
