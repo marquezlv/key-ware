@@ -19,25 +19,27 @@
                 <div v-else class="normal-page">
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">Reserva de Salas
                         <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addReservModal">
                                 Adicionar requisitante
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm ms-1 buttons" @click="deleteUser()">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
                         </div>
                     </h2>
-
+                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
 
                     <table class="table">
                         <tr>
-                            <th>FUNCIONARIO</th>
-                            <th>MATERIA</th>
-                            <th>SALA</th>
-                            <th>LOCAL</th>
-                            <th>INICIO</th>
-                            <th>TERMINO</th>
+                            <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(2)" style="cursor: pointer;">MATERIA  <i class="bi bi-arrow-down-up"></i></th> 
+                            <th @click="filterList(3)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(4)" style="cursor: pointer;">LOCAL <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(5)" style="cursor: pointer;">INICIO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(6)" style="cursor: pointer;">TERMINO  <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">

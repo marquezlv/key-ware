@@ -74,15 +74,61 @@ public class Rooms {
         return total;
     }
 
-    public static ArrayList<Rooms> getRooms(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Rooms> getRooms(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Rooms> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT * FROM rooms "
-                + "ORDER BY nm_location, nm_room "
+        String sql = "";
+        // Se for Sort 0 ele volta para o sql default
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            // Ordenando pela coluna 1 (nm_employee)
+            case 1:
+                // Sort 1 é ASCENDENTE e Sort 2 é DESCENDENTE
+                if (sort == 1) {
+                    sql = "SELECT * FROM rooms "
+                            + "ORDER BY nm_room ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM rooms "
+                            + "ORDER BY nm_room DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            // Ordenando pela coluna 2 (nm_subject)
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT * FROM rooms "
+                            + "ORDER BY nm_location ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM rooms "
+                            + "ORDER BY nm_location DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 4:
+                if (sort == 1) {
+                    sql = "SELECT * FROM rooms "
+                + "ORDER BY nm_status ASC "
+                + "LIMIT ?,?";  
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM rooms "
+                + "ORDER BY nm_status DESC "
                 + "LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT * FROM rooms "
+                        + "ORDER BY nm_location, nm_room "
+                        + "LIMIT ?,?";
+                break;
+        }
+
         PreparedStatement stmt = con.prepareStatement(sql);
 
         stmt.setInt(1, startIndex);

@@ -15,7 +15,7 @@ public class Employees_Subjects {
     private String subjectPeriod;
     
     public static String getCreateStatement(){
-        return "CREATE TABLE employees_subjects("
+        return "CREATE TABLE IF NOT EXISTS employees_subjects("
                 + "cd_dumb INTEGER PRIMARY KEY,"
                 + "cd_employee INTEGER NOT NULL,"
                 + "cd_subject INTEGER NOT NULL,"

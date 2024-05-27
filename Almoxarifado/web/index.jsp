@@ -35,7 +35,7 @@
                                             <div class="card-text"><i class="bi bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
                                             <br>
                                             <div class="form-check">
-                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee)'><i class="bi bi-key"></i><i class="bi bi-check2"></i></button>
+                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi bi-key"></i><i class="bi bi-check2"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -59,8 +59,14 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="inputEmployee" class="form-label">Funcionario</label>
-                                        <select class="form-select" v-model="newEmployee" id="inputEmployee">
+                                        <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
                                             <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputSubject" class="form-label">Materia</label>
+                                        <select class="form-select" v-model="newSubject" id="inputSubject">
+                                            <option v-for="subject in subjects" :key="subject.rowid" :value="subject.rowid">{{ subject.subjectName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -105,6 +111,11 @@
                                     </div>
                                 </form>
                             </div>
+                            <hr>
+                            <a href="rooms.jsp"><i class="bi bi-gear-fill"></i></a>
+                            <div v-for="filters in roomFilters" :key="filters.rowid">
+                                |{{ filters.filterName }} <br> Descrição: {{ filters.filterDesc }}
+                            </div>
                             <div class="modal-footer">
                                 <div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
@@ -118,9 +129,8 @@
                 </div>
             </div>
         </div>
+        <script src="scripts/index.js"></script>
 
-    <script src="scripts/index.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
 </html>

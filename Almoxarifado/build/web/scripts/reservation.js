@@ -15,29 +15,47 @@ const app = Vue.createApp({
             employees: [],
             subjects: [],
             currentPage: 1,
-            totalPages: 0
+            totalPages: 0,
+            itemsPerPage: 5,
+            direction: 0,
+            column: 0
         };
     },
     methods: {
+        filterList(column){
+            if(this.direction === 0){
+                this.direction = 1;
+            } else if(this.direction === 1){
+                this.direction = 2;
+            } else{
+                this.direction = 0;
+            }
+            this.column = column;
+            this.loadList(this.currentPage, this.column, this.direction);
+        },
+        reloadPage(){
+            this.currentPage = 1;
+            this.loadList(this.currentPage, this.column ,this.itemsPerPage);
+        },
         previousPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                this.loadList(this.currentPage);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
-                this.loadList(this.currentPage);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         goToPage(page) {
             this.currentPage = page;
-            this.loadList(page);
+            this.loadList(page, this.column, this.direction);
         },
         jumpPages(pages) {
             this.currentPage = Math.min(this.totalPages, Math.max(1, this.currentPage + pages));
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async request(url = "", method, data) {
             try {
@@ -72,13 +90,13 @@ const app = Vue.createApp({
                 date: this.newDate,
                 end: this.newEnd
             });
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async removeReservation(id) {
             try {
                 const data = await this.request("/Almoxarifado/api/reservations?id=" + id, "DELETE");
                 if (data) {
-                    await this.loadList(this.currentPage);
+                    await this.loadList(this.currentPage, this.column, this.direction);
                 }
             } catch (error) {
                 console.error("Erro ao excluir a Sala:", error);
@@ -103,15 +121,15 @@ const app = Vue.createApp({
                 date: this.newDate,
                 end: this.newEnd
             });
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
             this.resetForm();
             this.reservation = null;
         },
-        async loadList(page = 1) {
-            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}`, "GET");
+        async loadList(page = 1, column = 0, sort = 1) {
+            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
             if (data) {
                 this.list = data.list;
-                this.totalPages = Math.ceil(data.total / 5);
+                this.totalPages = Math.ceil(data.total / this.itemsPerPage);
             }
             const dataE = await this.request(`/Almoxarifado/api/employees`, "GET");
             if (dataE) {

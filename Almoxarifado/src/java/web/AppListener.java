@@ -40,46 +40,54 @@ public class AppListener implements ServletContextListener {
             Connection c = AppListener.getConnection();
             Statement s = c.createStatement();
             s.execute("PRAGMA encoding = 'UTF-8'");
-            
-//            s.execute(Employees.getCreateStatement());
-//          s.execute("DELETE FROM subjects");
-//          s.execute("DROP TABLE IF EXISTS users");
-//          s.execute("DROP TABLE IF EXISTS filters");
-//          s.execute("DROP TABLE IF EXISTS rooms");
-//          s.execute("DROP TABLE IF EXISTS subjects");
-//          s.execute("DROP TABLE IF EXISTS courses");
-//          s.execute("DROP TABLE IF EXISTS filters_rooms");
-//          s.execute("DROP TABLE IF EXISTS reservations");
-//          s.execute("DROP TABLE IF EXISTS employees");
-            
+
+            // Deletar todas as tabelas existentes
+//            try {
+//                s.execute("DROP TABLE IF EXISTS employees_subjects");
+//                s.execute("DROP TABLE IF EXISTS filters_rooms");
+//                s.execute("DROP TABLE IF EXISTS reservations");
+//                s.execute("DROP TABLE IF EXISTS users");
+//                s.execute("DROP TABLE IF EXISTS filters");
+//                s.execute("DROP TABLE IF EXISTS rooms");
+//                s.execute("DROP TABLE IF EXISTS subjects");
+//                s.execute("DROP TABLE IF EXISTS courses");
+//                s.execute("DROP TABLE IF EXISTS employees");
+//                s.execute("DROP TABLE IF EXISTS currentKey");
+//                s.execute("DROP TABLE IF EXISTS history");
+//            } catch (SQLException e) {
+//                initializeLog += new Date() + ": Error during table deletion: " + e.getMessage();
+//                e.printStackTrace();
+//            }
+            // Criar as tabelas novamente
+            s.execute(Employees.getCreateStatement());
+
+            s.execute(Rooms.getCreateStatement());
+
             s.execute(History.getCreateStatement());
 
-            initializeLog += new Date() + ": Initializing database creation;";
             s.execute(Users.getCreateStatement());
-            if (Users.getUsersAll().isEmpty()) {
-                Users.insertUser("admin", "Administrador", "ADMIN", "1234");
-            }    
-            
-            s.execute(CurrentKey.getCreateStatement());
 
-            s.execute(Employees.getCreateStatement());
+            s.execute(CurrentKey.getCreateStatement());
 
             s.execute(Employees_Subjects.getCreateStatement());
 
             s.execute(Reservation.getCreateStatement());
-                        
+
             s.execute(Filters_Rooms.getCreateStatement());
 
-            s.execute(Rooms.getCreateStatement());
-            
             s.execute(Filters.getCreateStatement());
 
             s.execute(Subjects.getCreateStatement());
 
-            s.execute(Courses.getCreateStatement());              
+            s.execute(Courses.getCreateStatement());
 
+            // Inserir usuário administrador, se não houver usuários
+            if (Users.getUsersAll().isEmpty()) {
+                Users.insertUser("admin", "Administrador", "ADMIN", "1234");
+            }
         } catch (Exception ex) {
-            
+            initializeLog += new Date() + ": Error during database initialization: " + ex.getMessage();
+            exception = ex;
         }
     }
 

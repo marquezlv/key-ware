@@ -13,6 +13,7 @@ public class Filters_Rooms {
     private long roomid;
     private long filterid;
     private String filterName;
+    private String filterDesc;
 
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS filters_rooms("
@@ -24,22 +25,49 @@ public class Filters_Rooms {
                 + ")";
     }
 
-    public static ArrayList<Filters_Rooms> getFiltersRoom() throws Exception {
+    public static ArrayList<Filters_Rooms> getFiltersRoom(int column, int sort) throws Exception {
         ArrayList<Filters_Rooms> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
+
+        String sql = "";
+        // Se for Sort 0 ele volta para o sql default
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            // Ordenando pela coluna 1 (nm_employee)
+            case 3:
+                // Sort 1 é ASCENDENTE e Sort 2 é DESCENDENTE
+                if (sort == 1) {
+                    sql = "SELECT fr.*, f.nm_type, f.ds_filter FROM filters_rooms fr "
+                            + "LEFT JOIN filters f ON f.cd_filter = fr.cd_filter "
+                            + "LEFT JOIN rooms r ON r.cd_room = fr.cd_room "
+                            + "ORDER BY f.nm_type ASC";
+                } else if (sort == 2) {
+                    sql = "SELECT fr.*, f.nm_type, f.ds_filter FROM filters_rooms fr "
+                            + "LEFT JOIN filters f ON f.cd_filter = fr.cd_filter "
+                            + "LEFT JOIN rooms r ON r.cd_room = fr.cd_room "
+                            + "ORDER BY f.nm_type DESC";
+                }
+                break;
+            default:
+                sql = "SELECT fr.*, f.nm_type, f.ds_filter FROM filters_rooms fr "
+                        + "LEFT JOIN filters f ON f.cd_filter = fr.cd_filter "
+                        + "LEFT JOIN rooms r ON r.cd_room = fr.cd_room "
+                        + "ORDER BY f.nm_type";
+                break;
+        }
+
         Statement stmt = con.createStatement();
-        String query = "SELECT fr.*, f.nm_type FROM filters_rooms fr "
-                + "LEFT JOIN filters f ON f.cd_filter = fr.cd_filter "
-                + "LEFT JOIN rooms r ON r.cd_room = fr.cd_room "
-                + "ORDER BY f.nm_type";
-        ResultSet rs = stmt.executeQuery(query);
+        ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
             long rowId = rs.getLong("cd_dumb");
             long filter = rs.getLong("cd_filter");
             long room = rs.getLong("cd_room");
             String filterName = rs.getString("nm_type");
-            list.add(new Filters_Rooms(rowId, room, filter, filterName));
+            String filterDesc = rs.getString("ds_filter");
+            list.add(new Filters_Rooms(rowId, room, filter, filterName, filterDesc));
         }
         rs.close();
         stmt.close();
@@ -74,11 +102,12 @@ public class Filters_Rooms {
         con.close();
     }
 
-    public Filters_Rooms(long rowid, long roomid, long filterid, String filterName) {
+    public Filters_Rooms(long rowid, long roomid, long filterid, String filterName, String filterDesc) {
         this.rowid = rowid;
         this.roomid = roomid;
         this.filterid = filterid;
         this.filterName = filterName;
+        this.filterDesc = filterDesc;
     }
 
     public long getRowid() {
@@ -111,6 +140,14 @@ public class Filters_Rooms {
 
     public void setFilterName(String filterName) {
         this.filterName = filterName;
+    }
+
+    public String getFilterDesc() {
+        return filterDesc;
+    }
+
+    public void setFilterDesc(String filterDesc) {
+        this.filterDesc = filterDesc;
     }
 
 }

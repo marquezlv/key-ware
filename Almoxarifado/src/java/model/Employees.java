@@ -11,7 +11,7 @@ public class Employees {
     private String type;
 
     public static String getCreateStatement() {
-        return "CREATE OR REPLACE TABLE employees("
+        return "CREATE TABLE IF NOT EXISTS employees("
                 + "cd_employee INTEGER PRIMARY KEY,"
                 + "nm_employee VARCHAR(50) NOT NULL,"
                 + "nm_type VARCHAR(50) NOT NULL"

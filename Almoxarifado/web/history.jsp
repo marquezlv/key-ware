@@ -26,12 +26,16 @@
                         <tr>
                             <th>DATA</th>
                             <th>FUNCIONARIO</th>
+                            <th>MATERIA</th>
+                            <th>CURSO</th>
                             <th>SALA</th>
                             <th>TIPO</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
                             <td> {{ item.date }} </td>
                             <td> {{ item.employeeName }} </td>
+                            <td> {{ item.subjectName }} </td>
+                            <td> {{ item.courseName }} </td>
                             <td> {{ item.roomName }} </td>
                             <td> {{ item.type }} </td>
                     </table>

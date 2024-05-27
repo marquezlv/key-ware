@@ -5,6 +5,7 @@ const app = Vue.createApp({
             error: null,
             newEmployee: '',
             newRoom: '',
+            newSubject: "",
             roomName: '',
             roomLocation: '',
             roomStatus: '',
@@ -12,9 +13,9 @@ const app = Vue.createApp({
             list: [],
             rooms: [],
             employees: [],
+            subjects: [],
             key: [],
-            currentPage: 1,
-            totalPages: 0
+            roomFilters: []
         };
     },
     computed: {
@@ -42,18 +43,20 @@ const app = Vue.createApp({
         },
         async addKey() {
             const currentDateTime = new Date().toISOString();
+            console.log(currentDateTime);
             const data = await this.request("/Almoxarifado/api/keys", "POST", {
                 room: this.newRoom,
                 employee: this.newEmployee,
+                subject: this.newSubject,
                 start: currentDateTime
             });
             if (data) {
                 this.loadList();
             }
         },
-        async returnKey(id, room, employee) {
+        async returnKey(id, room, employee, subject) {
             try {
-                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
@@ -76,6 +79,7 @@ const app = Vue.createApp({
                 location: this.roomLocation,
                 status: this.roomStatus
             });
+            this.loadList();
             this.resetForm();
             this.room = null;
         },
@@ -95,15 +99,31 @@ const app = Vue.createApp({
             if (dataK) {
                 this.key = dataK.list;
             }
+            const dataRF = await this.request(`/Almoxarifado/api/filters_room`, "GET");
+            if (dataRF) {
+                this.roomFilters = dataRF.list;
+            }
+        },
+        async getSubjects() {
+            const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
+            if (dataS) {
+                this.subjects = dataS.list.filter(subject => subject.employee === this.newEmployee);
+            }
+            console.log(this.subjects);
+        },
+        getRoomFilters(roomId) {
+            return this.roomFilters.filter(filter => filter.roomid === roomId);
         },
         getKey(id) {
             return this.key.filter(filter => filter.room === id);
         },
         viewRoom(room) {
             this.room = room;
+            this.roomid = room.rowid;
             this.roomName = room.name;
             this.roomLocation = room.location;
             this.roomStatus = room.status;
+            this.getRoomFilters(room.rowid);
         },
         updateInputName(room) {
             this.roomName = room.name;
@@ -114,7 +134,7 @@ const app = Vue.createApp({
             this.newEmployee = '';
             this.roomName = '';
         },
-        resetForm(){
+        resetForm() {
             this.room = null;
             this.roomName = '';
             this.roomLocation = '';

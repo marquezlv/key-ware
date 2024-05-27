@@ -10,7 +10,7 @@ public class Courses {
     private String name;
 
     public static String getCreateStatement() {
-        return "CREATE TABLE courses("
+        return "CREATE TABLE IF NOT EXISTS courses("
                 + "cd_course INTEGER PRIMARY KEY,"
                 + "nm_course VARCHAR(50) NOT NULL"
                 + ")";

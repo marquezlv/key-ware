@@ -21,21 +21,24 @@
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Salas
                         <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addRoomModal">
                                 Adicionar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm ms-1 buttons" @click="deleteUser()">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
                         </div>
                     </h2>
+                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
                     <table class="table">
                         <tr>
-                            <th>NOME DA SALA</th>
-                            <th>LOCALIZAÇÃO</th>
-                            <th>Filtros</th>
-                            <th>STATUS</th>
+                            <th  @click="filterList(1)" style="cursor: pointer;">NOME DA SALA <i class="bi bi-arrow-down-up"></i></th>
+                            <th  @click="filterList(2)" style="cursor: pointer;">LOCALIZAÇÃO <i class="bi bi-arrow-down-up"></i></th>
+                            <th  @click="filterList(3)" style="cursor: pointer;">Filtros <i class="bi bi-arrow-down-up"></i> </th>
+                            <th  @click="filterList(4)" style="cursor: pointer;">STATUS <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
@@ -49,105 +52,105 @@
                                 <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-circle"></i></i></button>
                             </td>
 
-                        <td>{{ item.status }}</td>
-                        <td>
-                            <div class="btn-group" role="group" aria-label="Basic Example">
-                                <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addRoomModal"><i class="bi bi-pen"></i></button>
-                                <button type ="button" @click="removeRoom(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                            </div>
-                        </td>
+                            <td>{{ item.status }}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic Example">
+                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addRoomModal"><i class="bi bi-pen"></i></button>
+                                    <button type ="button" @click="removeRoom(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
                     </table>         
                     <div class="pagination-container">
-                    <div class="pagination"> 
-                        <button @click="previousPage" :disabled="currentPage === 
-                                 1">Anterior</button> 
-                        <div v-if="totalPages > 1"> 
-                            <span v-for="page in pagination()" :key="page"> 
-                                <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button> 
-                                <button v-else-if="page === 'nextJump'" 
-                                        @click="jumpPages(5)">→</button> 
-                                <button v-else @click="goToPage(page)" :class="{ 'active': page 
-                                        === currentPage }">{{ page }}</button> 
-                            </span> 
-                        </div> 
-                        <button @click="nextPage" :disabled="currentPage === 
-                                 totalPages">Próxima</button> 
+                        <div class="pagination"> 
+                            <button @click="previousPage" :disabled="currentPage === 
+                                     1">Anterior</button> 
+                            <div v-if="totalPages > 1"> 
+                                <span v-for="page in pagination()" :key="page"> 
+                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button> 
+                                    <button v-else-if="page === 'nextJump'" 
+                                            @click="jumpPages(5)">→</button> 
+                                    <button v-else @click="goToPage(page)" :class="{ 'active': page 
+                                            === currentPage }">{{ page }}</button> 
+                                </span> 
+                            </div> 
+                            <button @click="nextPage" :disabled="currentPage === 
+                                     totalPages">Próxima</button> 
+                        </div>
                     </div>
                 </div>
-                </div>
-                 <div class="modal fade" id="addRoomModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5">Nova Sala</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="inputName" class="form-label">Nome da Sala</label>
-                                            <input type="text" v-model="newName" class="form-control" id="inputName"> 
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputLocation" class="form-label">Localização</label>
-                                            <input type="text" v-model="newLocation" class="form-control" id="inputLocation"> 
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputStatus" class="form-label">Status</label>
-                                            <select class="form-select" v-model="newStatus" id="inputStatus">
-                                                <option value="DISPONIVEL">Disponivel</option>
-                                                <option value="INDISPONIVEL">Indisponivel</option>
-                                                <option value="LIMPEZA">Limpeza</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <div>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                <div class="modal fade" id="addRoomModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Nova Sala</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputName" class="form-label">Nome da Sala</label>
+                                        <input type="text" v-model="newName" class="form-control" id="inputName"> 
                                     </div>
-                                    <div>
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                    <div class="mb-3">
+                                        <label for="inputLocation" class="form-label">Localização</label>
+                                        <input type="text" v-model="newLocation" class="form-control" id="inputLocation"> 
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="inputStatus" class="form-label">Status</label>
+                                        <select class="form-select" v-model="newStatus" id="inputStatus">
+                                            <option value="DISPONIVEL">Disponivel</option>
+                                            <option value="INDISPONIVEL">Indisponivel</option>
+                                            <option value="LIMPEZA">Limpeza</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                                        <div class="modal fade" id="addFilterModal" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5">Adicionar filtro</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal fade" id="addFilterModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Adicionar filtro</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputRoom" class="form-label">Filtro para a Sala</label>
+                                        <input type="text" v-model="roomName" class="form-control" id="inputRoom" disabled>
                                     </div>
-                                    <div class="modal-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="inputRoom" class="form-label">Filtro para a Sala</label>
-                                                <input type="text" v-model="roomName" class="form-control" id="inputRoom" disabled>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="inputFilter" class="form-label">Filtro</label>
-                                                <select class="form-select" v-model="newFilter" id="inputFilter">
-                                                    <option v-for="item3 in filters" :key="item3.rowid" :value="item3.rowid">{{ item3.type }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
+                                    <div class="mb-3">
+                                        <label for="inputFilter" class="form-label">Filtro</label>
+                                        <select class="form-select" v-model="newFilter" id="inputFilter">
+                                            <option v-for="item3 in filters" :key="item3.rowid" :value="item3.rowid">{{ item3.type }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
 
-                                            </div>
-                                        </form>
                                     </div>
-                                    <div class="modal-footer">
-                                        <div>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm2()">Cancelar</button>
-                                        </div>
-                                        <div>
-                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addRoomFilter()">Salvar</button>
-                                        </div>
-                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm2()">Cancelar</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addRoomFilter()">Salvar</button>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
             </div>
         </div>       
         <script src="scripts/rooms.js"></script>

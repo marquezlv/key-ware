@@ -32,6 +32,7 @@ const app = Vue.createApp({
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / 5);
             }
+            console.log(data);
         },
 
         pagination() {

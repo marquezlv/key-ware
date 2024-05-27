@@ -13,7 +13,7 @@ public class Subjects {
     private String courseName;
 
     public static String getCreateStatement() {
-        return "CREATE TABLE subjects("
+        return "CREATE TABLE IF NOT EXISTS subjects("
                 + "cd_subject INTEGER PRIMARY KEY,"
                 + "nm_subject VARCHAR(50) NOT NULL,"
                 + "nm_period VARCHAR(50) NOT NULL,"
