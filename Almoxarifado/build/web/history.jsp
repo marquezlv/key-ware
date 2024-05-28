@@ -17,8 +17,9 @@
                     {{ error }}
                 </div>
                 <div v-else class="normal-page">
+                    <div class="wrapper">
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">Historico de chaves</h2>
-                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <label for="registers" class="form-label"></label>
                     <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
                         <option value=5>5</option>
                         <option value=10>10</option>
@@ -55,6 +56,8 @@
                             <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
                         </div>
                     </div>
+                    <br>
+                </div>
                 </div>
             </div>
         </div>

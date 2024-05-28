@@ -107,6 +107,7 @@ th, td {
     transition: transform 0.3s ease;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-left: 20px;
 
 }
 

@@ -101,6 +101,7 @@
                             <button @click="nextPageCourse" :disabled="currentPageCourse === totalPagesCourse">Próxima</button>
                         </div>
                     </div>
+                    <br>
                 </div>
                                     <div class="modal fade" id="addSubjectModal" tabindex="-1">
                         <div class="modal-dialog">

@@ -18,6 +18,7 @@
                     {{ error }}
                 </div>
                 <div v-else class="normal-page">
+                    <div class="wrapper">
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Salas
                         <div class="d-flex align-items-center">
@@ -26,7 +27,7 @@
                             </button>
                         </div>
                     </h2>
-                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <label for="registers" class="form-label"></label>
                     <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
                         <option value=5>5</option>
                         <option value=10>10</option>
@@ -77,6 +78,8 @@
                                      totalPages">Próxima</button> 
                         </div>
                     </div>
+                    <br>
+                </div>
                 </div>
                 <div class="modal fade" id="addRoomModal" tabindex="-1">
                     <div class="modal-dialog">

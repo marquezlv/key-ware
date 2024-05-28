@@ -18,24 +18,28 @@
                     <div v-for="location in uniqueLocations" :key="location">
                         <h3>{{ location }}</h3>
                         <div class="row">
-                            <div class="col-md-2 mb-2 d-flex justify-content-center" v-for="room in rooms.filter(room => room.location === location)" :key="room.rowid">
+                            <div class="col-md-2 mb-2" v-for="room in rooms.filter(room => room.location === location)" :key="room.rowid">
                                 <div :class="room.status === 'DISPONIVEL' ? 'card-available' : 'card-unavailable'">
                                     <div class="card-body custom-card-body">
+                                        <div class="both-buttons">
                                         <h4 class="card-title">
-                                            {{ room.name }} 
+                                            {{ room.name }}
                                             <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
                                                 <i class="bi bi-plus-circle"></i>
                                             </button>
                                             <button class="btn btn-warning btn-sm ms-auto buttons" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
                                                 <i class="bi bi-info-square"></i>
                                             </button>
+                                            </div>
                                         </h4>
                                         <div v-for="key in getKey(room.rowid)" :key="key.rowid">
                                             <hr>
-                                            <div class="card-text"><i class="bi bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
+                                            <div class="d-flex align-items-center both-buttons"> 
+                                            <div class="card-text me-2"><i class="bi-style-key bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
                                             <br>
-                                            <div class="form-check">
-                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi bi-key"></i><i class="bi bi-check2"></i></button>
+                                            <div class="form-check ms-auto">
+                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i></button>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
