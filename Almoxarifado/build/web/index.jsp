@@ -113,7 +113,7 @@
                             </div>
                             <hr>
                             <a href="rooms.jsp"><i class="bi bi-gear-fill"></i></a>
-                            <div v-for="filters in roomFilters" :key="filters.rowid">
+                            <div v-for="filters in filters" :key="filters.rowid">
                                 |{{ filters.filterName }} <br> Descrição: {{ filters.filterDesc }}
                             </div>
                             <div class="modal-footer">

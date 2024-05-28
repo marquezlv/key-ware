@@ -15,7 +15,8 @@ const app = Vue.createApp({
             employees: [],
             subjects: [],
             key: [],
-            roomFilters: []
+            roomFilters: [],
+            filters: []
         };
     },
     computed: {
@@ -43,7 +44,6 @@ const app = Vue.createApp({
         },
         async addKey() {
             const currentDateTime = new Date().toISOString();
-            console.log(currentDateTime);
             const data = await this.request("/Almoxarifado/api/keys", "POST", {
                 room: this.newRoom,
                 employee: this.newEmployee,
@@ -99,10 +99,11 @@ const app = Vue.createApp({
             if (dataK) {
                 this.key = dataK.list;
             }
-            const dataRF = await this.request(`/Almoxarifado/api/filters_room`, "GET");
+            const dataRF = await this.request(`/Almoxarifado/api/filters_room?column=${0}&sort=${0}`, "GET");
             if (dataRF) {
                 this.roomFilters = dataRF.list;
             }
+            console.log(this.roomFilters);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
@@ -112,7 +113,7 @@ const app = Vue.createApp({
             console.log(this.subjects);
         },
         getRoomFilters(roomId) {
-            return this.roomFilters.filter(filter => filter.roomid === roomId);
+            this.filters = this.roomFilters.filter(filter => filter.roomid === roomId);
         },
         getKey(id) {
             return this.key.filter(filter => filter.room === id);

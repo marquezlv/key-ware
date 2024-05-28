@@ -17,19 +17,22 @@
                     {{ error }}
                 </div>
                 <div v-else class="normal-page">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Historico de chaves
-                        <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
-                        </div>
-                    </h2>
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Historico de chaves</h2>
+                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
                     <table class="table">
                         <tr>
-                            <th>DATA</th>
-                            <th>FUNCIONARIO</th>
-                            <th>MATERIA</th>
-                            <th>CURSO</th>
-                            <th>SALA</th>
-                            <th>TIPO</th>
+                            <th @click="filterList(1)" style="cursor: pointer;">DATA <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(2)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(3)" style="cursor: pointer;">MATERIA <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(4)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(5)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(6)" style="cursor: pointer;">TIPO <i class="bi bi-arrow-down-up"></i></th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
                             <td> {{ item.date }} </td>

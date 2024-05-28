@@ -36,17 +36,45 @@ public class Users {
         return total;
     }
 
-    public static ArrayList<Users> getUsers(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Users> getUsers(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Users> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
-        // Executando o SQL para resgatar todos os registros da tabela
-        String sql = "SELECT rowid, * from users ORDER BY name LIMIT ?,?";
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT rowid, * from users ORDER BY login ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT rowid, * from users ORDER BY login DESC LIMIT ?,?";
+                }
+                break;
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT rowid, * from users ORDER BY name ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT rowid, * from users ORDER BY name DESC LIMIT ?,?";
+                }
+                break;
+            case 3:
+                if (sort == 1) {
+                    sql = "SELECT rowid, * from users ORDER BY role ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT rowid, * from users ORDER BY role DESC LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT rowid, * from users ORDER BY name LIMIT ?,?";
+                break;
+        }
+
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);
         ResultSet rs = stmt.executeQuery();
-        // Enquanto houver registros irá adicionar ao array o novo objeto contendo os dados do usuario
         while (rs.next()) {
             long rowId = rs.getLong("rowid");
             String login = rs.getString("login");
@@ -60,7 +88,7 @@ public class Users {
         con.close();
         return list;
     }
-    
+
     public static ArrayList<Users> getUsersAll() throws Exception {
         ArrayList<Users> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
@@ -132,7 +160,7 @@ public class Users {
         con.close();
     }
 
-    public static void updateUser(long rowid,String login, String name, String role, String password) throws Exception {
+    public static void updateUser(long rowid, String login, String name, String role, String password) throws Exception {
         Connection con = AppListener.getConnection();
         // Identico ao insert com a diferença de que o login seja igual ao do usuario logado
         String sql = "UPDATE users SET login=?, name=?, role=?, password_hash=? WHERE rowid=?";

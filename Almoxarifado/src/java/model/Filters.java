@@ -70,12 +70,35 @@ public class Filters {
         return list;
     }
 
-    public static ArrayList<Filters> getFiltersPages(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Filters> getFiltersPages(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Filters> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT * FROM filters ORDER BY nm_type LIMIT ?,?";
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT * FROM filters ORDER BY nm_type ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM filters ORDER BY nm_type DESC LIMIT ?,?";
+                }
+                break;
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT * FROM filters ORDER BY ds_filter ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM filters ORDER BY ds_filter DESC LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT * FROM filters ORDER BY nm_type LIMIT ?,?";
+                break;
+        }
+
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);

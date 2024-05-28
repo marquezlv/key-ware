@@ -71,7 +71,7 @@ public class ApiServlet extends HttpServlet {
             } else if (request.getRequestURI().endsWith("/api/history")) {
                 processHistory(file, request, response);
             }
- 
+
         } catch (Exception ex) {
             response.sendError(500, "Internal Error: " + ex.getLocalizedMessage());
         }
@@ -154,8 +154,10 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: Only admin can manage users");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             int page = Integer.parseInt(request.getParameter("page"));
-            int itemPage = 5;
-            file.put("list", new JSONArray(Users.getUsers(page, itemPage)));
+            int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+            int column = Integer.parseInt(request.getParameter("column"));
+            int sort = Integer.parseInt(request.getParameter("sort"));
+            file.put("list", new JSONArray(Users.getUsers(page, itemsPerPage, column, sort)));
             file.put("total", Users.getTotalUsers());
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
@@ -171,7 +173,7 @@ public class ApiServlet extends HttpServlet {
             String role = body.getString("role");
             String password = body.getString("password");
             Long id = Long.parseLong(request.getParameter("id"));
-            Users.updateUser(id ,login, name, role, password);
+            Users.updateUser(id, login, name, role, password);
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Users.deleteUser(id);
@@ -188,9 +190,11 @@ public class ApiServlet extends HttpServlet {
             if (pageParam == null) {
                 file.put("list", new JSONArray(Filters.getFilters()));
             } else {
+                int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
                 int page = Integer.parseInt(pageParam);
-                int itemsPerPage = 5;
-                file.put("list", new JSONArray(Filters.getFiltersPages(page, itemsPerPage)));
+                file.put("list", new JSONArray(Filters.getFiltersPages(page, itemsPerPage, column, sort)));
                 file.put("total", Filters.getTotalFilters());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
@@ -294,7 +298,7 @@ public class ApiServlet extends HttpServlet {
                 int itemsPerPage = 5;
                 file.put("list", new JSONArray(Courses.getCoursesPages(page, itemsPerPage)));
                 file.put("total", Courses.getTotalCourses());
-            }           
+            }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
             String name = body.getString("name");
@@ -316,13 +320,15 @@ public class ApiServlet extends HttpServlet {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
-             String pageParam = request.getParameter("page");
+            String pageParam = request.getParameter("page");
             if (pageParam == null) {
                 file.put("list", new JSONArray(Employees.getEmployees()));
             } else {
                 int page = Integer.parseInt(pageParam);
-                int itemsPerPage = 5;
-                file.put("list", new JSONArray(Employees.getEmployeesPages(page, itemsPerPage)));
+                int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
+                file.put("list", new JSONArray(Employees.getEmployeesPages(page, itemsPerPage, column, sort)));
                 file.put("total", Employees.getTotalEmployees());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
@@ -440,7 +446,7 @@ public class ApiServlet extends HttpServlet {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             String strDate = body.getString("start");
             Date date = dateFormat.parse(strDate);
-            History.insertHistory(employee, room, subject ,"Retirada", date);
+            History.insertHistory(employee, room, subject, "Retirada", new Date());
             CurrentKey.insertKey(employee, room, subject, date);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
@@ -449,20 +455,22 @@ public class ApiServlet extends HttpServlet {
             Long employee = Long.parseLong(request.getParameter("employee"));
             Long room = Long.parseLong(request.getParameter("room"));
             Long subject = Long.parseLong(request.getParameter("subject"));
-            History.insertHistory(employee, room, subject ,"Devolvido", new Date());
+            History.insertHistory(employee, room, subject, "Devolvido", new Date());
             CurrentKey.deleteKey(id, room);
         } else {
             response.sendError(405, "Method not allowed");
         }
     }
-    
+
     private void processHistory(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             int page = Integer.parseInt(request.getParameter("page"));
-            int itemPage = 5;
-            file.put("list", new JSONArray(History.getHistory(page, itemPage)));
+            int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+            int column = Integer.parseInt(request.getParameter("column"));
+            int sort = Integer.parseInt(request.getParameter("sort"));
+            file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort)));
             file.put("total", History.getTotalHistory());
         } else if (request.getMethod().toLowerCase().equals("post")) {
             response.sendError(401, "Insert: This table cannot be inserted directly");

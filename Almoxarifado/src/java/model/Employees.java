@@ -50,13 +50,36 @@ public class Employees {
         return total;
     }
     
-    public static ArrayList<Employees> getEmployeesPages(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Employees> getEmployeesPages(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Employees> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
         int startIndex = (page - 1) * recordsPerPage;
-
-        String sql = "SELECT * FROM employees ORDER BY nm_employee LIMIT ?,?";
+        
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT * FROM employees ORDER BY nm_employee ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM employees ORDER BY nm_employee DESC LIMIT ?,?";
+                }
+                break;
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT * FROM employees ORDER BY nm_type ASC LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM employees ORDER BY nm_type DESC LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT * FROM employees ORDER BY nm_employee LIMIT ?,?";
+                break;
+        }
+        
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);

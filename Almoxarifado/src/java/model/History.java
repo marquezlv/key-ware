@@ -52,18 +52,141 @@ public class History {
         return total;
     }
 
-    public static ArrayList<History> getHistory(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<History> getHistory(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<History> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
-                + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                + "ORDER BY h.dt_history desc "
-                + "LIMIT ?,?";
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY h.dt_history ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY h.dt_history DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY e.nm_employee ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY e.nm_employee DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 3:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_subject ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_subject DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 4:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY c.nm_course ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY c.nm_course DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 5:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY r.nm_room ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY r.nm_room DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 6:
+                if (sort == 1) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY h.nm_type ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY h.nm_type DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course FROM history h "
+                        + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                        + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                        + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                        + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                        + "ORDER BY h.dt_history desc "
+                        + "LIMIT ?,?";
+                break;
+        }
+
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);

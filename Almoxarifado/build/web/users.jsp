@@ -25,22 +25,24 @@
                 <div v-else class="normal-page">
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Usuários do sistema
-                        <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
+                        <div class="d-flex align-items-center">                            
                             <button @click="resetForm()" type ="button" class="btn btn-success btn-sm ms-auto buttons" data-bs-toggle="modal" data-bs-target="#addUserModal">
                                 Adicionar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm ms-1 buttons" @click="deleteUser()">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
                         </div>
                     </h2>
-
+                    <label for="registers" class="form-label">Registros por pagina</label>
+                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
                     <table class="table">
                         <tr>
-                            <th>LOGIN</th>
-                            <th>NOME</th>
-                            <th>FUNÇÃO</th>
+                            <th @click="filterList(1)" style="cursor: pointer;">LOGIN <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(2)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(3)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
@@ -69,47 +71,47 @@
                         </div>
                     </div>
                 </div>
-                                    <div class="modal fade" id="addUserModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5">Novo usuario</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="inputRole" class="form-label">Função</label>
-                                            <select class="form-select" v-model="newRole">
-                                                <option value="ADMIN">ADMIN</option>
-                                                <option value="FUNCIONARIO">FUNCIONARIO</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputLogin" class="form-label">Login</label>
-                                            <input type="text" v-model="newLogin" class="form-control" id="inputLogin">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputName" class="form-label">Nome</label>
-                                            <input type="text" v-model="newName" class="form-control" id="inputName">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputPass" class="form-label">Senha</label>
-                                            <input type="password" v-model="newPassword" class="form-control" id="inputPass" required>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <div>
+                <div class="modal fade" id="addUserModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Novo usuario</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputRole" class="form-label">Função</label>
+                                        <select class="form-select" v-model="newRole">
+                                            <option value="ADMIN">ADMIN</option>
+                                            <option value="FUNCIONARIO">FUNCIONARIO</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputLogin" class="form-label">Login</label>
+                                        <input type="text" v-model="newLogin" class="form-control" id="inputLogin">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputName" class="form-label">Nome</label>
+                                        <input type="text" v-model="newName" class="form-control" id="inputName">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputPass" class="form-label">Senha</label>
+                                        <input type="password" v-model="newPassword" class="form-control" id="inputPass" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
-                                    </div>
-                                    <div>
+                                </div>
+                                <div>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
         <script src="scripts/users.js"></script>

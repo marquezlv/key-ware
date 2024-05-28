@@ -81,14 +81,11 @@ public class Rooms {
         int startIndex = (page - 1) * recordsPerPage;
 
         String sql = "";
-        // Se for Sort 0 ele volta para o sql default
         if (sort == 0) {
             column = 0;
         }
         switch (column) {
-            // Ordenando pela coluna 1 (nm_employee)
             case 1:
-                // Sort 1 é ASCENDENTE e Sort 2 é DESCENDENTE
                 if (sort == 1) {
                     sql = "SELECT * FROM rooms "
                             + "ORDER BY nm_room ASC "
@@ -99,7 +96,6 @@ public class Rooms {
                             + "LIMIT ?,?";
                 }
                 break;
-            // Ordenando pela coluna 2 (nm_subject)
             case 2:
                 if (sort == 1) {
                     sql = "SELECT * FROM rooms "

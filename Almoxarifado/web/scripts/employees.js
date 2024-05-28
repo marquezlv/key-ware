@@ -13,10 +13,28 @@ const app = Vue.createApp({
             list: [],
             employee: null,
             currentPage: 1,
-            totalPages: 0
+            totalPages: 0,
+            itemsPerPage: 5,
+            direction: 0,
+            column: 0
         };
     },
     methods: {
+        filterList(column){
+            if(this.direction === 0){
+                this.direction = 1;
+            } else if(this.direction === 1){
+                this.direction = 2;
+            } else{
+                this.direction = 0;
+            }
+            this.column = column;
+            this.loadList(this.currentPage, this.column, this.direction);
+        },
+        reloadPage(){
+            this.currentPage = 1;
+            this.loadList(this.currentPage, this.column ,this.direction);
+        },
         async request(url = "", method, data) {
             try {
                 const response = await fetch(url, {
@@ -46,20 +64,20 @@ const app = Vue.createApp({
                 name: this.newName,
                 type: this.newType
             });
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async addEmployeeSubject() {
             const data = await this.request("/Almoxarifado/api/employee_subject", "POST", {
                 employee: this.employeeId,
                 subject: this.newSubject
             });
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async removeEmployee(id) {
             try {
                 const data = await this.request("/Almoxarifado/api/employees?id=" + id, "DELETE");
                 if (data) {
-                    await this.loadList(this.currentPage);
+                    await this.loadList(this.currentPage, this.column, this.direction);
                 }
             } catch (error) {
                 console.error("Erro ao excluir o Funcionario:", error);
@@ -69,7 +87,7 @@ const app = Vue.createApp({
             try {
                 const data = await this.request("/Almoxarifado/api/employee_subject?id=" + id, "DELETE");
                 if (data) {
-                    await this.loadList(this.currentPage);
+                    await this.loadList(this.currentPage, this.column, this.direction);
                 }
             } catch (error) {
                 console.error("Erro ao excluir a Sala:", error);
@@ -88,15 +106,15 @@ const app = Vue.createApp({
                 name: this.newName,
                 type: this.newType
             });
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
             this.resetForm();
             this.employee = null;
         },
-        async loadList(page = 1) {
-            const data = await this.request(`/Almoxarifado/api/employees?page=${page}`, "GET");
+        async loadList(page = 1,  column = 0, sort = 1) {
+            const data = await this.request(`/Almoxarifado/api/employees?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
             if (data) {
                 this.list = data.list;
-                this.totalPages = Math.ceil(data.total / 5);
+                this.totalPages = Math.ceil(data.total / this.itemsPerPage);
             }
             const dataS = await this.request("/Almoxarifado/api/subjects", "GET");
             if (dataS) {
@@ -141,23 +159,23 @@ const app = Vue.createApp({
         previousPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                this.loadList(this.currentPage);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
-                this.loadList(this.currentPage);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         goToPage(page) {
             this.currentPage = page;
-            this.loadList(page);
+            this.loadList(page, this.column, this.direction);
         },
         jumpPages(pages) {
             this.currentPage = Math.min(this.totalPages, Math.max(1, this.currentPage +
                     pages));
-            this.loadList(this.currentPage);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         getEmployeesSubjects(employeeId) {
             return this.employeeSubject.filter(employee => employee.employee === employeeId);
