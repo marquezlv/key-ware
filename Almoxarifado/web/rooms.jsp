@@ -37,17 +37,17 @@
                         <tr>
                             <th  @click="filterList(1)" style="cursor: pointer;">NOME DA SALA <i class="bi bi-arrow-down-up"></i></th>
                             <th  @click="filterList(2)" style="cursor: pointer;">LOCALIZAÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th  @click="filterList(3)" style="cursor: pointer;">Filtros <i class="bi bi-arrow-down-up"></i> </th>
+                            <th  @click="filterList(3)" style="cursor: pointer;">FILTROS <i class="bi bi-arrow-down-up"></i> </th>
                             <th  @click="filterList(4)" style="cursor: pointer;">STATUS <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
-                        <tr v-for="item in list" :key="item.rowid">
+                        <tr v-for="item in list" :key="item.rowid" class="tr-style">
                             <td>{{ item.name}}</td>
                             <td>{{ item.location }}</td>
                             <td>
-                                <div v-for="item2 in getRoomFilters(item.rowid)" :key="item2.rowid">
-                                    |{{ item2.filterName }}
-                                    <button class="btn btn-danger btn-sm ms-auto buttons" type="button" @click="removeFilter(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>|
+                                <div v-for="item2 in getRoomFilters(item.rowid)" :key="item2.rowid" class="filter-container">
+                                    {{ item2.filterName }}
+                                    <button class="btn btn-danger btn-sm buttons" type="button" @click="removeFilter(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
                                 </div>
                                 <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-circle"></i></i></button>
                             </td>

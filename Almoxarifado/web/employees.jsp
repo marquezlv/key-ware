@@ -40,9 +40,9 @@
                             <td>{{ item.name}}</td>
                             <td>{{ item.type }}</td>
                             <td>
-                                <div v-for="item2 in getEmployeesSubjects(item.rowid)" :key="item2.rowid">
-                                    |{{ item2.subjectName }} - {{ item2.subjectPeriod }}
-                                    <button class="btn btn-danger btn-sm ms-auto buttons" type="button" @click="removeSubject(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>|
+                                <div v-for="item2 in getEmployeesSubjects(item.rowid)" :key="item2.rowid" class="filter-container">
+                                    {{ item2.subjectName }} - {{ item2.subjectPeriod }}
+                                    <button class="btn btn-danger btn-sm buttons" type="button" @click="removeSubject(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
                                 </div>
                                 <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-circle"></i></i></button>
                             </td>

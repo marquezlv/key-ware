@@ -3,31 +3,53 @@
 .container {
     margin: 0;
     padding: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .custom-card {
     width: 400px;
     height: 300px;
     border: 2px solid #ddd;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 .custom-card-body {
+     padding: 20px;
     text-align: left;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
 }
 
 .card-available {
-    background-color: lightgreen;
-    color: white;
+    background-color: #00A451;
+    color: #fff;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .card-unavailable {
-    background-color: lightcoral;
-    color: white;
+    background-color: #F25562;
+    color: #fff;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
-[v-cloak] {
-    display: none;
+.card-text {
+    white-space: nowrap;
 }
-
-

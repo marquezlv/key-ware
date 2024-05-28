@@ -33,7 +33,7 @@
                     </select>
 
                     <table class="table">
-                        <tr>
+                        <tr class="tr-style">
                             <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterList(2)" style="cursor: pointer;">MATERIA  <i class="bi bi-arrow-down-up"></i></th> 
                             <th @click="filterList(3)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>

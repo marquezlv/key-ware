@@ -91,3 +91,7 @@ body.dark-mode .form-select {
 body.dark-mode .form-select option {
     color: #fff;
 }
+body.dark-mode  .filter-container {
+    background-color: #51525E;
+    border: none;
+}
