@@ -37,7 +37,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 .custom-card-body {
-     padding: 20px;
+    padding: 20px;
     text-align: left;
     font-size: 14px;
     font-weight: 500;
@@ -67,7 +67,7 @@
 .card-text {
     white-space: nowrap;
     font-size: 18px;
-    
+
 }
 
 .d-flex {
@@ -85,25 +85,63 @@
 
 .bi-style-key {
     display: inline-block;
-    transform: rotate(45deg);  
+    transform: rotate(45deg);
     font-size: 18px;
 
 }
 
 .both-buttons{
-        white-space: nowrap;
+    white-space: nowrap;
 
 }
 
+
 @media (min-width: 768px) {
     .row-cols-md-2 > .col {
-        flex: 0 0 50%; /* Two columns per row */
+        flex: 0 0 50%;
     }
 }
 
 @media (min-width: 992px) {
     .row-cols-lg-3 > .col {
-        flex: 0 0 33.333%; /* Three columns per row */
+        flex: 0 0 33.333%;
+        
     }
 }
+.config-container {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.config-bi {
+    font-size: 25px;
+    color: #007bff;
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+.filter-info {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-left: 15px; 
+}
+
+.separator {
+   position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    width: 2px;
+}
+
+.description {
+    color: #666;
+    font-style: italic;
+    display: block;
+    margin-top: 3px;
+}
+
 

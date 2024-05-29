@@ -21,7 +21,7 @@
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">Reserva de Salas
                         <div class="d-flex align-items-center">
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addReservModal">
-                                Adicionar requisitante
+                                Adicionar
                             </button>
                         </div>
                     </h2>

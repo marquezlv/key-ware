@@ -11,7 +11,7 @@ body {
 
 
     }
-    
+
     .container {
         padding-left: 15%;
         padding-top: 5vh;
@@ -84,42 +84,42 @@ body {
     .tr-style {
         white-space: nowrap;
     }
-    
-select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 7%; 
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-}
 
-select:hover {
-  border-color: #aaa;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 7%;
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
 
-select:focus {
-  border-color: #66d9ef;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
+    select:hover {
+        border-color: #aaa;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-select option {
-  padding: 10px;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-}
+    select:focus {
+        border-color: #66d9ef;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
 
-.form-label {
-  margin-bottom: 10px;
-}
+    select option {
+        padding: 10px;
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
 
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100vh; /* Ensure the wrapper takes up the full viewport height */
-}
+    .form-label {
+        margin-bottom: 10px;
+    }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100vh;
+    }
 
 
 }

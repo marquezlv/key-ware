@@ -21,7 +21,7 @@
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">Funcionarios
                         <div class="d-flex align-items-center"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                                Adicionar novo usuario
+                                Adicionar
                             </button>
                         </div>
                     </h2>
@@ -44,10 +44,10 @@
                             <td>{{ item.type }}</td>
                             <td>
                                 <div v-for="item2 in getEmployeesSubjects(item.rowid)" :key="item2.rowid" class="filter-container">
-                                    {{ item2.subjectName }} - {{ item2.subjectPeriod }}
+                                    {{ item2.subjectName }} - {{ item2.subjectPeriod }} - {{ item2.courseName}}
                                     <button class="btn btn-danger btn-sm buttons" type="button" @click="removeSubject(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
                                 </div>
-                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-circle"></i></i></button>
+                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-lg"></i></button>
                             </td>
 
 
@@ -127,7 +127,7 @@
                                     <div class="mb-3">
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-for="item3 in subjects" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{ item3.period }}</option>
+                                            <option v-for="item3 in subjects" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{ item3.period }} - {{ item3.courseName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">

@@ -54,14 +54,14 @@
                             <a class="nav-link" href="showTV.jsp">TV</a>
                         </li>
                     </ul>
-                    <span class="navbar-text-login">
+                    <div class="navbar-text-login">
                         <i class="bi bi-person"></i>{{data.name}}
-                        <button @click="logout()" class="btn btn-sm btn-danger navbar-text-login-button" type="button"><i class="bi bi-arrow-right-circle"></i></button>
-                    </span>
-                    <button class="btn btn-sm btn-secondary ms-auto" @click="toggleMode">
-                        <i class="bi bi-sun-fill" v-if="!isDarkTheme"></i>
-                        <i class="bi bi-moon-fill" v-else></i>
-                    </button>
+                        <button @click="logout()" class="btn btn-sm btn-danger navbar-text-login-button" type="button"><i class="bi bi-box-arrow-right"></i></button>
+                        <button class="btn btn-sm btn-secondary ms-auto" @click="toggleMode">
+                            <i class="bi bi-sun-fill" v-if="!isDarkTheme"></i>
+                            <i class="bi bi-moon-fill" v-else></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -43,14 +43,62 @@ public class Subjects {
         return list;
     }
 
-    public static ArrayList<Subjects> getSubjectsPages(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Subjects> getSubjectsPages(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Subjects> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
-        String sql = "SELECT s.*, c.nm_course FROM subjects s "
-                + "JOIN courses c ON c.cd_course = s.cd_course "
-                + "ORDER BY s.nm_subject "
-                + "LIMIT ?,?";
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_subject ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_subject DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 2:
+                if (sort == 1) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY c.nm_course ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY c.nm_course DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            case 3:
+                if (sort == 1) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_period ASC "
+                            + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT s.*, c.nm_course FROM subjects s "
+                            + "JOIN courses c ON c.cd_course = s.cd_course "
+                            + "ORDER BY s.nm_period DESC "
+                            + "LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT s.*, c.nm_course FROM subjects s "
+                        + "JOIN courses c ON c.cd_course = s.cd_course "
+                        + "ORDER BY s.nm_subject "
+                        + "LIMIT ?,?";
+                break;
+        }
+
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);

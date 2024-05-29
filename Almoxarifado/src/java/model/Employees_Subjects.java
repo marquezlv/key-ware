@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import web.AppListener;
 
 public class Employees_Subjects {
+
     private long rowid;
     private long employee;
     private long subject;
     private String subjectName;
     private String subjectPeriod;
-    
-    public static String getCreateStatement(){
+    private String courseName;
+
+    public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS employees_subjects("
                 + "cd_dumb INTEGER PRIMARY KEY,"
                 + "cd_employee INTEGER NOT NULL,"
@@ -23,31 +25,34 @@ public class Employees_Subjects {
                 + "FOREIGN KEY(cd_subject) REFERENCES subjects(cd_subject)"
                 + ")";
     }
-    
-    public static ArrayList<Employees_Subjects> getEmployeesSubjects() throws Exception{
+
+    public static ArrayList<Employees_Subjects> getEmployeesSubjects() throws Exception {
         ArrayList<Employees_Subjects> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         Statement stmt = con.createStatement();
-        String query = "SELECT es.*, s.nm_subject, s.nm_period FROM employees_subjects es " +
-                       "LEFT JOIN subjects s ON s.cd_subject = es.cd_subject " +
-                       "LEFT JOIN employees e ON e.cd_employee = es.cd_employee";
+        String query = "SELECT es.*, s.nm_subject, s.nm_period, c.nm_course FROM employees_subjects es "
+                + "LEFT JOIN subjects s ON s.cd_subject = es.cd_subject "
+                + "LEFT JOIN employees e ON e.cd_employee = es.cd_employee "
+                + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                + "ORDER BY s.nm_subject, c.nm_course, s.nm_period";
         ResultSet rs = stmt.executeQuery(query);
 
-        while(rs.next()){
+        while (rs.next()) {
             long rowId = rs.getLong("cd_dumb");
             long employee = rs.getLong("cd_employee");
             long subject = rs.getLong("cd_subject");
             String subjectName = rs.getString("nm_subject");
             String period = rs.getString("nm_period");
-            list.add(new Employees_Subjects(rowId, employee, subject, subjectName, period));
+            String course = rs.getString("nm_course");
+            list.add(new Employees_Subjects(rowId, employee, subject, subjectName, period, course));
         }
         rs.close();
         stmt.close();
         con.close();
         return list;
     }
-    
-    public static void insertEmployeeSubject(long employee, long subject) throws Exception{
+
+    public static void insertEmployeeSubject(long employee, long subject) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "INSERT INTO employees_subjects(cd_employee, cd_subject) VALUES(?,?)";
 
@@ -60,8 +65,8 @@ public class Employees_Subjects {
         stmt.close();
         con.close();
     }
-    
-    public static void deleteEmployeeSubject(long id) throws Exception{
+
+    public static void deleteEmployeeSubject(long id) throws Exception {
         Connection con = AppListener.getConnection();
 
         String sql = "DELETE FROM employees_subjects WHERE cd_dumb = ?";
@@ -74,12 +79,13 @@ public class Employees_Subjects {
         con.close();
     }
 
-    public Employees_Subjects(long rowid, long employee, long subject, String subjectName, String subjectPeriod) {
+    public Employees_Subjects(long rowid, long employee, long subject, String subjectName, String subjectPeriod, String courseName) {
         this.rowid = rowid;
         this.employee = employee;
         this.subject = subject;
         this.subjectName = subjectName;
         this.subjectPeriod = subjectPeriod;
+        this.courseName = courseName;
     }
 
     public long getRowid() {
@@ -121,6 +127,13 @@ public class Employees_Subjects {
     public void setSubjectPeriod(String subjectPeriod) {
         this.subjectPeriod = subjectPeriod;
     }
-    
-    
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
 }

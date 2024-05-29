@@ -261,8 +261,10 @@ public class ApiServlet extends HttpServlet {
                 file.put("list", new JSONArray(Subjects.getSubjects()));
             } else {
                 int page = Integer.parseInt(pageParam);
-                int itemsPerPage = 5;
-                file.put("list", new JSONArray(Subjects.getSubjectsPages(page, itemsPerPage)));
+                int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
+                file.put("list", new JSONArray(Subjects.getSubjectsPages(page, itemsPerPage, column, sort)));
                 file.put("total", Subjects.getTotalSubjects());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
@@ -295,8 +297,10 @@ public class ApiServlet extends HttpServlet {
                 file.put("list", new JSONArray(Courses.getCourses()));
             } else {
                 int page = Integer.parseInt(pageParam);
-                int itemsPerPage = 5;
-                file.put("list", new JSONArray(Courses.getCoursesPages(page, itemsPerPage)));
+                int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
+                file.put("list", new JSONArray(Courses.getCoursesPages(page, itemsPerPage, column, sort)));
                 file.put("total", Courses.getTotalCourses());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {

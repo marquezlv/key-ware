@@ -33,15 +33,34 @@ public class Courses {
         return list;
     }
 
-    public static ArrayList<Courses> getCoursesPages(int page, int recordsPerPage) throws Exception {
+    public static ArrayList<Courses> getCoursesPages(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Courses> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
         int startIndex = (page - 1) * recordsPerPage;
+        String sql = "";
+        if (sort == 0) {
+            column = 0;
+        }
+        switch (column) {
+            case 1:
+                if (sort == 1) {
+                    sql = "SELECT * FROM courses "
+                        + "ORDER BY nm_course ASC "
+                        + "LIMIT ?,?";
+                } else if (sort == 2) {
+                    sql = "SELECT * FROM courses "
+                        + "ORDER BY nm_course DESC "
+                        + "LIMIT ?,?";
+                }
+                break;
+            default:
+                sql = "SELECT * FROM courses "
+                        + "ORDER BY nm_course "
+                        + "LIMIT ?,?";
+                break;
+        }
 
-        String sql = "SELECT * FROM courses "
-                + "ORDER BY nm_course "
-                + "LIMIT ?,?";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);

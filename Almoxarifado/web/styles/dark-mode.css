@@ -95,3 +95,11 @@ body.dark-mode  .filter-container {
     background-color: #51525E;
     border: none;
 }
+
+.dark-mode .btn-close {
+    filter: invert(1);
+}
+
+.dark-mode .description {
+    color: grey;
+}

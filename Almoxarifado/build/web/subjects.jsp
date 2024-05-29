@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+ <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -20,21 +20,24 @@
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Materias
                         <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
                                 Adicionar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm ms-1 buttons" @click="deleteUser()">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
                         </div>
                     </h2>
+                    <label for="registers" class="form-label"></label>
+                    <select class="mb-3" v-model="itemsPerPageSub" id="registers" @change="reloadPageSub">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
 
                     <table class="table">
                         <tr>
-                            <th>NOME</th>
-                            <th>CURSO</th>
-                            <th>PERIODO</th>
+                            <th @click="filterListSub(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterListSub(2)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterListSub(3)" style="cursor: pointer;">PERIODO <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
@@ -65,18 +68,21 @@
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Cursos
                         <div class="d-flex align-items-center">
-                            <input type="text" placeholder="Digite algo..." class="form-control custom-input mx-2"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                                 Adicionar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm ms-1 buttons" @click="deleteUser()">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
                         </div>
                     </h2>
+                    <label for="registers" class="form-label"></label>
+                    <select class="mb-3" v-model="itemsPerPageCourse" id="registers" @change="reloadPageCourse">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
                     <table class="table">
                         <tr>
-                            <th>NOME</th>
+                            <th @click="filterListCourse(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item3 in course" :key="item3.rowid">
@@ -103,75 +109,74 @@
                     </div>
                     <br>
                 </div>
-                                    <div class="modal fade" id="addSubjectModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5">Nova materia</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="inputName" class="form-label">Nome</label>
-                                            <input type="text" v-model="newName" class="form-control" id="inputName" required> 
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputCourse" class="form-label">Curso</label>
-                                            <select class="form-select" v-model="newCourse" id="course" required>
-                                                <option v-for="item2 in course" :key="item2.rowid" :value="item2.rowid">{{ item2.name }}</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputCourse" class="form-label">Periodo</label>
-                                            <select class="form-select" v-model="newPeriod" id="period" required>
-                                                <option value="MATUTINO">Matutino</option>
-                                                <option value="VESPERTINO">Vespertino</option>
-                                                <option value="NOTURNO">Noturno</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <div>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                <div class="modal fade" id="addSubjectModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Nova materia</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputName" class="form-label">Nome</label>
+                                        <input type="text" v-model="newName" class="form-control" id="inputName" required> 
                                     </div>
-                                    <div>
+                                    <div class="mb-3">
+                                        <label for="inputCourse" class="form-label">Curso</label>
+                                        <select class="form-select" v-model="newCourse" id="course" required>
+                                            <option v-for="item2 in course" :key="item2.rowid" :value="item2.rowid">{{ item2.name }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputCourse" class="form-label">Periodo</label>
+                                        <select class="form-select" v-model="newPeriod" id="period" required>
+                                            <option value="MATUTINO">Matutino</option>
+                                            <option value="VESPERTINO">Vespertino</option>
+                                            <option value="NOTURNO">Noturno</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                                </div>
+                                <div>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                                   <div class="modal fade" id="addCourseModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5">Novo Curso</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="inputCourse" class="form-label">Nome</label>
-                                            <input type="text" v-model="CourseAdd" class="form-control" id="inputCourse" required> 
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                   <div>
+                </div>
+                <div class="modal fade" id="addCourseModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Novo Curso</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputCourse" class="form-label">Nome</label>
+                                        <input type="text" v-model="CourseAdd" class="form-control" id="inputCourse" required> 
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
-                                    </div>
-                                    <div>
+                                </div>
+                                <div>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdateCourse()">Salvar</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                
+                </div>
+                </div> 
             </div>
-        </div>
 
         <script src="scripts/subjects.js"></script>
 

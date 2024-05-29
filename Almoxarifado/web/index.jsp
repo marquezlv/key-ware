@@ -25,8 +25,7 @@
                                         <h4 class="card-title">
                                             {{ room.name }}
                                             <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
-                                                <i class="bi bi-plus-circle"></i>
-                                            </button>
+                                                <i class="bi bi-plus-lg"></i>                                            </button>
                                             <button class="btn btn-warning btn-sm ms-auto buttons" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
                                                 <i class="bi bi-info-square"></i>
                                             </button>
@@ -70,7 +69,7 @@
                                     <div class="mb-3">
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-for="subject in subjects" :key="subject.rowid" :value="subject.rowid">{{ subject.subjectName }}</option>
+                                            <option v-for="subject in subjects" :key="subject.rowid" :value="subject.rowid">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -116,9 +115,12 @@
                                 </form>
                             </div>
                             <hr>
-                            <a href="rooms.jsp"><i class="bi bi-gear-fill"></i></a>
-                            <div v-for="filters in filters" :key="filters.rowid">
-                                |{{ filters.filterName }} <br> Descrição: {{ filters.filterDesc }}
+                            <div class="config-container">
+                            <a href="rooms.jsp"><i class="config-bi bi bi-gear-fill"></i></a>
+                            <div v-for="filters in filters" :key="filters.rowid" class="filter-info">
+                                <span class="separator"></span>{{ filters.filterName }} <br> 
+                                <span class="description">Descrição: {{ filters.filterDesc }}</span>                            
+                            </div>
                             </div>
                             <div class="modal-footer">
                                 <div>

@@ -14,10 +14,46 @@ const app = Vue.createApp({
             currentPageSub: 1,
             currentPageCourse: 1,
             totalPagesSub: 0,
-            totalPagesCourse: 0
+            totalPagesCourse: 0,
+            itemsPerPageSub: 5,
+            directionSub: 0,
+            columnSub: 0,
+            itemsPerPageCourse: 5,
+            directionCourse: 0,
+            columnCourse: 0
         };
     },
     methods: {
+        filterListSub(column){
+            if(this.directionSub === 0){
+                this.directionSub = 1;
+            } else if(this.directionSub === 1){
+                this.directionSub = 2;
+            } else{
+                this.directionSub = 0;
+            }
+            this.columnSub = column;
+            this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
+        },
+        reloadPageSub(){
+            this.currentPageSub = 1;
+            this.loadListSub(this.currentPageSub, this.columnSub ,this.directionSub);
+        },
+        filterListCourse(column){
+            if(this.directionCourse === 0){
+                this.directionCourse = 1;
+            } else if(this.directionCourse === 1){
+                this.directionCourse = 2;
+            } else{
+                this.directionCourse = 0;
+            }
+            this.columnCourse = column;
+            this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
+        },
+        reloadPageCourse(){
+            this.currentPageCourse = 1;
+            this.loadListCourse(this.currentPageCourse, this.columnCourse ,this.directionCourse);
+        },
         async request(url = "", method, data) {
             try {
                 const response = await fetch(url, {
@@ -55,19 +91,19 @@ const app = Vue.createApp({
                 course: this.newCourse,
                 period: this.newPeriod
             });
-            this.loadListSub(this.currentPageSub);
+            this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
         },
         async addCourse() {
             const data = await this.request("/Almoxarifado/api/courses", "POST", {
                 name: this.CourseAdd
             });
-            this.loadListCourse(this.currentPageCourse);
+            this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
         },
         async removeSubject(id) {
             try {
                 const data = await this.request("/Almoxarifado/api/subjects?id=" + id, "DELETE");
                 if (data) {
-                    await this.loadListSub(this.currentPageSub);
+                    await this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
                 }
             } catch (error) {
                 console.error("Erro ao excluir a Materia:", error);
@@ -77,7 +113,7 @@ const app = Vue.createApp({
             try {
                 const data = await this.request("/Almoxarifado/api/courses?id=" + id, "DELETE");
                 if (data) {
-                    await this.loadListCourse(this.currentPageCourse);
+                    await this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
                 }
             } catch (error) {
                 console.error("Erro ao excluir o Curso:", error);
@@ -100,7 +136,7 @@ const app = Vue.createApp({
             });
             this.resetForm();
             this.subject = null;
-            this.loadListSub(this.currentPageSub);
+            this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
         },
         async updateCourse() {
             const index = this.list.findIndex(item => item.rowid === this.editCourse.rowid);
@@ -115,20 +151,20 @@ const app = Vue.createApp({
             });
             this.resetForm();
             this.editCourse = null;
-            this.loadListCourse(this.currentPageCourse);
+            this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
         },
-        async loadListSub(page = 1) {
-            const data = await this.request(`/Almoxarifado/api/subjects?page=${page}`, "GET");
+        async loadListSub(page = 1, column = 0, sort = 1) {
+            const data = await this.request(`/Almoxarifado/api/subjects?page=${page}&items=${this.itemsPerPageSub}&column=${column}&sort=${sort}`, "GET");
             if (data) {
                 this.list = data.list;
-                this.totalPagesSub = Math.ceil(data.total / 5);
+                this.totalPagesSub = Math.ceil(data.total / this.itemsPerPageSub);
             }
         },
-        async loadListCourse(page = 1) {
-            const dataC = await this.request(`/Almoxarifado/api/courses?page=${page}`, "GET");
+        async loadListCourse(page = 1, column = 0, sort = 1) {
+            const dataC = await this.request(`/Almoxarifado/api/courses?page=${page}&items=${this.itemsPerPageCourse}&column=${column}&sort=${sort}`, "GET");
             if (dataC) {
                 this.course = dataC.list;
-                this.totalPagesCourse = Math.ceil(dataC.total / 5);
+                this.totalPagesCourse = Math.ceil(dataC.total / this.itemsPerPageCourse);
             }
         },
         paginationSub() {
@@ -165,23 +201,23 @@ const app = Vue.createApp({
         previousPageSub() {
             if (this.currentPageSub > 1) {
                 this.currentPageSub--;
-                this.loadListSub(this.currentPageSub);
+                this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
             }
         },
         nextPageSub() {
             if (this.currentPageSub < this.totalPagesSub) {
                 this.currentPageSub++;
-                this.loadListSub(this.currentPageSub);
+                this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
             }
         },
         goToPageSub(page) {
             this.currentPageSub = page;
-            this.loadListSub(page);
+            this.loadListSub(page, this.columnSub, this.directionSub);
         },
         jumpPagesSub(pages) {
             this.currentPageSub = Math.min(this.totalPagesSub, Math.max(1, this.currentPageSub +
                     pages));
-            this.loadListSub(this.currentPageSub);
+            this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
         },
         paginationCourse() {
             const pages = [];
@@ -217,23 +253,23 @@ const app = Vue.createApp({
         previousPageCourse() {
             if (this.currentPageCourse > 1) {
                 this.currentPageCourse--;
-                this.loadListCourse(this.currentPageCourse);
+                this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
             }
         },
         nextPageCourse() {
             if (this.currentPageCourse < this.totalPagesCourse) {
                 this.currentPageCourse++;
-                this.loadListCourse(this.currentPageCourse);
+                this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
             }
         },
         goToPageCourse(page) {
             this.currentPageCourse = page;
-            this.loadListCourse(page);
+            this.loadListCourse(page, this.columnCourse, this.directionCourse);
         },
         jumpPagesCourse(pages) {
             this.currentPageCourse = Math.min(this.totalPagesCourse, Math.max(1, this.currentPageCourse +
                     pages));
-            this.loadListCourse(this.currentPageCourse);
+            this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
         },
 
         setVariables(subject) {

@@ -50,7 +50,7 @@
                                     {{ item2.filterName }}
                                     <button class="btn btn-danger btn-sm buttons" type="button" @click="removeFilter(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
                                 </div>
-                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-circle"></i></i></button>
+                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-lg"></i></i></button>
                             </td>
 
                             <td>{{ item.status }}</td>
