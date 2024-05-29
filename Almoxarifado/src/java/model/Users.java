@@ -173,10 +173,9 @@ public class Users {
         stmt.close();
         con.close();
     }
-    
+
     public static void updatePassword(long rowid, String password) throws Exception {
         Connection con = AppListener.getConnection();
-        // Identico ao insert com a diferença de que o login seja igual ao do usuario logado
         String sql = "UPDATE users SET password_hash=? WHERE rowid=?";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, AppListener.getMd5Hash(password));

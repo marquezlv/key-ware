@@ -69,8 +69,8 @@
                                     <div v-if="newEmployee !== ''" class="mb-3">
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-if="subjects.length === 0">Sem matérias para este funcionario</option> 
-                                            <option v-for="subject in subjects" :key="subject.rowid" :value="subject.rowid">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
+                                            <option v-if="subjects.length === 0" value="0">Sem matérias para este funcionario</option> 
+                                            <option v-for="subject in subjects" :key="subject.subject" :value="subject.subject">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">

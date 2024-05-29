@@ -24,55 +24,55 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                        Usuários do sistema
-                        <div class="d-flex align-items-center">                            
-                            <button @click="resetForm()" type ="button" class="btn btn-success btn-sm ms-auto buttons" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                                Adicionar
-                            </button>
-                        </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th @click="filterList(1)" style="cursor: pointer;">LOGIN <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(2)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(3)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid">
-                            <td>{{ item.login }}</td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.role }}</td>
-                            <td>
-                                <!-- Botões de edit e remove  -->
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="password(item.rowid)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editPasswordModal"><i class="bi bi-lock-fill"></i></button>
-                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-pen"></i></button>
-                                    <button v-if="item.role!='ADMIN'" type ="button" @click="removeUser(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-                            <div v-if="totalPages > 1">
-                                <span v-for="page in pagination()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
-                                </span>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                            Usuários do sistema
+                            <div class="d-flex align-items-center">                            
+                                <button @click="resetForm()" type ="button" class="btn btn-success btn-sm ms-auto buttons" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                    Adicionar
+                                </button>
                             </div>
-                            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                        </h2>
+                        <label for="registers" class="form-label"></label>
+                        <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                            <option value=5>5</option>
+                            <option value=10>10</option>
+                            <option value=20>20</option>
+                            <option value=50>50</option>
+                        </select>
+                        <table class="table">
+                            <tr>
+                                <th @click="filterList(1)" style="cursor: pointer;">LOGIN <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(3)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
+                                <th>AÇÕES</th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid">
+                                <td>{{ item.login }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.role }}</td>
+                                <td>
+                                    <!-- Botões de edit e remove  -->
+                                    <div class="btn-group" role="group" aria-label="Basic Example">
+                                        <button type ="button" @click="password(item.rowid)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editPasswordModal"><i class="bi bi-lock-fill"></i></button>
+                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-pen"></i></button>
+                                        <button v-if="item.role!='ADMIN'" type ="button" @click="removeUser(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </td>
+                        </table>
+                        <div class="pagination-container">
+                            <div class="pagination">
+                                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                                <div v-if="totalPages > 1">
+                                    <span v-for="page in pagination()" :key="page">
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
+                                        <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
+                                    </span>
+                                </div>
+                                <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <div class="modal fade" id="addUserModal" tabindex="-1">
                     <div class="modal-dialog">
@@ -124,7 +124,7 @@
                             </div>
                             <div class="modal-body">
                                 <form>
-                                    <div v-if="user ===null" class="mb-3">
+                                    <div class="mb-3">
                                         <label for="inputEdit" class="form-label">Senha</label>
                                         <input type="password" v-model="newPassword" class="form-control" id="inputEdit" required>
                                     </div>

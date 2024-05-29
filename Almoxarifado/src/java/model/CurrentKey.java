@@ -11,6 +11,7 @@ import java.util.Locale;
 import web.AppListener;
 
 public class CurrentKey {
+
     private long rowid;
     private long room;
     private long employee;
@@ -19,7 +20,8 @@ public class CurrentKey {
     private String employeeName;
     private String employeeType;
     private String roomName;
-    
+    private String subjectName;
+
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS currentKey("
                 + "cd_key INTEGER PRIMARY KEY,"
@@ -32,17 +34,34 @@ public class CurrentKey {
                 + "FOREIGN KEY(cd_subject) REFERENCES subjects(cd_subject)"
                 + ")";
     }
+
+    public static int getTotalCurrentKey() throws Exception {
+        Connection con = AppListener.getConnection();
+        String sql = "SELECT COUNT(*) AS total FROM currentKey";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        int total = 0;
+        if (rs.next()) {
+            total = rs.getInt("total");
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        return total;
+    }
+
     public static ArrayList<CurrentKey> getKeys() throws Exception {
         ArrayList<CurrentKey> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT c.*, e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+        String sql = "SELECT c.*, s.nm_subject, e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = c.cd_subject "
                 + "ORDER BY r.nm_room, e.nm_employee";
         PreparedStatement stmt = con.prepareStatement(sql);
-        
+
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             long rowid = rs.getLong("cd_key");
@@ -52,19 +71,59 @@ public class CurrentKey {
             String employeeName = rs.getString("nm_employee");
             String employeeType = rs.getString("nm_type");
             String roomName = rs.getString("nm_room");
+            String subjectName = rs.getString("nm_subject");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject ,date, employeeName, roomName, employeeType));
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName));
         }
         rs.close();
         stmt.close();
         con.close();
         return list;
     }
-    
-     public static void insertKey(long employee, long room, long subject, Date date) throws Exception {
+
+    public static ArrayList<CurrentKey> getKeysPages(int page, int recordsPerPage) throws Exception {
+        ArrayList<CurrentKey> list = new ArrayList<>();
+        Connection con = AppListener.getConnection();
+        int startIndex = (page - 1) * recordsPerPage;
+
+        String sql = "SELECT c.*, s.nm_subject ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+                + "FROM currentKey c "
+                + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
+                + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = c.cd_subject "
+                + "ORDER BY r.nm_room, e.nm_employee "
+                + "LIMIT ?,?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, startIndex);
+        stmt.setInt(2, recordsPerPage);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            long rowid = rs.getLong("cd_key");
+            long employee = rs.getLong("cd_employee");
+            long room = rs.getLong("cd_room");
+            long subject = rs.getLong("cd_subject");
+            String employeeName = rs.getString("nm_employee");
+            String employeeType = rs.getString("nm_type");
+            String roomName = rs.getString("nm_room");
+            String subjectName = rs.getString("nm_subject");
+            Timestamp timestamp = rs.getTimestamp("dt_start");
+            Date datetime = new Date(timestamp.getTime());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
+            String date = dateFormat.format(datetime);
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName));
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        return list;
+    }
+
+    public static void insertKey(long employee, long room, long subject, Date date) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "INSERT INTO currentKey(cd_room, cd_employee, cd_subject, dt_start) VALUES(?,?,?,?)";
 
@@ -80,8 +139,8 @@ public class CurrentKey {
         stmt.close();
         con.close();
     }
-     
-     public static void deleteKey(long id, long room) throws Exception{
+
+    public static void deleteKey(long id, long room) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "DELETE FROM currentKey WHERE cd_key=?";
         PreparedStatement stmt = con.prepareStatement(sql);
@@ -89,10 +148,10 @@ public class CurrentKey {
         stmt.execute();
         Rooms.updateStatus(room, "DISPONIVEL");
         stmt.close();
-        con.close();       
+        con.close();
     }
 
-    public CurrentKey(long rowid, long room, long employee,long subject ,String start, String employeeName,String roomName, String employeeType) {
+    public CurrentKey(long rowid, long room, long employee, long subject, String start, String employeeName, String roomName, String employeeType, String subjectName) {
         this.rowid = rowid;
         this.room = room;
         this.employee = employee;
@@ -101,6 +160,7 @@ public class CurrentKey {
         this.subject = subject;
         this.roomName = roomName;
         this.employeeType = employeeType;
+        this.subjectName = subjectName;
     }
 
     public long getRowid() {
@@ -166,6 +226,13 @@ public class CurrentKey {
     public void setEmployeeType(String employeeType) {
         this.employeeType = employeeType;
     }
-    
-    
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
 }

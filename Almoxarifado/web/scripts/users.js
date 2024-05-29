@@ -101,11 +101,19 @@ const app = Vue.createApp({
             this.user = null;
         },
         async updatePassword() {
-            const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
-                password: this.newPassword
-            });
-            this.loadList(this.currentPage, this.column, this.direction);
-            this.resetForm();
+            console.log(this.newPassword);
+            console.log(this.userId);
+            if (this.newPassword && this.userId) {
+                const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
+                    password: this.newPassword
+                });
+                if (data) {
+                    this.loadList(this.currentPage, this.column, this.direction);
+                    this.resetForm();
+                }
+            } else {
+                this.error = "Senha ou ID do usuário não podem estar vazios";
+            }
         },
         async removeUser(id) {
             try {
@@ -185,8 +193,8 @@ const app = Vue.createApp({
                 this.resetForm();
             }
         },
-        password(id){
-            userId = id;
+        password(id) {
+            this.userId = id;
         },
         resetForm() {
             this.newRole = '';

@@ -65,8 +65,9 @@
 }
 
 .card-text {
-    white-space: nowrap;
+    white-space: normal;
     font-size: 18px;
+    word-break: break-word;
 
 }
 

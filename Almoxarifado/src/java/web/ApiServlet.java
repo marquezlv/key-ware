@@ -168,9 +168,10 @@ public class ApiServlet extends HttpServlet {
             Users.insertUser(login, name, role, password);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             JSONObject body = getJSONBODY(request.getReader());
+            String password = body.optString("password", null);
             Long id = Long.parseLong(request.getParameter("id"));
-            if (body.has("password") && !"".equals(body.getString("password"))) {
-                String password = body.getString("password");
+
+            if (password != null && !password.isEmpty()) {
                 Users.updatePassword(id, password);
             } else {
                 String login = body.optString("login", null);
@@ -445,7 +446,14 @@ public class ApiServlet extends HttpServlet {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
-            file.put("list", new JSONArray(CurrentKey.getKeys()));
+            String pageParam = request.getParameter("page");
+            if (pageParam == null) {
+                file.put("list", new JSONArray(CurrentKey.getKeys()));
+            } else {
+                int page = Integer.parseInt(pageParam);
+                file.put("list", new JSONArray(CurrentKey.getKeysPages(page, 8)));
+                file.put("total", CurrentKey.getTotalCurrentKey());
+            }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
             long room = body.getLong("room");
