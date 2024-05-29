@@ -19,6 +19,11 @@ const app = Vue.createApp({
             column: 0
         };
     },
+    computed: {
+        isFormValid() {
+            return this.newName && this.newType;
+        }
+    },
     methods: {
         filterList(column){
             if(this.direction === 0){

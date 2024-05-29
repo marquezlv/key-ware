@@ -23,6 +23,11 @@ const app = Vue.createApp({
             columnCourse: 0
         };
     },
+    computed: {
+        isFormValid() {
+            return this.newName && this.newCourse && this.newPeriod;
+        }
+    },
     methods: {
         filterListSub(column){
             if(this.directionSub === 0){

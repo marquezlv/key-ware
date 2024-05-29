@@ -113,7 +113,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!isFormValid"  data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
                                 </div>
                             </div>
                         </div>
@@ -135,6 +135,7 @@
                                     <div class="mb-3">
                                         <label for="inputFilter" class="form-label">Filtro</label>
                                         <select class="form-select" v-model="newFilter" id="inputFilter">
+                                            <option v-if="filters.length === 0" value="0">Não há filtros para adicionar</option>
                                             <option v-for="item3 in filters" :key="item3.rowid" :value="item3.rowid">{{ item3.type }}</option>
                                         </select>
                                     </div>
@@ -148,7 +149,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm2()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addRoomFilter()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!newFilter" data-bs-dismiss="modal" @click="addRoomFilter()">Salvar</button>
                                 </div>
                             </div>
                         </div>

@@ -160,16 +160,27 @@ public class Users {
         con.close();
     }
 
-    public static void updateUser(long rowid, String login, String name, String role, String password) throws Exception {
+    public static void updateUser(long rowid, String login, String name, String role) throws Exception {
         Connection con = AppListener.getConnection();
         // Identico ao insert com a diferença de que o login seja igual ao do usuario logado
-        String sql = "UPDATE users SET login=?, name=?, role=?, password_hash=? WHERE rowid=?";
+        String sql = "UPDATE users SET login=?, name=?, role=? WHERE rowid=?";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, login);
         stmt.setString(2, name);
         stmt.setString(3, role);
-        stmt.setString(4, AppListener.getMd5Hash(password));
-        stmt.setLong(5, rowid);
+        stmt.setLong(4, rowid);
+        stmt.execute();
+        stmt.close();
+        con.close();
+    }
+    
+    public static void updatePassword(long rowid, String password) throws Exception {
+        Connection con = AppListener.getConnection();
+        // Identico ao insert com a diferença de que o login seja igual ao do usuario logado
+        String sql = "UPDATE users SET password_hash=? WHERE rowid=?";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, AppListener.getMd5Hash(password));
+        stmt.setLong(2, rowid);
         stmt.execute();
         stmt.close();
         con.close();

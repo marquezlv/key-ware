@@ -18,82 +18,82 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Filtros de sala
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()"  type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal">
-                                Adicionar
-                            </button>
-                        </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(2)" style="cursor: pointer;">DESCRIÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid">
-                            <td>{{ item.type }}</td>
-                            <td>{{ item.desc }}</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-pen"></i></button>
-                                    <button type ="button" @click="removeFilter(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-                            <div v-if="totalPages > 1">
-                                <span v-for="page in pagination()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
-                                </span>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Filtros de sala
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()"  type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal">
+                                    Adicionar
+                                </button>
                             </div>
-                            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
-                        </div>
-                    </div>
-                    <br>
-                </div>
-                </div>
-                                    <div class="modal fade" id="addFilterModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5">Novo Filtro</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="inputType" class="form-label">Nome</label>
-                                            <input type="text" v-model="newType" class="form-control" id="inputType"> 
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="inputDesc" class="form-label">Descrição</label>
-                                            <input type="textarea" v-model="newDesc" class="form-control" id="inputDesc">
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <div>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                        </h2>
+                        <label for="registers" class="form-label"></label>
+                        <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                            <option value=5>5</option>
+                            <option value=10>10</option>
+                            <option value=20>20</option>
+                            <option value=50>50</option>
+                        </select>
+                        <table class="table">
+                            <tr>
+                                <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">DESCRIÇÃO <i class="bi bi-arrow-down-up"></i></th>
+                                <th>AÇÕES</th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid">
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.desc || "Não há descrição" }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic Example">
+                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-pen"></i></button>
+                                        <button type ="button" @click="removeFilter(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                                     </div>
-                                    <div>
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
-                                    </div>
+                                </td>
+                        </table>
+                        <div class="pagination-container">
+                            <div class="pagination">
+                                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                                <div v-if="totalPages > 1">
+                                    <span v-for="page in pagination()" :key="page">
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
+                                        <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
+                                    </span>
                                 </div>
+                                <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
                             </div>
                         </div>
+                        <br>
                     </div>
+                </div>
+                <div class="modal fade" id="addFilterModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Novo Filtro</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="inputType" class="form-label">Nome</label>
+                                        <input type="text" v-model="newType" class="form-control" id="inputType"> 
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputDesc" class="form-label">Descrição</label>
+                                        <input type="textarea" v-model="newDesc" class="form-control" id="inputDesc">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" :disabled="!newType" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

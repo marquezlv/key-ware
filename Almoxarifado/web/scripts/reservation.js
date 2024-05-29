@@ -21,6 +21,11 @@ const app = Vue.createApp({
             column: 0
         };
     },
+    computed: {
+        isFormValid() {
+            return this.newEmployee && this.newRoom && this.newDate && this.newEnd;
+        }
+    },
     methods: {
         filterList(column){
             if(this.direction === 0){
@@ -82,6 +87,10 @@ const app = Vue.createApp({
             }
         },
         async addReservation() {
+            if (!this.newEmployee) {
+                console.error("Um funcionario é necessario para reservar a chave");
+                return;
+            }
             const subjectValue = this.newSubject ? parseInt(this.newSubject) : 0;
             const data = await this.request("/Almoxarifado/api/reservations", "POST", {
                 employee: this.newEmployee,

@@ -88,9 +88,10 @@
                                             <option v-for="item2 in employees" :key="item2.rowid" :value="item2.rowid">{{ item2.name }}</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
+                                    <div v-if='newEmployee !== ""' class="mb-3">
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
+                                            <option v-if="subjects.length === 0" value="0">Este funcionario não há materias</option>
                                             <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.subjectPeriod }}</option>
                                         </select>
                                     </div>
@@ -119,7 +120,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled='!isFormValid' data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
                                 </div>
                             </div>
                         </div>

@@ -143,7 +143,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!isFormValid" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdateCourse()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!CourseAdd" data-bs-dismiss="modal" @click="insertOrUpdateCourse()">Salvar</button>
                                 </div>
                             </div>
                         </div>

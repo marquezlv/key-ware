@@ -3,10 +3,11 @@ const app = Vue.createApp({
         return {
             shared: shared,
             error: null,
-            newRole: 'PROFESSOR',
+            newRole: '',
             newLogin: '',
             newName: '',
             newPassword: '',
+            editPassword: false,
             userId: 0,
             list: [],
             user: null,
@@ -17,21 +18,26 @@ const app = Vue.createApp({
             column: 0
         };
     },
+    computed: {
+        isFormValid() {
+            return this.newRole && this.newLogin && this.newName;
+        }
+    },
     methods: {
-        filterList(column){
-            if(this.direction === 0){
+        filterList(column) {
+            if (this.direction === 0) {
                 this.direction = 1;
-            } else if(this.direction === 1){
+            } else if (this.direction === 1) {
                 this.direction = 2;
-            } else{
+            } else {
                 this.direction = 0;
             }
             this.column = column;
             this.loadList(this.currentPage, this.column, this.direction);
         },
-        reloadPage(){
+        reloadPage() {
             this.currentPage = 1;
-            this.loadList(this.currentPage, this.column ,this.direction);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async request(url = "", method, data) {
             try {
@@ -57,12 +63,12 @@ const app = Vue.createApp({
                 await this.addUser();
             }
         },
-        async loadList(page = 1,  column = 0, sort = 1) {
+        async loadList(page = 1, column = 0, sort = 1) {
             const data = await this.request(`/Almoxarifado/api/users?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);
-            }
+        }
         },
         async addUser() {
             const data = await this.request("/Almoxarifado/api/users", "POST", {
@@ -93,6 +99,13 @@ const app = Vue.createApp({
             this.loadList(this.currentPage, this.column, this.direction);
             this.resetForm();
             this.user = null;
+        },
+        async updatePassword() {
+            const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
+                password: this.newPassword
+            });
+            this.loadList(this.currentPage, this.column, this.direction);
+            this.resetForm();
         },
         async removeUser(id) {
             try {
@@ -171,14 +184,17 @@ const app = Vue.createApp({
             } else {
                 this.resetForm();
             }
-        }
-        ,
+        },
+        password(id){
+            userId = id;
+        },
         resetForm() {
-            this.newRole = 'PROFESSOR';
+            this.newRole = '';
             this.newLogin = '';
             this.newName = '';
             this.newPassword = '';
             this.rowId = '';
+            this.editPassword = false;
         }
     },
     mounted() {

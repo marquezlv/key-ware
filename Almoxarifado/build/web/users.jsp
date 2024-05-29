@@ -53,6 +53,7 @@
                             <td>
                                 <!-- Botões de edit e remove  -->
                                 <div class="btn-group" role="group" aria-label="Basic Example">
+                                    <button type ="button" @click="password(item.rowid)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editPasswordModal"><i class="bi bi-lock-fill"></i></button>
                                     <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-pen"></i></button>
                                     <button v-if="item.role!='ADMIN'" type ="button" @click="removeUser(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                                 </div>
@@ -86,7 +87,7 @@
                                         <label for="inputRole" class="form-label">Função</label>
                                         <select class="form-select" v-model="newRole">
                                             <option value="ADMIN">ADMIN</option>
-                                            <option value="FUNCIONARIO">FUNCIONARIO</option>
+                                            <option value="ESTAGIARIO">Estagiario</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -97,7 +98,7 @@
                                         <label for="inputName" class="form-label">Nome</label>
                                         <input type="text" v-model="newName" class="form-control" id="inputName">
                                     </div>
-                                    <div class="mb-3">
+                                    <div v-if="user ===null" class="mb-3">
                                         <label for="inputPass" class="form-label">Senha</label>
                                         <input type="password" v-model="newPassword" class="form-control" id="inputPass" required>
                                     </div>
@@ -108,7 +109,33 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!isFormValid" data-bs-dismiss="modal" @click="insertOrUpdate()">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="editPasswordModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Mudar Senha</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div v-if="user ===null" class="mb-3">
+                                        <label for="inputEdit" class="form-label">Senha</label>
+                                        <input type="password" v-model="newPassword" class="form-control" id="inputEdit" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updatePassword()">Salvar</button>
                                 </div>
                             </div>
                         </div>

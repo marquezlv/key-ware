@@ -168,12 +168,16 @@ public class ApiServlet extends HttpServlet {
             Users.insertUser(login, name, role, password);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             JSONObject body = getJSONBODY(request.getReader());
-            String login = body.getString("login");
-            String name = body.getString("name");
-            String role = body.getString("role");
-            String password = body.getString("password");
             Long id = Long.parseLong(request.getParameter("id"));
-            Users.updateUser(id, login, name, role, password);
+            if (body.has("password") && !"".equals(body.getString("password"))) {
+                String password = body.getString("password");
+                Users.updatePassword(id, password);
+            } else {
+                String login = body.optString("login", null);
+                String name = body.optString("name", null);
+                String role = body.optString("role", null);
+                Users.updateUser(id, login, name, role);
+            }
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Users.deleteUser(id);

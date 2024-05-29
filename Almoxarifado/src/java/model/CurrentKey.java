@@ -17,6 +17,8 @@ public class CurrentKey {
     private long subject;
     private String start;
     private String employeeName;
+    private String employeeType;
+    private String roomName;
     
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS currentKey("
@@ -34,10 +36,11 @@ public class CurrentKey {
         ArrayList<CurrentKey> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT c.*, e.cd_employee, e.nm_employee, r.cd_room "
+        String sql = "SELECT c.*, e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
-                + "LEFT JOIN rooms r ON r.cd_room = c.cd_room";
+                + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
+                + "ORDER BY r.nm_room, e.nm_employee";
         PreparedStatement stmt = con.prepareStatement(sql);
         
         ResultSet rs = stmt.executeQuery();
@@ -47,11 +50,13 @@ public class CurrentKey {
             long room = rs.getLong("cd_room");
             long subject = rs.getLong("cd_subject");
             String employeeName = rs.getString("nm_employee");
+            String employeeType = rs.getString("nm_type");
+            String roomName = rs.getString("nm_room");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject ,date, employeeName));
+            list.add(new CurrentKey(rowid, room, employee, subject ,date, employeeName, roomName, employeeType));
         }
         rs.close();
         stmt.close();
@@ -87,13 +92,15 @@ public class CurrentKey {
         con.close();       
     }
 
-    public CurrentKey(long rowid, long room, long employee,long subject ,String start, String employeeName) {
+    public CurrentKey(long rowid, long room, long employee,long subject ,String start, String employeeName,String roomName, String employeeType) {
         this.rowid = rowid;
         this.room = room;
         this.employee = employee;
         this.start = start;
         this.employeeName = employeeName;
         this.subject = subject;
+        this.roomName = roomName;
+        this.employeeType = employeeType;
     }
 
     public long getRowid() {
@@ -142,6 +149,22 @@ public class CurrentKey {
 
     public void setSubject(long subject) {
         this.subject = subject;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+    public void setEmployeeType(String employeeType) {
+        this.employeeType = employeeType;
     }
     
     

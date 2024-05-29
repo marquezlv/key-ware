@@ -43,11 +43,16 @@ const app = Vue.createApp({
             return null;
         },
         async addKey() {
+            if (!this.newEmployee) {
+                console.error("Um funcionario é necessario para pegar a chave");
+                return;
+            }
             const currentDateTime = new Date().toISOString();
+            const subjectToSend = this.newSubject || 0;
             const data = await this.request("/Almoxarifado/api/keys", "POST", {
                 room: this.newRoom,
                 employee: this.newEmployee,
-                subject: this.newSubject,
+                subject: subjectToSend,
                 start: currentDateTime
             });
             if (data) {

@@ -66,9 +66,10 @@
                                             <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
+                                    <div v-if="newEmployee !== ''" class="mb-3">
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
+                                            <option v-if="subjects.length === 0">Sem matérias para este funcionario</option> 
                                             <option v-for="subject in subjects" :key="subject.rowid" :value="subject.rowid">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
                                         </select>
                                     </div>
@@ -81,7 +82,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetKey()">Cancelar</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addKey()">Salvar</button>
+                                    <button type="button" class="btn btn-primary" :disabled="!newEmployee" data-bs-dismiss="modal" @click="addKey()">Salvar</button>
                                 </div>
                             </div>
                         </div>
@@ -104,7 +105,7 @@
                                         <label for="inputLocation" class="form-label">Localização</label>
                                         <input type="text" v-model="roomLocation" class="form-control" id="inputLocation"> 
                                     </div>
-                                    <div class="mb-3">
+                                    <div v-if="roomStatus !== 'OCUPADO'" class="mb-3">
                                         <label for="inputStatus" class="form-label">Status</label>
                                         <select class="form-select" v-model="roomStatus" id="inputStatus">
                                             <option value="DISPONIVEL">Disponivel</option>
@@ -119,7 +120,7 @@
                             <a href="rooms.jsp"><i class="config-bi bi bi-gear-fill"></i></a>
                             <div v-for="filters in filters" :key="filters.rowid" class="filter-info">
                                 <span class="separator"></span>{{ filters.filterName }} <br> 
-                                <span class="description">Descrição: {{ filters.filterDesc }}</span>                            
+                                <span class="description">Descrição: {{ filters.filterDesc || "Não há descrição" }}</span>                            
                             </div>
                             </div>
                             <div class="modal-footer">
