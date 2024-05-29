@@ -92,7 +92,7 @@
                                         <label for="inputSubject" class="form-label">Materia</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
                                             <option v-if="subjects.length === 0" value="0">Este funcionario não há materias</option>
-                                            <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.subjectPeriod }}</option>
+                                            <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.subjectPeriod }} - {{ item4.courseName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -107,11 +107,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="inputDate" class="form-label">Data e Horário Inicio</label>
-                                        <input type="datetime-local" v-model="newDate" class="form-control" id="inputDate"> 
+                                        <input type="datetime-local" v-model="newDate" class="form-control" id="inputDate" :min="minDate"> 
                                     </div>
                                     <div class="mb-3">
                                         <label for="inputEnd" class="form-label">Data e Horário Término</label>
-                                        <input type="datetime-local" v-model="newEnd" class="form-control" id="inputEnd"> 
+                                        <input type="datetime-local" v-model="newEnd" class="form-control" id="inputEnd" :min="newDate || minDate"> 
                                     </div>
                                 </form>
                             </div>

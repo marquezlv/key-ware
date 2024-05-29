@@ -18,7 +18,8 @@ const app = Vue.createApp({
             totalPages: 0,
             itemsPerPage: 5,
             direction: 0,
-            column: 0
+            column: 0,
+            minDate: this.getCurrentDateTime()
         };
     },
     computed: {
@@ -27,6 +28,11 @@ const app = Vue.createApp({
         }
     },
     methods: {
+        getCurrentDateTime() {
+            const now = new Date();
+            return now.toISOString().slice(0, 16); 
+        },
+        
         filterList(column){
             if(this.direction === 0){
                 this.direction = 1;

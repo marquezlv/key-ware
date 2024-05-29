@@ -36,8 +36,7 @@ const session = Vue.createApp({
             this.isDarkTheme = !this.isDarkTheme;
             document.body.classList.toggle('dark-mode', this.isDarkTheme);
             localStorage.setItem('darkMode', JSON.stringify(this.isDarkTheme));
-            console.log('Dark mode toggled:', this.isDarkTheme);
-            console.log('Stored dark mode:', localStorage.getItem('darkMode'));
+
         },
 
         checkDarkMode() {
