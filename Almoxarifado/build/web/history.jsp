@@ -34,6 +34,7 @@
                             <th @click="filterList(4)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterList(5)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterList(6)" style="cursor: pointer;">TIPO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterList(7)" style="cursor: pointer;">USUARIO <i class="bi bi-arrow-down-up"></i></th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
                             <td> {{ item.date }} </td>
@@ -42,6 +43,7 @@
                             <td> {{ item.courseName || "-" }} </td>
                             <td> {{ item.roomName }} </td>
                             <td> {{ item.type }} </td>
+                            <td> {{ item.userName }} </td>
                     </table>
                     <div class="pagination-container">
                         <div class="pagination">

@@ -53,7 +53,8 @@ const app = Vue.createApp({
                 room: this.newRoom,
                 employee: this.newEmployee,
                 subject: subjectToSend,
-                start: currentDateTime
+                start: currentDateTime,
+                user: this.shared.session.id
             });
             if (data) {
                 this.loadList();
@@ -61,7 +62,7 @@ const app = Vue.createApp({
         },
         async returnKey(id, room, employee, subject) {
             try {
-                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
@@ -108,7 +109,7 @@ const app = Vue.createApp({
             if (dataRF) {
                 this.roomFilters = dataRF.list;
             }
-            console.log(this.roomFilters);
+            console.log(this.shared.session.id);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");

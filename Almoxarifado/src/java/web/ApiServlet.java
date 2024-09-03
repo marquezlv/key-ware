@@ -459,10 +459,11 @@ public class ApiServlet extends HttpServlet {
             long room = body.getLong("room");
             long employee = body.getLong("employee");
             long subject = body.getLong("subject");
+            long user = body.getLong("user");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             String strDate = body.getString("start");
             Date date = dateFormat.parse(strDate);
-            History.insertHistory(employee, room, subject, "Retirada", new Date());
+            History.insertHistory(employee, room, subject, "Retirada", new Date(), user);
             CurrentKey.insertKey(employee, room, subject, date);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
@@ -471,7 +472,8 @@ public class ApiServlet extends HttpServlet {
             Long employee = Long.parseLong(request.getParameter("employee"));
             Long room = Long.parseLong(request.getParameter("room"));
             Long subject = Long.parseLong(request.getParameter("subject"));
-            History.insertHistory(employee, room, subject, "Devolvido", new Date());
+            Long user = Long.parseLong(request.getParameter("user"));
+            History.insertHistory(employee, room, subject, "Devolvido", new Date(), user);
             CurrentKey.deleteKey(id, room);
         } else {
             response.sendError(405, "Method not allowed");
