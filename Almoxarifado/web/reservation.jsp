@@ -18,60 +18,60 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Reserva de Salas
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addReservModal">
-                                Adicionar
-                            </button>
-                        </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-
-                    <table class="table">
-                        <tr class="tr-style">
-                            <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(2)" style="cursor: pointer;">MATERIA  <i class="bi bi-arrow-down-up"></i></th> 
-                            <th @click="filterList(3)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(4)" style="cursor: pointer;">LOCAL <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(5)" style="cursor: pointer;">INICIO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(6)" style="cursor: pointer;">TERMINO  <i class="bi bi-arrow-down-up"></i></th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid">
-                            <td>{{ item.employee }}</td>
-                            <td>{{ item.subjectName || '-' }}</td>
-                            <td>{{ item.roomName }}</td>
-                            <td>{{ item.location }}</td>
-                            <td>{{ item.start }}</td>
-                            <td>{{ item.end }}</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addReservModal"><i class="bi bi-pen"></i></button>
-                                    <button type ="button" @click="removeReservation(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-                            <div v-if="totalPages > 1">
-                                <span v-for="page in pagination()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
-                                </span>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Reserva de Salas
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addReservModal">
+                                    Adicionar
+                                </button>
                             </div>
-                            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                        </h2>
+                        <label for="registers" class="form-label"></label>
+                        <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                            <option value=5>5</option>
+                            <option value=10>10</option>
+                            <option value=20>20</option>
+                            <option value=50>50</option>
+                        </select>
+
+                        <table class="table">
+                            <tr class="tr-style">
+                                <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">MATERIA  <i class="bi bi-arrow-down-up"></i></th> 
+                                <th @click="filterList(3)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(4)" style="cursor: pointer;">LOCAL <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(5)" style="cursor: pointer;">INICIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(6)" style="cursor: pointer;">TERMINO  <i class="bi bi-arrow-down-up"></i></th>
+                                <th>AÇÕES</th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid">
+                                <td>{{ item.employee }}</td>
+                                <td>{{ item.subjectName || '-' }}</td>
+                                <td>{{ item.roomName }}</td>
+                                <td>{{ item.location }}</td>
+                                <td>{{ item.start }}</td>
+                                <td>{{ item.end }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic Example">
+                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addReservModal"><i class="bi bi-pen"></i></button>
+                                        <button type ="button" @click="removeReservation(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </td>
+                        </table>
+                        <div class="pagination-container">
+                            <div class="pagination">
+                                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                                <div v-if="totalPages > 1">
+                                    <span v-for="page in pagination()" :key="page">
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
+                                        <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
+                                    </span>
+                                </div>
+                                <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                            </div>
                         </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
                 </div>
                 <div class="modal fade" id="addReservModal" tabindex="-1">
                     <div class="modal-dialog">
@@ -114,18 +114,16 @@
                                         <input type="datetime-local" v-model="newEnd" class="form-control" id="inputEnd" :min="newDate || minDate"> 
                                     </div>
                                 </form>
-                                
+
                                 <div class="mb-3 form-check">
-    <input type="checkbox" v-model="isRecurring" class="form-check-input" id="recurringCheck">
-    <label class="form-check-label" for="recurringCheck">Recorrente</label>
-</div>
+                                    <input type="checkbox" v-model="isRecurring" class="form-check-input" id="recurringCheck">
+                                    <label class="form-check-label" for="recurringCheck">Recorrente</label>
+                                </div>
 
-<div v-if="isRecurring" class="mb-3">
-    <label for="inputWeeks" class="form-label">Quantas semanas?</label>
-    <input type="number" v-model="recurringWeeks" min="1" max="52" class="form-control" id="inputWeeks"> 
-</div>
-
-                                
+                                <div v-if="isRecurring" class="mb-3">
+                                    <label for="inputWeeks" class="form-label">Quantas semanas?</label>
+                                    <input type="number" v-model="recurringWeeks" min="1" max="52" class="form-control" id="inputWeeks"> 
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <div>

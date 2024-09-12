@@ -53,7 +53,7 @@ public class AppListener implements ServletContextListener {
 //                s.execute("DROP TABLE IF EXISTS courses");
 //                s.execute("DROP TABLE IF EXISTS employees");
 //                s.execute("DROP TABLE IF EXISTS currentKey");
-                s.execute("DROP TABLE IF EXISTS history");
+//                s.execute("DROP TABLE IF EXISTS history");
 //            } catch (SQLException e) {
 //                initializeLog += new Date() + ": Error during table deletion: " + e.getMessage();
 //                e.printStackTrace();
