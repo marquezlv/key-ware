@@ -114,6 +114,18 @@
                                         <input type="datetime-local" v-model="newEnd" class="form-control" id="inputEnd" :min="newDate || minDate"> 
                                     </div>
                                 </form>
+                                
+                                <div class="mb-3 form-check">
+    <input type="checkbox" v-model="isRecurring" class="form-check-input" id="recurringCheck">
+    <label class="form-check-label" for="recurringCheck">Recorrente</label>
+</div>
+
+<div v-if="isRecurring" class="mb-3">
+    <label for="inputWeeks" class="form-label">Quantas semanas?</label>
+    <input type="number" v-model="recurringWeeks" min="1" max="52" class="form-control" id="inputWeeks"> 
+</div>
+
+                                
                             </div>
                             <div class="modal-footer">
                                 <div>

@@ -19,7 +19,9 @@ const app = Vue.createApp({
             itemsPerPage: 5,
             direction: 0,
             column: 0,
-            minDate: this.getCurrentDateTime()
+            minDate: this.getCurrentDateTime(),
+            isRecurring: false,
+            recurringWeeks: 1
         };
     },
     computed: {
@@ -30,23 +32,23 @@ const app = Vue.createApp({
     methods: {
         getCurrentDateTime() {
             const now = new Date();
-            return now.toISOString().slice(0, 16); 
+            return now.toISOString().slice(0, 16);
         },
-        
-        filterList(column){
-            if(this.direction === 0){
+
+        filterList(column) {
+            if (this.direction === 0) {
                 this.direction = 1;
-            } else if(this.direction === 1){
+            } else if (this.direction === 1) {
                 this.direction = 2;
-            } else{
+            } else {
                 this.direction = 0;
             }
             this.column = column;
             this.loadList(this.currentPage, this.column, this.direction);
         },
-        reloadPage(){
+        reloadPage() {
             this.currentPage = 1;
-            this.loadList(this.currentPage, this.column ,this.itemsPerPage);
+            this.loadList(this.currentPage, this.column, this.itemsPerPage);
         },
         previousPage() {
             if (this.currentPage > 1) {
@@ -86,12 +88,57 @@ const app = Vue.createApp({
         }
         },
         async insertOrUpdate() {
-            if (this.reservation) {
-                await this.updateReservation();
+            if (this.isRecurring) {
+                await this.addRecurringReservations();
             } else {
-                await this.addReservation();
+                if (this.reservation) {
+                    await this.updateReservation();
+                } else {
+                    await this.addReservation();
+                }
             }
         },
+
+        async addRecurringReservations() {
+            if (!this.newEmployee) {
+                console.error("Um funcionario é necessário para reservar a chave");
+                return;
+            }
+
+            const subjectValue = this.newSubject ? parseInt(this.newSubject) : 0;
+            const startDate = new Date(this.newDate);
+            const endDate = new Date(this.newEnd);
+
+            // Loop para cada semana recorrente
+            for (let i = 0; i < this.recurringWeeks; i++) {
+                const currentStartDate = new Date(startDate);
+                const currentEndDate = new Date(endDate);
+
+                // Adiciona a quantidade de semanas
+                currentStartDate.setDate(startDate.getDate() + (i * 7));
+                currentEndDate.setDate(endDate.getDate() + (i * 7));
+                const data = await this.request("/Almoxarifado/api/reservations", "POST", {
+                    employee: this.newEmployee,
+                    room: this.newRoom,
+                    subject: subjectValue,
+                    date: currentStartDate,
+                    end: currentEndDate
+
+                });
+                console.log(i," - ",data);
+                console.log(i," - ",currentEndDate);
+                console.log(i," - ",currentStartDate);
+                console.log(i," - ",this.endDate);
+                console.log(i," - ",this.newDate);
+
+
+                if (!data) {
+                    console.error("Erro ao adicionar reserva para a semana " + (i + 1));
+                }
+            }
+            this.loadList(this.currentPage, this.column, this.direction);
+        },
+
         async addReservation() {
             if (!this.newEmployee) {
                 console.error("Um funcionario é necessario para reservar a chave");
@@ -101,7 +148,7 @@ const app = Vue.createApp({
             const data = await this.request("/Almoxarifado/api/reservations", "POST", {
                 employee: this.newEmployee,
                 room: this.newRoom,
-                subject: subjectValue, 
+                subject: subjectValue,
                 date: this.newDate,
                 end: this.newEnd
             });
@@ -153,8 +200,8 @@ const app = Vue.createApp({
             const dataR = await this.request(`/Almoxarifado/api/rooms`, "GET");
             if (dataR) {
                 this.rooms = dataR.list;
-            }
-            
+        }
+            console.log(data);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
@@ -231,6 +278,9 @@ const app = Vue.createApp({
     },
     mounted() {
         this.loadList();
+
     }
+
+
 });
 app.mount('#app');
