@@ -122,8 +122,11 @@
 
                                 <div v-if="isRecurring" class="mb-3">
                                     <label for="inputWeeks" class="form-label">Quantas semanas?</label>
-                                    <input type="number" v-model="recurringWeeks" min="1" max="52" class="form-control" id="inputWeeks"> 
+                                    <select v-model="recurringWeeks" class="form-control" id="inputWeeks">
+                                        <option v-for="n in 52" :key="n" :value="n">{{ n }}</option>
+                                    </select>
                                 </div>
+
                             </div>
                             <div class="modal-footer">
                                 <div>
