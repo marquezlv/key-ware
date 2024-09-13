@@ -221,6 +221,45 @@ public class Reservation {
         con.close();
         return list;
     }
+    
+    public static ArrayList<Reservation> getReservationsAll() throws Exception {
+        ArrayList<Reservation> list = new ArrayList<>();
+        Connection con = AppListener.getConnection();
+        
+        String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
+                        + "FROM reservations r "
+                        + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
+                        + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
+                        + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
+                        + "ORDER BY r.dt_start, e.nm_employee";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            long rowid = rs.getLong("cd_reservation");
+            long employee = rs.getLong("cd_employee");
+            long room = rs.getLong("cd_room");
+            long subject = rs.getLong("cd_subject");
+            String employeeName = rs.getString("nm_employee");
+            String roomName = rs.getString("nm_room");
+            String roomLocation = rs.getString("nm_location");
+            String subjectName = rs.getString("nm_subject");
+            String subjectPeriod = rs.getString("nm_period");
+            Timestamp timestamp = rs.getTimestamp("dt_start");
+            Timestamp timestampend = rs.getTimestamp("dt_end");
+            Date datetime = new Date(timestamp.getTime());
+            Date datetimeEnd = new Date(timestampend.getTime());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
+            String date = dateFormat.format(datetime);
+            String dateEnd = dateFormat.format(datetimeEnd);
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd));
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        return list;
+    }
 
     public static void insertReservation(long employee, long room, long subject, Date date, Date end) throws Exception {
         Connection con = AppListener.getConnection();

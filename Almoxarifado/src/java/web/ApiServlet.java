@@ -386,12 +386,18 @@ public class ApiServlet extends HttpServlet {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
-            int page = Integer.parseInt(request.getParameter("page"));
-            int itemPage = Integer.parseInt(request.getParameter("items"));
-            int column = Integer.parseInt(request.getParameter("column"));
-            int sort = Integer.parseInt(request.getParameter("sort"));
-            file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort)));
+            String pageParam = request.getParameter("page");
+            if (pageParam == null) {
+                file.put("list", new JSONArray(Reservation.getReservationsAll()));
+            } else {
+                int page = Integer.parseInt(pageParam);
+                int itemPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
+                file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort)));
             file.put("total", Reservation.getTotalReservations());
+            } 
+            
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
             long employee = body.getLong("employee");

@@ -8,37 +8,70 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="styles/index_page.css">
+        <style>
+            .stacked-card {
+                position: relative;
+                margin-top: -40px;
+                z-index: 1;
+                transition: transform 0.3s ease, z-index 0.3s ease;
+                cursor: pointer;
+            }
+
+            .stacked-card:hover {
+                z-index: 10;
+                transform: translateY(-10px) scale(1.05);
+            }
+
+            .stacked-card.focused .card-content {
+                display: block;
+            }
+
+            .stacked-card:not(.focused) .card-content {
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .stacked-card.focused ~ .stacked-card .card-content {
+                display: none;
+            }
+
+        </style>
     </head>
     <body>
         <%@ include file="WEB-INF/jspf/header.jspf" %>
         <div id="app" class="container">
             <div v-if="shared.session">
-                <div class="page-content">                  
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de salas</h2>
-                    <div v-for="location in uniqueLocations" :key="location">
-                        <h3>{{ location }}</h3>
-                        <div class="row">
-                            <div class="col-md-2 mb-2" v-for="room in rooms.filter(room => room.location === location)" :key="room.rowid">
-                                <div :class="room.status === 'DISPONIVEL' ? 'card-available' : 'card-unavailable'">
-                                    <div class="card-body custom-card-body">
-                                        <div class="both-buttons">
-                                        <h4 class="card-title">
-                                            {{ room.name }}
-                                            <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
-                                                <i class="bi bi-plus-lg"></i>                                            </button>
-                                            <button class="btn btn-warning btn-sm ms-auto buttons" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
-                                                <i class="bi bi-info-square"></i>
-                                            </button>
+                <div class="page-content"> 
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de salas
+                        <button class="btn btn-success btn-sm ms-auto buttons" @click="ChangeScreen()" type="button">
+                            Ver reservas
+                        </button>
+                    </h2>
+                    <div v-if="isReservations === false">
+                        <div v-for="location in uniqueLocations" :key="location">
+                            <h3>{{ location }}</h3>
+                            <div class="row">
+                                <div class="col-md-2 mb-2" v-for="room in rooms.filter(room => room.location === location)" :key="room.rowid">
+                                    <div :class="room.status === 'DISPONIVEL' ? 'card-available' : 'card-unavailable'">
+                                        <div class="card-body custom-card-body">
+                                            <div class="both-buttons">
+                                                <h4 class="card-title">
+                                                    {{ room.name }}
+                                                    <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
+                                                        <i class="bi bi-plus-lg"></i>                                            </button>
+                                                    <button class="btn btn-warning btn-sm ms-auto buttons" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                                                        <i class="bi bi-info-square"></i>
+                                                    </button>
                                             </div>
-                                        </h4>
-                                        <div v-for="key in getKey(room.rowid)" :key="key.rowid">
-                                            <hr>
-                                            <div class="d-flex align-items-center both-buttons"> 
-                                            <div class="card-text me-2"><i class="bi-style-key bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
-                                            <br>
-                                            <div class="form-check ms-auto">
-                                                <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i></button>
-                                            </div>
+                                            </h4>
+                                            <div v-for="key in getKey(room.rowid)" :key="key.rowid">
+                                                <hr>
+                                                <div class="d-flex align-items-center both-buttons"> 
+                                                    <div class="card-text me-2"><i class="bi-style-key bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
+                                                    <br>
+                                                    <div class="form-check ms-auto">
+                                                        <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i></button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -46,89 +79,113 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal fade" id="addKeyModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5">Adicionar requisitante</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="inputRoom" class="form-label">Sala para retirar chave</label>
-                                        <input type="text" v-model="roomName" class="form-control" id="inputRoom" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="inputEmployee" class="form-label">Funcionario</label>
-                                        <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
-                                            <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
-                                        </select>
-                                    </div>
-                                    <div v-if="newEmployee !== ''" class="mb-3">
-                                        <label for="inputSubject" class="form-label">Materia</label>
-                                        <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-if="subjects.length === 0" value="0">Sem matérias para este funcionario</option> 
-                                            <option v-for="subject in subjects" :key="subject.subject" :value="subject.subject">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <div>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetKey()">Cancelar</button>
+                    <div class="modal fade" id="addKeyModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">Adicionar requisitante</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div>
-                                    <button type="button" class="btn btn-primary" :disabled="!newEmployee" data-bs-dismiss="modal" @click="addKey()">Salvar</button>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="inputRoom" class="form-label">Sala para retirar chave</label>
+                                            <input type="text" v-model="roomName" class="form-control" id="inputRoom" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="inputEmployee" class="form-label">Funcionario</label>
+                                            <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
+                                                <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
+                                            </select>
+                                        </div>
+                                        <div v-if="newEmployee !== ''" class="mb-3">
+                                            <label for="inputSubject" class="form-label">Materia</label>
+                                            <select class="form-select" v-model="newSubject" id="inputSubject">
+                                                <option v-if="subjects.length === 0" value="0">Sem matérias para este funcionario</option> 
+                                                <option v-for="subject in subjects" :key="subject.subject" :value="subject.subject">{{ subject.subjectName }} - {{ subject.subjectPeriod }} - {{ subject.courseName }}</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetKey()">Cancelar</button>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-primary" :disabled="!newEmployee" data-bs-dismiss="modal" @click="addKey()">Salvar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editRoomModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">{{ roomName }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="inputName" class="form-label">Nome da Sala</label>
+                                            <input type="text" v-model="roomName" class="form-control" id="inputName"> 
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="inputLocation" class="form-label">Localização</label>
+                                            <input type="text" v-model="roomLocation" class="form-control" id="inputLocation"> 
+                                        </div>
+                                        <div v-if="roomStatus !== 'OCUPADO'" class="mb-3">
+                                            <label for="inputStatus" class="form-label">Status</label>
+                                            <select class="form-select" v-model="roomStatus" id="inputStatus">
+                                                <option value="DISPONIVEL">Disponivel</option>
+                                                <option value="INDISPONIVEL">Indisponivel</option>
+                                                <option value="LIMPEZA">Limpeza</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <hr>
+                                <div class="config-container">
+                                    <a href="rooms.jsp"><i class="config-bi bi bi-gear-fill"></i></a>
+                                    <div v-for="filters in filters" :key="filters.rowid" class="filter-info">
+                                        <span class="separator"></span>{{ filters.filterName }} <br> 
+                                        <span class="description">Descrição: {{ filters.filterDesc || "Não há descrição" }}</span>                            
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateRoom()">Salvar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal fade" id="editRoomModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5">{{ roomName }}</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="inputName" class="form-label">Nome da Sala</label>
-                                        <input type="text" v-model="roomName" class="form-control" id="inputName"> 
+                <div v-if="isReservations === true">
+                    <div class="row">
+                        <div v-for="(groupedReservations, roomName) in groupedReservationsByRoom" :key="roomName" class="col-md-2 mb-2">
+                            <div class="card-available">
+                                <div class="card-body custom-card-body">
+                                    <h4 class="card-title">{{ roomName }}</h4>
+                                    <hr>
+                                    <div v-for="(reservation, index) in limitedReservations(groupedReservations)" 
+                                         :key="reservation.rowid" 
+                                         class="stacked-card" 
+                                         @mouseover="focusedCard = reservation.rowid" 
+                                         @mouseleave="focusedCard = null" 
+                                         :class="{ 'focused': focusedCard === reservation.rowid }">
+                                        <div class="card-content">
+                                            <p class="card-text"><strong>Início:</strong> {{ reservation.start }}</p>
+                                            <p class="card-text"><strong>Término:</strong> {{ reservation.end }}</p>
+                                            <p class="card-text"><strong>Funcionário:</strong> {{ reservation.employee }}</p>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="inputLocation" class="form-label">Localização</label>
-                                        <input type="text" v-model="roomLocation" class="form-control" id="inputLocation"> 
-                                    </div>
-                                    <div v-if="roomStatus !== 'OCUPADO'" class="mb-3">
-                                        <label for="inputStatus" class="form-label">Status</label>
-                                        <select class="form-select" v-model="roomStatus" id="inputStatus">
-                                            <option value="DISPONIVEL">Disponivel</option>
-                                            <option value="INDISPONIVEL">Indisponivel</option>
-                                            <option value="LIMPEZA">Limpeza</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                            <hr>
-                            <div class="config-container">
-                            <a href="rooms.jsp"><i class="config-bi bi bi-gear-fill"></i></a>
-                            <div v-for="filters in filters" :key="filters.rowid" class="filter-info">
-                                <span class="separator"></span>{{ filters.filterName }} <br> 
-                                <span class="description">Descrição: {{ filters.filterDesc || "Não há descrição" }}</span>                            
-                            </div>
-                            </div>
-                            <div class="modal-footer">
-                                <div>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
-                                </div>
-                                <div>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateRoom()">Salvar</button>
                                 </div>
                             </div>
                         </div>

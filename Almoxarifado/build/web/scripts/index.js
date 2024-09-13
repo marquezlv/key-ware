@@ -9,6 +9,8 @@ const app = Vue.createApp({
             roomName: '',
             roomLocation: '',
             roomStatus: '',
+            isReservations: false,
+            focusedCard: null,
             room: null,
             list: [],
             rooms: [],
@@ -16,15 +18,29 @@ const app = Vue.createApp({
             subjects: [],
             key: [],
             roomFilters: [],
-            filters: []
+            filters: [],
+            reservations: []
         };
     },
     computed: {
         uniqueLocations() {
             return [...new Set(this.rooms.map(room => room.location))];
+        },
+        groupedReservationsByRoom() {
+            return this.reservations.reduce((group, reservation) => {
+                (group[reservation.roomName] = group[reservation.roomName] || []).push(reservation);
+                return group;
+            }, {});
         }
     },
     methods: {
+        limitedReservations(reservations) {
+            return reservations.slice(0, 5).sort((a, b) => new Date(b.start) - new Date(a.start));
+        },
+        ChangeScreen(){
+            this.isReservations = !this.isReservations;
+            console.log(this.isReservations);
+        },
         async request(url = "", method, data) {
             try {
                 const response = await fetch(url, {
@@ -109,7 +125,11 @@ const app = Vue.createApp({
             if (dataRF) {
                 this.roomFilters = dataRF.list;
             }
-            console.log(this.shared.session.id);
+            const dataRE = await this.request(`/Almoxarifado/api/reservations`, "GET");
+            if (dataRE) {
+                this.reservations = dataRE.list;
+            }
+            console.log(this.reservations);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
