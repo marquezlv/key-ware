@@ -49,6 +49,14 @@ body.dark-mode .card-header {
     color: #fff;
 }
 
+body.dark-mode .stack-card h5{
+    background-color: #222831;
+}
+
+body.dark-mode .stack-card {
+    background-color: #95a0a8;
+}
+
 body.dark-mode .form-label {
     color: #ccc;
 }
@@ -70,6 +78,10 @@ body.dark-mode .alert {
 }
 
 body.dark-mode .custom-input::placeholder{
+    color: white;
+}
+
+body.dark-mode input::placeholder{
     color: white;
 }
 

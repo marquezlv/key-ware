@@ -53,6 +53,83 @@ public class Reservation {
         return total;
     }
 
+    public static ArrayList<Reservation> getSearchReservations(String employeeSearch, String subjectSearch, Date day) throws Exception {
+        ArrayList<Reservation> list = new ArrayList<>();
+        Connection con = AppListener.getConnection();
+
+        // Montar o SQL dinamicamente
+        StringBuilder sql = new StringBuilder("SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period ")
+                .append("FROM reservations r ")
+                .append("LEFT JOIN employees e ON e.cd_employee = r.cd_employee ")
+                .append("LEFT JOIN rooms ro ON ro.cd_room = r.cd_room ")
+                .append("LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ");
+
+        boolean whereAdded = false;
+
+        // Construção dinâmica do WHERE
+        if (employeeSearch != null) {
+            sql.append("WHERE e.nm_employee LIKE ? ");
+            whereAdded = true;
+        }
+        if (subjectSearch != null) {
+            sql.append(whereAdded ? "AND " : "WHERE ").append("s.nm_subject LIKE ? ");
+            whereAdded = true;
+        }
+        if (day != null) {
+            sql.append(whereAdded ? "AND " : "WHERE ").append("r.dt_start = ? ");
+        }
+
+        // Ordenação
+        sql.append("ORDER BY r.dt_start, e.nm_employee");
+
+        PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+        // Substituir os placeholders com base nos parâmetros presentes
+        int paramIndex = 1;
+        if (employeeSearch != null) {
+            stmt.setString(paramIndex++, "%" + employeeSearch + "%");
+        }
+        if (subjectSearch != null) {
+            stmt.setString(paramIndex++, "%" + subjectSearch + "%");
+        }
+        if (day != null) {
+            // Usa java.sql.Timestamp para incluir horas, minutos e segundos
+            Timestamp sqlTimestamp = new Timestamp(day.getTime());
+            stmt.setTimestamp(paramIndex++, sqlTimestamp);
+        }
+
+        ResultSet rs = stmt.executeQuery();
+
+        // Processa os resultados
+        while (rs.next()) {
+            long rowid = rs.getLong("cd_reservation");
+            long employee = rs.getLong("cd_employee");
+            long room = rs.getLong("cd_room");
+            long subject = rs.getLong("cd_subject");
+            String employeeName = rs.getString("nm_employee");
+            String roomName = rs.getString("nm_room");
+            String roomLocation = rs.getString("nm_location");
+            String subjectName = rs.getString("nm_subject");
+            String subjectPeriod = rs.getString("nm_period");
+            Timestamp timestamp = rs.getTimestamp("dt_start");
+            Timestamp timestampEnd = rs.getTimestamp("dt_end");
+
+            // Converte os timestamps para Date, mantendo as horas
+            Date datetime = new Date(timestamp.getTime());
+            Date datetimeEnd = new Date(timestampEnd.getTime());
+
+            // Formatação das datas para exibição
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
+            String date = dateFormat.format(datetime);
+            String dateEnd = dateFormat.format(datetimeEnd);
+
+            // Adiciona a reserva na lista
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd));
+        }
+
+        return list;
+    }
+
     public static ArrayList<Reservation> getReservations(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Reservation> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
@@ -162,7 +239,7 @@ public class Reservation {
                             + "LIMIT ?, ?";
                 }
                 break;
-                case 6:
+            case 6:
                 if (sort == 1) {
                     sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
                             + "FROM reservations r "
@@ -221,17 +298,17 @@ public class Reservation {
         con.close();
         return list;
     }
-    
+
     public static ArrayList<Reservation> getReservationsAll() throws Exception {
         ArrayList<Reservation> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
-        
+
         String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                        + "FROM reservations r "
-                        + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                        + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                        + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                        + "ORDER BY r.dt_start, e.nm_employee";
+                + "FROM reservations r "
+                + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
+                + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
+                + "ORDER BY r.dt_start, e.nm_employee";
 
         PreparedStatement stmt = con.prepareStatement(sql);
 

@@ -121,7 +121,7 @@
                                 </div>
 
                                 <div v-if="isRecurring" class="mb-3">
-                                    <label for="inputWeeks" class="form-label">Quantas semanas?</label>
+                                    <label for="inputWeeks" class="form-label">Quantas semanas? (52 semanas = semestre todo)</label>
                                     <select v-model="recurringWeeks" class="form-control" id="inputWeeks">
                                         <option v-for="n in 52" :key="n" :value="n">{{ n }}</option>
                                     </select>

@@ -89,7 +89,6 @@ th, td {
     bottom: 0;
     left: 0;
     width: 300px !important;
-    padding: 1rem;
     background-color: #fff;
     z-index: 1040 !important;
     border-right: 1px solid rgba(0, 0, 0, .125);
@@ -109,11 +108,10 @@ th, td {
     overflow-y: auto;
     overflow-x: hidden;
     padding-left: 20px;
-
 }
 
 .offcanvas-open .page-content {
-    transform: translateX(100px) scale(0.8);
+    transform: translateX(5%) scale(0.8);
 }
 
 
@@ -145,7 +143,7 @@ th, td {
 
 
 .offcanvas-closed .normal-page {
-    transform: translateX(-100px) translateY(30px) scale(1.1);
+    transform: translateX(-5%) translateY(30px) scale(1.1);
 }
 
 .normal-page {

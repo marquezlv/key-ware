@@ -1,0 +1,47 @@
+
+.stack-container {
+    position: relative;
+}
+
+.card-stack {
+    position: relative;
+    width: 250px;
+    height: 300px;
+}
+
+.stack-card {
+    margin-top: 20px;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    z-index: 1;
+}
+
+.stack-card h5 {
+    text-align: center;
+    font-size: 18px;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px;
+}
+
+.stack-card:hover {
+    transform: translateY(-35px);
+    z-index: 35;
+}
+
+.custom-card-body {
+    display: inline-block;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+    margin-left: 20px;
+}
+
+.extra-count {
+    position: absolute;
+}

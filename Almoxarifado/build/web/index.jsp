@@ -8,56 +8,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="styles/index_page.css">
-        <style>
-            .stack-container {
-                position: relative;
-            }
-
-            .card-stack {
-                position: relative;
-                width: 250px;
-                height: 300px;
-            }
-
-            .stack-card {
-                margin-top: 20px;
-                position: absolute;
-                left: 0;
-                width: 100%;
-                background-color: #fff;
-                border: 1px solid #ccc;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                transition: transform 0.2s ease;
-                z-index: 1;
-            }
-
-            .stack-card h5 {
-                text-align: center;
-                font-size: 18px;
-                background-color: #f0f0f0;
-                margin: 0;
-                padding: 10px;
-            }
-
-            .stack-card:hover {
-                transform: translateY(-40px);
-                z-index: 40;
-            }
-
-            .custom-card-body {
-                display: inline-block;
-                color: white;
-                border-radius: 10px;
-                padding: 10px;
-                text-align: left;
-                margin-left: 20px;
-            }
-
-            .extra-count {
-                position: relative;
-            }
-
-        </style>
+        <link rel="stylesheet" href="styles/card_reservation.css">
     </head>
     <body>
         <%@ include file="WEB-INF/jspf/header.jspf" %>
@@ -108,15 +59,26 @@
                         </div>
                     </div>
                     <div v-if="isReservations === true">
-                        <div v-for="(reservationsGroup, roomName) in groupedReservations" :key="roomName" class="stack-container">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" v-model="searchEmployee" class="form-control" @change="loadReservation()" placeholder="Pesquisar por professor">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" v-model="searchSubject" class="form-control" @change="loadReservation()" placeholder="Pesquisar por matéria">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" v-model="searchDate" class="form-control" @change="loadReservation()">
+                            </div>
+                        </div>
+                        <div v-for="(reservationsGroup, roomName) in reservationsGroup" :key="roomName" class="stack-container">
                             <h4 class="card-title">{{ roomName }}</h4>
                             <div class="col-md-12 mb-2">
                                 <div v-for="employeeReservations in groupByEmployee(reservationsGroup)" :key="employeeReservations[0].employee" class="card-body custom-card-body card-stack">
-                                    <div v-for="(reservation, index) in employeeReservations.slice(0, 5)" :key="reservation.rowid" :style="{ top: index * 40 + 'px' }" class="stack-card">
-                                        <h5 class="card-header">{{ reservation.employee }} - {{ reservation.start.split(' - ')[1].split('/').slice(0, 2).join('/') }}</h5>
+                                    <div v-for="(reservation, index) in employeeReservations.reverse().slice(0, 5).reverse()" :key="reservation.rowid" :style="{ top: index * 40 + 'px' }" class="stack-card">
+                                        <h5>{{ reservation.employee }} - {{ reservation.start.split(' - ')[1].split('/').slice(0, 2).join('/') }}</h5>
                                         <p style="font-size: 14px; margin-left: 15px;">Inicio: {{ reservation.start.split(' - ')[2] }}<br>Terminio: {{ reservation.end.split(' - ')[2] }}</p>
                                     </div>
-                                    <div v-if="employeeReservations.length > 5" class="extra-count" :style="{ top: employeeReservations.length * 37 + 'px' }">
+                                    <div v-if="employeeReservations.length > 5" class="extra-count" :style="{ top: employeeReservations.length * 40 + 'px' }">
                                         <p>+ {{ employeeReservations.length - 5 }} mais</p>
                                     </div>
                                 </div>
@@ -213,9 +175,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    <script src="scripts/index.js"></script>
+        <script src="scripts/index.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
 </html>

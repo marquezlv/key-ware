@@ -9,6 +9,9 @@ const app = Vue.createApp({
             roomName: '',
             roomLocation: '',
             roomStatus: '',
+            searchDate: '',
+            searchEmployee: '',
+            searchSubject: '',
             isReservations: false,
             focusedCard: null,
             room: null,
@@ -26,19 +29,55 @@ const app = Vue.createApp({
         uniqueLocations() {
             return [...new Set(this.rooms.map(room => room.location))];
         },
+        reservationsGroup() {
+            return this.groupedReservations(); // Call the method to return grouped reservations
+        }
+
+    },
+    methods: {
         groupedReservations() {
-            const currentDate = new Date();
-            currentDate.setHours(0, 0, 0, 0); // Ignorar tempo, focando apenas na data
+            const currentDate = new Date(); // Current date and time
 
-            // Filtrando reservas com base no 'start' para serem apenas atuais ou futuras
             const filteredReservations = this.reservations.filter(reservation => {
-                const startDateStr = reservation.start.split(' - ')[1]; // "12/09/2024"
-                const [day, month, year] = startDateStr.split('/').map(Number);
-                const startDate = new Date(year, month - 1, day);
-                return startDate >= currentDate;
-            });
+                // Process the 'end' field from the reservation  
+                const endDateTimeStr = reservation.end;
+                console.log("String de data/hora:", endDateTimeStr);
 
-            // Agrupando as reservas por nome da sala
+                // Separar a string e ignorar o primeiro elemento (dia da semana)
+                const parts = endDateTimeStr.split(' - ');
+
+                // Verifique se há pelo menos 3 partes (dia da semana, data, hora)
+                if (parts.length < 3) {
+                    console.error("Formato inválido da string de data/hora.");
+                    return false; // Retorna falso se o formato não estiver correto
+                }
+
+                // A data e a hora são as partes seguintes
+                const datePart = parts[1]; // 12/09/2024
+                const timePart = parts[2];  // 20:23
+
+                // Processar a parte da data
+                const [endDay, endMonth, endYear] = datePart.split('/').map(Number);
+                console.log(`Dia: ${endDay}, Mês: ${endMonth}, Ano: ${endYear}`);
+
+                // Processar a parte da hora
+                const [endHour, endMinute] = timePart.split(':').map(Number);
+                console.log(`Hora: ${endHour}, Minuto: ${endMinute}`);
+
+                // Verifique se os valores extraídos são válidos
+                if (isNaN(endDay) || isNaN(endMonth) || isNaN(endYear) || isNaN(endHour) || isNaN(endMinute)) {
+                    console.error("Um dos valores é inválido.");
+                    return false;
+                }
+
+                // Criar o objeto de data
+                const endDate = new Date(endYear, endMonth - 1, endDay, endHour || 23, endMinute || 59);
+                console.log("Data de término:", endDate, " - ", currentDate);
+
+                // Apenas retorna reservas onde a data e hora 'end' é maior que o tempo atual
+                return currentDate <= endDate;
+            });
+            // Grouping reservations by room
             const grouped = filteredReservations.reduce((groups, reservation) => {
                 if (!groups[reservation.roomName]) {
                     groups[reservation.roomName] = [];
@@ -47,32 +86,31 @@ const app = Vue.createApp({
                 return groups;
             }, {});
 
-            // Ordenando as reservas dentro de cada grupo por data em ordem decrescente
+            // Sorting reservations by date (in descending order, latest first)
             Object.keys(grouped).forEach(roomName => {
                 grouped[roomName].sort((a, b) => {
-                    // Extraindo as datas de início
-                    const [dayA, monthA, yearA] = a.start.split(' - ')[1].split('/').map(Number);
-                    const dateA = new Date(yearA, monthA - 1, dayA);
+                    const [dayA, monthA, yearA] = a.start.split(' - ')[1].split(' ')[0].split('/').map(Number);
+                    const timeA = a.start.split(' - ')[1].split(' ')[1] || '00:00';
+                    const [hourA, minuteA] = timeA.split(':').map(Number);
+                    const dateA = new Date(yearA, monthA - 1, dayA, hourA, minuteA);
 
-                    const [dayB, monthB, yearB] = b.start.split(' - ')[1].split('/').map(Number);
-                    const dateB = new Date(yearB, monthB - 1, dayB);
+                    const [dayB, monthB, yearB] = b.start.split(' - ')[1].split(' ')[0].split('/').map(Number);
+                    const timeB = b.start.split(' - ')[1].split(' ')[1] || '00:00';
+                    const [hourB, minuteB] = timeB.split(':').map(Number);
+                    const dateB = new Date(yearB, monthB - 1, dayB, hourB, minuteB);
 
-                    // Ordenando por data decrescente (mais distante primeiro)
                     return dateB - dateA;
                 });
             });
 
-            // Ordenando as salas em ordem alfabética
+            // Return the grouped reservations, sorted alphabetically by room name
             return Object.keys(grouped)
-                    .sort((a, b) => a.localeCompare(b)) // Ordena alfabeticamente pelo nome da sala
+                    .sort((a, b) => a.localeCompare(b))
                     .reduce((sortedGroups, roomName) => {
                         sortedGroups[roomName] = grouped[roomName];
                         return sortedGroups;
                     }, {});
-        }
-
-    },
-    methods: {
+        },
         ChangeScreen() {
             this.isReservations = !this.isReservations;
             console.log(this.isReservations);
@@ -172,6 +210,15 @@ const app = Vue.createApp({
                 this.roomFilters = dataRF.list;
             }
             const dataRE = await this.request(`/Almoxarifado/api/reservations`, "GET");
+            if (dataRE) {
+                this.reservations = dataRE.list;
+            }
+            console.log(this.reservations);
+
+        },
+        async loadReservation() {
+            search = "true";
+            const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${search}`, "GET");
             if (dataRE) {
                 this.reservations = dataRE.list;
             }

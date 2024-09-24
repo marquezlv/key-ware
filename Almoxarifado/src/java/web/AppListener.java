@@ -80,7 +80,7 @@ public class AppListener implements ServletContextListener {
             s.execute(Subjects.getCreateStatement());
 
             s.execute(Courses.getCreateStatement());
-
+            
             // Inserir usuário administrador, se não houver usuários
             if (Users.getUsersAll().isEmpty()) {
                 Users.insertUser("admin", "Administrador", "ADMIN", "1234");

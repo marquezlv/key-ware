@@ -386,18 +386,36 @@ public class ApiServlet extends HttpServlet {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
+            String searchParam = request.getParameter("search");
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            if (pageParam == null && searchParam == null) {
                 file.put("list", new JSONArray(Reservation.getReservationsAll()));
-            } else {
+            } else if (searchParam == null) {
                 int page = Integer.parseInt(pageParam);
                 int itemPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
                 file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort)));
-            file.put("total", Reservation.getTotalReservations());
-            } 
-            
+                file.put("total", Reservation.getTotalReservations());
+            } else {
+                String employee = request.getParameter("employee");
+                String subject = request.getParameter("subject");
+                String strdate = request.getParameter("date");
+
+                // Verifica se a data foi enviada
+                Date searchDate = null;
+                if (strdate != null && !strdate.isEmpty()) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    searchDate = dateFormat.parse(strdate);  // Converte a data se estiver presente
+           }
+                // Chama a função de pesquisa, passando os parâmetros, inclusive null se for o caso
+                file.put("list", new JSONArray(Reservation.getSearchReservations(
+                        employee != null && !employee.isEmpty() ? employee : null,
+                        subject != null && !subject.isEmpty() ? subject : null,
+                        searchDate
+                )));
+            }
+
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
             long employee = body.getLong("employee");

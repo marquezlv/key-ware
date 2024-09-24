@@ -32,9 +32,14 @@ const app = Vue.createApp({
     methods: {
         getCurrentDateTime() {
             const now = new Date();
-            return now.toISOString().slice(0, 16);
-        },
 
+            // Ajusta o horário para Brasília (UTC-3)
+            const utcOffset = -3; // GMT-3
+            const localDate = new Date(now.getTime() + (utcOffset * 60 * 60 * 1000));
+
+            // Retorna a data em formato ISO, mas apenas a parte que você deseja (yyyy-mm-ddThh:mm)
+            return localDate.toISOString().slice(0, 16);
+        },
         filterList(column) {
             if (this.direction === 0) {
                 this.direction = 1;
@@ -125,11 +130,11 @@ const app = Vue.createApp({
                     end: currentEndDate
 
                 });
-                console.log(i," - ",data);
-                console.log(i," - ",currentEndDate);
-                console.log(i," - ",currentStartDate);
-                console.log(i," - ",this.endDate);
-                console.log(i," - ",this.newDate);
+                console.log(i, " - ", data);
+                console.log(i, " - ", currentEndDate);
+                console.log(i, " - ", currentStartDate);
+                console.log(i, " - ", this.endDate);
+                console.log(i, " - ", this.newDate);
 
 
                 if (!data) {
@@ -200,7 +205,7 @@ const app = Vue.createApp({
             const dataR = await this.request(`/Almoxarifado/api/rooms`, "GET");
             if (dataR) {
                 this.rooms = dataR.list;
-        }
+            }
             console.log(data);
         },
         async getSubjects() {
@@ -278,7 +283,7 @@ const app = Vue.createApp({
     },
     mounted() {
         this.loadList();
-
+        console.log(this.minDate);
     }
 
 
