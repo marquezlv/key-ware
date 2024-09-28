@@ -218,6 +218,7 @@ const app = Vue.createApp({
         },
         async loadReservation() {
             search = "true";
+            console.log(this.searchDate);
             const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${search}`, "GET");
             if (dataRE) {
                 this.reservations = dataRE.list;

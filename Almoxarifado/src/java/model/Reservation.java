@@ -76,7 +76,7 @@ public class Reservation {
             whereAdded = true;
         }
         if (day != null) {
-            sql.append(whereAdded ? "AND " : "WHERE ").append("r.dt_start = ? ");
+            sql.append(whereAdded ? "AND " : "WHERE ").append("r.dt_start BETWEEN ? AND ? ");
         }
 
         // Ordenação
@@ -93,9 +93,11 @@ public class Reservation {
             stmt.setString(paramIndex++, "%" + subjectSearch + "%");
         }
         if (day != null) {
-            // Usa java.sql.Timestamp para incluir horas, minutos e segundos
-            Timestamp sqlTimestamp = new Timestamp(day.getTime());
-            stmt.setTimestamp(paramIndex++, sqlTimestamp);
+            long millis = day.getTime();
+            long millisEnd = day.getTime() + 24 * 60 * 60 * 1000;
+            stmt.setLong(paramIndex++, millis);
+            stmt.setLong(paramIndex++, millisEnd);
+            System.out.println("Data para o SQL em milissegundos: " + millis);
         }
 
         ResultSet rs = stmt.executeQuery();

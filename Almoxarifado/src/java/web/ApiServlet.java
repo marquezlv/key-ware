@@ -401,13 +401,14 @@ public class ApiServlet extends HttpServlet {
                 String employee = request.getParameter("employee");
                 String subject = request.getParameter("subject");
                 String strdate = request.getParameter("date");
-
+                System.out.println("Data String " + strdate);
                 // Verifica se a data foi enviada
                 Date searchDate = null;
                 if (strdate != null && !strdate.isEmpty()) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     searchDate = dateFormat.parse(strdate);  // Converte a data se estiver presente
            }
+                System.out.println("Data formatada: "+searchDate);
                 // Chama a função de pesquisa, passando os parâmetros, inclusive null se for o caso
                 file.put("list", new JSONArray(Reservation.getSearchReservations(
                         employee != null && !employee.isEmpty() ? employee : null,
