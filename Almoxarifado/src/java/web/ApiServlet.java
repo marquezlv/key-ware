@@ -395,8 +395,9 @@ public class ApiServlet extends HttpServlet {
                 int itemPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
-                file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort)));
-                file.put("total", Reservation.getTotalReservations());
+                int order = Integer.parseInt(request.getParameter("order"));
+                file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort, order)));
+                file.put("total", Reservation.getTotalReservations(order));
             } else {
                 String employee = request.getParameter("employee");
                 String subject = request.getParameter("subject");

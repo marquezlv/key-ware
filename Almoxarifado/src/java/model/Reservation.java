@@ -38,10 +38,19 @@ public class Reservation {
                 + ")";
     }
 
-    public static int getTotalReservations() throws Exception {
+    public static int getTotalReservations(int order) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM reservations";
+        String sql = "SELECT COUNT(*) AS total FROM reservations ";
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        if (order == 1) {
+            sql = "SELECT COUNT(*) AS total FROM reservations "
+                    + "WHERE dt_start > ?";
+        } else if (order == 2) {
+            sql = "SELECT COUNT(*) AS total FROM reservations "
+                    + "WHERE dt_start < ?";
+        }
         PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setTimestamp(1, currentTimestamp);
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
@@ -132,148 +141,65 @@ public class Reservation {
         return list;
     }
 
-    public static ArrayList<Reservation> getReservations(int page, int recordsPerPage, int column, int sort) throws Exception {
+    public static ArrayList<Reservation> getReservations(int page, int recordsPerPage, int column, int sort, int order) throws Exception {
         ArrayList<Reservation> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
         int startIndex = (page - 1) * recordsPerPage;
-        String sql = "";
-        // Se for Sort 0 ele volta para o sql default
-        if (sort == 0) {
-            column = 0;
+        String baseSQL = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
+                + "FROM reservations r "
+                + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
+                + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ";
+
+        String orderClause = "";
+        String dateFilter = "";
+
+        if (order == 1) {
+            dateFilter = " WHERE r.dt_start > ? ";
+        } else if (order == 2) {
+            dateFilter = " WHERE r.dt_start < ? ";
         }
+
         switch (column) {
-            // Ordenando pela coluna 1 (nm_employee)
             case 1:
-                // Sort 1 é ASCENDENTE e Sort 2 é DESCENDENTE
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY e.nm_employee ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY e.nm_employee DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY e.nm_employee ";
                 break;
-            // Ordenando pela coluna 2 (nm_subject)
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY s.nm_subject ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY s.nm_subject DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY s.nm_subject ";
                 break;
             case 3:
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY ro.nm_room ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY ro.nm_room DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY ro.nm_room ";
                 break;
             case 4:
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY ro.nm_location ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY ro.nm_location DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY ro.nm_location ";
                 break;
             case 5:
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY dt_start ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY dt_start DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY r.dt_start ";
                 break;
             case 6:
-                if (sort == 1) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY dt_end ASC "
-                            + "LIMIT ?, ?";
-                } else if (sort == 2) {
-                    sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                            + "FROM reservations r "
-                            + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                            + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                            + "ORDER BY dt_end DESC "
-                            + "LIMIT ?, ?";
-                }
+                orderClause = " ORDER BY r.dt_end ";
                 break;
             default:
-                sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
-                        + "FROM reservations r "
-                        + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
-                        + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                        + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                        + "ORDER BY r.dt_start, e.nm_employee "
-                        + "LIMIT ?, ?";
+                orderClause = " ORDER BY r.dt_start, e.nm_employee ";
                 break;
         }
 
+        if (sort == 2) {
+            orderClause += "DESC ";
+        } else {
+            orderClause += "ASC ";
+        }
+
+        String sql = baseSQL + dateFilter + orderClause + "LIMIT ?, ?";
+
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+
+        stmt.setTimestamp(1, currentTimestamp);
+        stmt.setInt(2, startIndex);
+        stmt.setInt(3, recordsPerPage);
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {

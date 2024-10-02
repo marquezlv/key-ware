@@ -25,14 +25,18 @@
                                 </button>
                             </div>
                         </h2>
-                        <label for="registers" class="form-label"></label>
-                        <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                            <option value=5>5</option>
-                            <option value=10>10</option>
-                            <option value=20>20</option>
-                            <option value=50>50</option>
-                        </select>
-
+                        <div>
+                            <select class="mb-3 me-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                <option value=5>5</option>
+                                <option value=10>10</option>
+                                <option value=20>20</option>
+                                <option value=50>50</option>
+                            </select>
+                            <select class="mb-3 me-3 w-25" v-model="listReservation" id="filter-reservation" @change="reloadPage">
+                                <option value=1>Mostrar Futuras</option>
+                                <option value=2>Mostrar Anteriores</option>
+                            </select>
+                        </div>
                         <table class="table">
                             <tr class="tr-style">
                                 <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>

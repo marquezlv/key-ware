@@ -14,6 +14,7 @@ const app = Vue.createApp({
             rooms: [],
             employees: [],
             subjects: [],
+            listReservation: 1,
             currentPage: 1,
             totalPages: 0,
             itemsPerPage: 5,
@@ -54,6 +55,7 @@ const app = Vue.createApp({
         reloadPage() {
             this.currentPage = 1;
             this.loadList(this.currentPage, this.column, this.itemsPerPage);
+            console.log(this.listReservation);
         },
         previousPage() {
             if (this.currentPage > 1) {
@@ -193,7 +195,7 @@ const app = Vue.createApp({
             this.reservation = null;
         },
         async loadList(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&order=${this.listReservation}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);

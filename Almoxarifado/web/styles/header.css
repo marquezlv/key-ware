@@ -112,11 +112,13 @@ th, td {
 
 .offcanvas-open .page-content {
     transform: translateX(5%) scale(0.8);
+    transform-origin: top;
 }
 
 
 .offcanvas-closed .page-content {
     transform: translateX(0) scale(1);
+    transform-origin: top;
 }
 
 .offcanvas-open .offcanvas {

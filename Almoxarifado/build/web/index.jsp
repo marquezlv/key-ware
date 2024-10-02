@@ -78,8 +78,8 @@
                                         <h5>{{ reservation.employee }} - {{ reservation.start.split(' - ')[1].split('/').slice(0, 2).join('/') }}</h5>
                                         <p style="font-size: 14px; margin-left: 15px;">Inicio: {{ reservation.start.split(' - ')[2] }}<br>Terminio: {{ reservation.end.split(' - ')[2] }}<br>Matéria: {{ reservation.subjectName}}</p>
                                     </div>
-                                    <div v-if="employeeReservations.length > 5" class="extra-count" :style="{ top: employeeReservations.length * 40 + 'px' }">
-                                        <p>+ {{ employeeReservations.length - 5 }} mais</p>
+                                    <div v-if="employeeReservations.length > 5" class="extra-count">
+                                        + {{ employeeReservations.length - 5 }} mais
                                     </div>
                                 </div>
                             </div>
