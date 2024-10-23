@@ -41,10 +41,54 @@ public class History {
                 + ")";
     }
 
-    public static int getTotalHistory() throws Exception {
+    public static int getTotalHistory(String searchParam, String searchSubject, String searchCourse, String strDateStart, String strDateEnd) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM history";
+
+        String baseSql = "SELECT COUNT(*) AS total FROM history h "
+                + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                + "LEFT JOIN users u ON u.rowid = h.cd_user ";
+
+        StringBuilder whereClause = new StringBuilder("WHERE 1=1 ");
+
+        if (searchParam != null && !searchParam.isEmpty()) {
+            whereClause.append("AND e.nm_employee LIKE ? ");
+        }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            whereClause.append("AND s.nm_subject LIKE ? ");
+        }
+        if (searchCourse != null && !searchCourse.isEmpty()) {
+            whereClause.append("AND c.nm_course LIKE ? ");
+        }
+        if (strDateStart != null && !strDateStart.isEmpty() && strDateEnd != null && !strDateEnd.isEmpty()) {
+            whereClause.append("AND h.dt_history BETWEEN ? AND ? ");
+        }
+
+        String sql = baseSql + whereClause.toString();
+
         PreparedStatement stmt = con.prepareStatement(sql);
+
+        int paramIndex = 1;
+
+        if (searchParam != null && !searchParam.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchParam + "%");
+        }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchSubject + "%");
+        }
+        if (searchCourse != null && !searchCourse.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchCourse + "%");
+        }
+        if (strDateStart != null && !strDateStart.isEmpty() && strDateEnd != null && !strDateEnd.isEmpty()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = dateFormat.parse(strDateStart);
+            Date endDate = dateFormat.parse(strDateEnd);
+            stmt.setTimestamp(paramIndex++, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(paramIndex++, new java.sql.Timestamp(endDate.getTime()));
+        }
+
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
@@ -55,181 +99,89 @@ public class History {
         con.close();
         return total;
     }
-
-    public static ArrayList<History> getHistory(int page, int recordsPerPage, int column, int sort) throws Exception {
+    
+    public static ArrayList<History> getHistory(int page, int recordsPerPage, int column, int sort, String searchParam, String searchSubject, String searchCourse, String strDateStart, String strDateEnd) throws Exception {
         ArrayList<History> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "";
-        if (sort == 0) {
-            column = 0;
+        String baseSql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
+                + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
+                + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
+                + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
+                + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
+                + "LEFT JOIN users u ON u.rowid = h.cd_user ";
+
+        StringBuilder whereClause = new StringBuilder("WHERE 1=1 ");
+
+        if (searchParam != null && !searchParam.isEmpty()) {
+            whereClause.append("AND e.nm_employee LIKE ? ");
         }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            whereClause.append("AND s.nm_subject LIKE ? ");
+        }
+        if (searchCourse != null && !searchCourse.isEmpty()) {
+            whereClause.append("AND c.nm_course LIKE ? ");
+        }
+        if (strDateStart != null && !strDateStart.isEmpty() && strDateEnd != null && !strDateEnd.isEmpty()) {
+            whereClause.append("AND h.dt_history BETWEEN ? AND ? ");
+        }
+
+        String sql = baseSql + whereClause.toString();
+
         switch (column) {
             case 1:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY h.dt_history ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY h.dt_history DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY h.dt_history ASC " : "ORDER BY h.dt_history DESC ");
                 break;
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY e.nm_employee ASC "
-                            + "LIMIT ?,?";
-
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY e.nm_employee DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY e.nm_employee ASC " : "ORDER BY e.nm_employee DESC ");
                 break;
             case 3:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY s.nm_subject ASC "
-                            + "LIMIT ?,?";
-
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY s.nm_subject DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY s.nm_subject ASC " : "ORDER BY s.nm_subject DESC ");
                 break;
             case 4:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY c.nm_course ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY c.nm_course DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY c.nm_course ASC " : "ORDER BY c.nm_course DESC ");
                 break;
             case 5:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY r.nm_room ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY r.nm_room DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY r.nm_room ASC " : "ORDER BY r.nm_room DESC ");
                 break;
             case 6:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY h.nm_type ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY h.nm_type DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY h.nm_type ASC " : "ORDER BY h.nm_type DESC ");
                 break;
             case 7:
-                if (sort == 1) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY u.name ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                            + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                            + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                            + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                            + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                            + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                            + "ORDER BY u.name DESC "
-                            + "LIMIT ?,?";
-                }
+                sql += (sort == 1 ? "ORDER BY u.name ASC " : "ORDER BY u.name DESC ");
                 break;
             default:
-                sql = "SELECT h.*, e.nm_employee, r.nm_room, s.nm_subject, c.nm_course, u.rowid, u.name FROM history h "
-                        + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                        + "LEFT JOIN rooms r ON r.cd_room = h.cd_room "
-                        + "LEFT JOIN subjects s ON s.cd_subject = h.cd_subject "
-                        + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                        + "LEFT JOIN users u ON u.rowid = h.cd_user "
-                        + "ORDER BY h.dt_history DESC "
-                        + "LIMIT ?,?";
+                sql += "ORDER BY h.dt_history DESC ";
                 break;
         }
 
+        sql += "LIMIT ?,?";
+
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+
+        int paramIndex = 1;
+
+        if (searchParam != null && !searchParam.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchParam + "%");  
+        }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchSubject + "%");  
+        }
+        if (searchCourse != null && !searchCourse.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchCourse + "%"); 
+        }
+        if (strDateStart != null && !strDateStart.isEmpty() && strDateEnd != null && !strDateEnd.isEmpty()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = dateFormat.parse(strDateStart);
+            Date endDate = dateFormat.parse(strDateEnd);
+            stmt.setTimestamp(paramIndex++, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(paramIndex++, new java.sql.Timestamp(endDate.getTime()));
+        }
+
+        stmt.setInt(paramIndex++, startIndex);
+        stmt.setInt(paramIndex++, recordsPerPage);
+
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
@@ -246,8 +198,8 @@ public class History {
             String userName = rs.getString("name");
             Timestamp timestamp = rs.getTimestamp("dt_history");
             Date datetime = new Date(timestamp.getTime());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
-            String date = dateFormat.format(datetime);
+            SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
+            String date = displayFormat.format(datetime);
             list.add(new History(rowId, employee, room, subject, type, employeeName, roomName, subjectName, courseName, date, user, userName));
         }
         rs.close();
@@ -288,7 +240,7 @@ public class History {
         this.user = user;
         this.userName = userName;
     }
-    
+
     public long getRowid() {
         return rowid;
     }

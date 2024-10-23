@@ -18,48 +18,76 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Historico de chaves</h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th @click="filterList(1)" style="cursor: pointer;">DATA <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(2)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(3)" style="cursor: pointer;">MATERIA <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(4)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(5)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(6)" style="cursor: pointer;">TIPO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(7)" style="cursor: pointer;">USUARIO <i class="bi bi-arrow-down-up"></i></th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid">
-                            <td> {{ item.date }} </td>
-                            <td> {{ item.employeeName }} </td>
-                            <td> {{ item.subjectName || "-" }} </td>
-                            <td> {{ item.courseName || "-" }} </td>
-                            <td> {{ item.roomName }} </td>
-                            <td> {{ item.type }} </td>
-                            <td> {{ item.userName }} </td>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-                            <div v-if="totalPages > 1">
-                                <span v-for="page in pagination()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
-                                </span>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                            Historico de chaves
+                            <button @click="exportToCSV" class="btn btn-warning">Baixar historico </button>
+                        </h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label>Qtd. Registro</label>
+                                <select class="form-select mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                    <option value=5>5</option>
+                                    <option value=10>10</option>
+                                    <option value=20>20</option>
+                                    <option value=50>50</option>
+                                </select>
                             </div>
-                            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                            <div class="col-md-2">
+                                <label></label>
+                                <input type="text" v-model="searchEmployee" class="form-control mb-3" @change="loadList()" placeholder="Professor">
+                            </div>
+                            <div class="col-md-2">
+                                <label>Data inicio</label>
+                                <input type="date" v-model="dateStart" class="form-control mb-3" @change="loadList()">
+                            </div>
+                            <div class="col-md-2">
+                                <label>Data final</label>
+                                <input type="date" v-model="dateEnd" class="form-control mb-3" @change="loadList()">
+                            </div>
+                            <div class="col-md-2">
+                                <label></label>
+                                <input type="text" v-model="searchSubject" class="form-control mb-3" @change="loadList()" placeholder="Matéria">
+                            </div>
+                            <div class="col-md-2">
+                                <label></label>
+                                <input type="text" v-model="searchCourse" class="form-control mb-3" @change="loadList()" placeholder="Curso">
+                            </div>
                         </div>
+
+                        <table class="table">
+                            <tr>
+                                <th @click="filterList(1)" style="cursor: pointer;">DATA <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(3)" style="cursor: pointer;">MATERIA <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(4)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(5)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(6)" style="cursor: pointer;">TIPO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(7)" style="cursor: pointer;">USUARIO <i class="bi bi-arrow-down-up"></i></th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid">
+                                <td> {{ item.date }} </td>
+                                <td> {{ item.employeeName }} </td>
+                                <td> {{ item.subjectName || "-" }} </td>
+                                <td> {{ item.courseName || "-" }} </td>
+                                <td> {{ item.roomName }} </td>
+                                <td> {{ item.type }} </td>
+                                <td> {{ item.userName }} </td>
+                        </table>
+                        <div class="pagination-container">
+                            <div class="pagination">
+                                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                                <div v-if="totalPages > 1">
+                                    <span v-for="page in pagination()" :key="page">
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
+                                        <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
+                                    </span>
+                                </div>
+                                <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                            </div>
+                        </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
                 </div>
             </div>
         </div>

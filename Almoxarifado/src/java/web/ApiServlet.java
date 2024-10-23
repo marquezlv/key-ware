@@ -408,8 +408,8 @@ public class ApiServlet extends HttpServlet {
                 if (strdate != null && !strdate.isEmpty()) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     searchDate = dateFormat.parse(strdate);  // Converte a data se estiver presente
-           }
-                System.out.println("Data formatada: "+searchDate);
+                }
+                System.out.println("Data formatada: " + searchDate);
                 // Chama a função de pesquisa, passando os parâmetros, inclusive null se for o caso
                 file.put("list", new JSONArray(Reservation.getSearchReservations(
                         employee != null && !employee.isEmpty() ? employee : null,
@@ -512,12 +512,24 @@ public class ApiServlet extends HttpServlet {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
+            String searchParam = request.getParameter("employee");
+            String searchSubject = request.getParameter("subject");
+            String searchCourse = request.getParameter("course");
+            String strDateStart = request.getParameter("dateStart");
+            String strDateEnd = request.getParameter("dateEnd");
+
             int page = Integer.parseInt(request.getParameter("page"));
             int itemsPerPage = Integer.parseInt(request.getParameter("items"));
             int column = Integer.parseInt(request.getParameter("column"));
             int sort = Integer.parseInt(request.getParameter("sort"));
-            file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort)));
-            file.put("total", History.getTotalHistory());
+
+            if (searchParam != null && !searchParam.isEmpty() || searchSubject != null && !searchSubject.isEmpty() || searchCourse != null && !searchCourse.isEmpty() || strDateStart != null && !strDateStart.isEmpty() || strDateEnd != null && !strDateEnd.isEmpty()) {
+                file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort, searchParam, searchSubject, searchCourse, strDateStart, strDateEnd)));
+                file.put("total", History.getTotalHistory(searchParam, searchSubject, searchCourse, strDateStart, strDateEnd));  // Chamada atualizada com filtros
+            } else {
+                file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort, null, null, null, null, null)));
+                file.put("total", History.getTotalHistory(null, null, null, null, null));  // Chamada sem filtros
+            }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             response.sendError(401, "Insert: This table cannot be inserted directly");
         } else if (request.getMethod().toLowerCase().equals("put")) {

@@ -3,6 +3,11 @@ const app = Vue.createApp({
         return {
             shared: shared,
             error: null,
+            searchEmployee: "",
+            searchSubject: "",
+            searchCourse: "",
+            dateStart: "",
+            dateEnd: "",
             list: [],
             currentPage: 1,
             totalPages: 0,
@@ -12,20 +17,66 @@ const app = Vue.createApp({
         };
     },
     methods: {
-        filterList(column){
-            if(this.direction === 0){
+        exportToCSV() {
+            const headers = ['Funcionário', 'Curso', 'Matéria', 'Data', 'Tipo', 'Sala', 'Usuário'];
+
+            const escapeCSVValue = (value) => {
+                if (!value)
+                    return '';
+                return `"${String(value).replace(/"/g, '""')}"`;
+            };
+
+            const rows = this.list.map(item => [
+                    escapeCSVValue(item.employeeName),
+                    escapeCSVValue(item.courseName),
+                    escapeCSVValue(item.subjectName),
+                    escapeCSVValue(item.date),
+                    escapeCSVValue(item.type),
+                    escapeCSVValue(item.roomName),
+                    escapeCSVValue(item.userName)
+                ]);
+
+            let firstDate = this.list.length > 0 ? this.list[0].date : '';
+            let year = '';
+
+            const dateMatch = firstDate.match(/\d{2}\/\d{2}\/(\d{4})/);
+            if (dateMatch) {
+                year = dateMatch[1];
+            }
+
+            let csvContent = headers.join(';')
+                    + '\n'
+                    + rows.map(row => row.join(';')).join('\n');
+
+            const blob = new Blob([`\uFEFF${csvContent}`], {type: 'text/csv;charset=utf-8;'});
+
+            const fileName = `history - ${year || 'sem_ano'}.csv`;
+
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        },
+        filterList(column) {
+            if (this.direction === 0) {
                 this.direction = 1;
-            } else if(this.direction === 1){
+            } else if (this.direction === 1) {
                 this.direction = 2;
-            } else{
+            } else {
                 this.direction = 0;
             }
             this.column = column;
             this.loadList(this.currentPage, this.column, this.direction);
         },
-        reloadPage(){
+        reloadPage() {
             this.currentPage = 1;
-            this.loadList(this.currentPage, this.column ,this.direction);
+            this.loadList(this.currentPage, this.column, this.direction);
         },
         async request(url = "", method, data) {
             try {
@@ -45,7 +96,8 @@ const app = Vue.createApp({
         }
         },
         async loadList(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/history?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
+            console.log(this.dateStart);
+            const data = await this.request(`/Almoxarifado/api/history?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&employee=${this.searchEmployee}&subject=${this.searchSubject}&course=${this.searchCourse}&dateStart=${this.dateStart}&dateEnd=${this.dateEnd}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);
@@ -88,23 +140,23 @@ const app = Vue.createApp({
         previousPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                this.loadList(this.currentPage, this.column ,this.direction);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
-                this.loadList(this.currentPage, this.column ,this.direction);
+                this.loadList(this.currentPage, this.column, this.direction);
             }
         },
         goToPage(page) {
             this.currentPage = page;
-            this.loadList(page, this.column ,this.direction);
+            this.loadList(page, this.column, this.direction);
         },
         jumpPages(pages) {
             this.currentPage = Math.min(this.totalPages, Math.max(1, this.currentPage +
                     pages));
-            this.loadList(this.currentPage, this.column ,this.direction);
+            this.loadList(this.currentPage, this.column, this.direction);
         }
     },
     mounted() {
