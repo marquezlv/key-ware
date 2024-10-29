@@ -151,8 +151,6 @@ public class ApiServlet extends HttpServlet {
     private void processUsers(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
-        } else if (!((Users) request.getSession().getAttribute("users")).getRole().equals("ADMIN")) {
-            response.sendError(401, "Unauthorized: Only admin can manage users");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             int page = Integer.parseInt(request.getParameter("page"));
             int itemsPerPage = Integer.parseInt(request.getParameter("items"));
@@ -179,6 +177,18 @@ public class ApiServlet extends HttpServlet {
                 String name = body.optString("name", null);
                 String role = body.optString("role", null);
                 Users.updateUser(id, login, name, role);
+
+                Users updatedUser = Users.getUserById(id);
+                if (updatedUser != null) {
+                    request.getSession().setAttribute("users", updatedUser);
+                    file.put("id", updatedUser.getRowid());
+                    file.put("login", updatedUser.getLogin());
+                    file.put("name", updatedUser.getName());
+                    file.put("role", updatedUser.getRole());
+                    file.put("passwordHash", updatedUser.getPasswordHash());
+                } else {
+                    response.sendError(404, "Usuário não encontrado após a atualização.");
+                }
             }
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));

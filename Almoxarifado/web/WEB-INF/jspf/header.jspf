@@ -56,7 +56,8 @@
                     </ul>
                     <div class="navbar-text-login">
                         <i class="bi bi-person"></i>{{data.name}}
-                        <button @click="logout()" class="btn btn-sm btn-danger navbar-text-login-button" type="button"><i class="bi bi-box-arrow-right"></i></button>
+                        <button @click="logout()" class="btn btn-sm btn-danger" type="button"><i class="bi bi-box-arrow-right"></i></button>
+                        <button class="btn btn-sm btn-info" type="button" data-bs-toggle="modal" @click="loadUserData()" data-bs-target="#editAccount" ><i class="bi bi-gear"></i></button>
                         <button class="btn btn-sm btn-secondary ms-auto" @click="toggleMode">
                             <i class="bi bi-sun-fill" v-if="!isDarkTheme"></i>
                             <i class="bi bi-moon-fill" v-else></i>
@@ -90,7 +91,46 @@
         <!-- Caso ocorra algum erro sem ser de sessão exibe na tela -->
         <div v-if="error && error !=='No Session'" class="alert alert-danger m-2" role="alert">
             {{error}}
-        </div> 
-    </div>      
-</div>
+        </div>
+        <div class="modal fade" id="editAccount" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Editar seus dados</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="loginAccount" class="form-label">Login</label>
+                                <input type="text" v-model="newLogin" class="form-control" id="loginAccount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="nameAccount" class="form-label">Nome</label>
+                                <input type="text" v-model="newName" class="form-control" id="nameAccount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="passAccount" class="form-label">Senha</label>
+                                <div class="d-flex align-items-center mb-3">
+                                    <input type="password" v-model="newPassword" class="form-control w-50 me-2" id="passAccount" required/>
+                                    <button type="button" class="btn btn-primary w-50" @click="updatePassword()" style="padding:4px 8px;">
+                                        Alterar senha
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary" :disabled="!isFormValid" data-bs-dismiss="modal" @click="updateUser()">Salvar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>      
 <script src="scripts/session.js"></script>  

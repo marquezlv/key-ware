@@ -135,6 +135,29 @@ public class Users {
         return user;
     }
 
+    public static Users getUserById(long id) throws Exception {
+        Users user = null;
+        Connection con = AppListener.getConnection();
+        String sql = "SELECT rowid, * FROM users WHERE rowid = ?";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setLong(1, id);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            long rowId = rs.getLong("rowid");
+            String name = rs.getString("name");
+            String login = rs.getString("login");
+            String role = rs.getString("role");
+            String passwordHash = rs.getString("password_hash");
+            user = new Users(rowId, name, login, role, passwordHash);
+        }
+
+        rs.close();
+        stmt.close();
+        con.close();
+        return user;
+    }
+
     public static void insertUser(String login, String name, String role, String password) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "INSERT INTO users(login, name, role, password_hash)"

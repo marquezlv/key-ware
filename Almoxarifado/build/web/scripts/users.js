@@ -87,22 +87,18 @@ const app = Vue.createApp({
                     name: this.newName,
                     login: this.newLogin,
                     role: this.newRole,
-                    password: this.newPassword
                 };
             }
             const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
                 name: this.newName,
                 login: this.newLogin,
                 role: this.newRole,
-                password: this.newPassword
             });
             this.loadList(this.currentPage, this.column, this.direction);
             this.resetForm();
             this.user = null;
         },
         async updatePassword() {
-            console.log(this.newPassword);
-            console.log(this.userId);
             if (this.newPassword && this.userId) {
                 const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
                     password: this.newPassword
