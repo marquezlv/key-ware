@@ -26,6 +26,7 @@ import model.Filters_Rooms;
 import model.Reservation;
 import model.CurrentKey;
 import model.History;
+import model.Material;
 import org.json.JSONArray;
 
 @WebServlet(name = "ApiServlet", urlPatterns = {"/api/*"})
@@ -71,7 +72,9 @@ public class ApiServlet extends HttpServlet {
                 processKeys(file, request, response);
             } else if (request.getRequestURI().endsWith("/api/history")) {
                 processHistory(file, request, response);
-            }
+            } else if (request.getRequestURI().endsWith("/api/material")) {
+                processMaterial(file, request, response);
+            } 
 
         } catch (Exception ex) {
             response.sendError(500, "Internal Error: " + ex.getLocalizedMessage());
@@ -546,6 +549,38 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Update: This table cannot be update");
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             response.sendError(401, "Delete: History cannot be deleted directly");
+        } else {
+            response.sendError(405, "Method not allowed");
+        }
+    }
+    
+    private void processMaterial(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute("users") == null) {
+            response.sendError(401, "Unauthorized: No session");
+        } else if (request.getMethod().toLowerCase().equals("get")) {
+            String pageParam = request.getParameter("page");
+            if (pageParam == null) {
+                file.put("list", new JSONArray(Material.getMaterials()));
+            } else {
+                int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+                int column = Integer.parseInt(request.getParameter("column"));
+                int sort = Integer.parseInt(request.getParameter("sort"));
+                int page = Integer.parseInt(pageParam);
+                file.put("list", new JSONArray(Material.getMaterialPages(page, itemsPerPage, column, sort)));
+                file.put("total", Material.getTotalMaterial());
+            }
+        } else if (request.getMethod().toLowerCase().equals("post")) {
+            JSONObject body = getJSONBODY(request.getReader());
+            String name = body.getString("name");
+            Material.insertMaterial(name);
+        } else if (request.getMethod().toLowerCase().equals("put")) {
+            JSONObject body = getJSONBODY(request.getReader());
+            String name = body.getString("name");
+            Long id = Long.parseLong(request.getParameter("id"));
+            Material.updateMaterial(id, name);
+        } else if (request.getMethod().toLowerCase().equals("delete")) {
+            Long id = Long.parseLong(request.getParameter("id"));
+            Material.deleteMaterial(id);
         } else {
             response.sendError(405, "Method not allowed");
         }

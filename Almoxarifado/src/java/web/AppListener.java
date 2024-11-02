@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Date;
 import model.Users;
+import model.Material;
 import model.Filters;
 import model.Rooms;
 import model.Subjects;
@@ -76,6 +77,8 @@ public class AppListener implements ServletContextListener {
             s.execute(Filters_Rooms.getCreateStatement());
 
             s.execute(Filters.getCreateStatement());
+            
+            s.execute(Material.getCreateStatement());
 
             s.execute(Subjects.getCreateStatement());
 

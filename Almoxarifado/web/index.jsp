@@ -9,6 +9,51 @@
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="styles/index_page.css">
         <link rel="stylesheet" href="styles/card_reservation.css">
+        <style>
+            .card-title {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .scrolling-container {
+                width: 70px; /* Define a área de rolagem fixa */
+                overflow: hidden; /* Oculta o texto fora da área */
+                white-space: nowrap; /* Impede quebra de linha no texto */
+                position: relative;
+            }
+
+            .scrolling-text.marquee {
+                display: inline-block;
+                padding-right: 100%; /* Espaço extra para rolar */
+                animation: scroll-text 5s linear infinite;
+            }
+
+            @keyframes scroll-text {
+                0% {
+                    transform: translateX(100%); /* Começa à direita, fora da área visível */
+                }
+                100% {
+                    transform: translateX(-100%); /* Rola para a esquerda até desaparecer */
+                }
+            }
+
+            .button-container .custom-btn {
+                background-color: transparent;
+                border: none;
+            }
+
+            .custom-icon {
+                color: white !important;
+                transition: transform 0.2s ease, color 0.2s ease;
+            }
+
+            .custom-btn:hover {
+                background-color: gray !important;
+                transform: scale(1.4);
+            }
+
+        </style>
     </head>
     <body>
         <%@ include file="WEB-INF/jspf/header.jspf" %>
@@ -34,14 +79,27 @@
                                         <div class="card-body custom-card-body">
                                             <div class="both-buttons">
                                                 <h4 class="card-title">
-                                                    {{ room.name }}
-                                                    <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
-                                                        <i class="bi bi-plus-lg"></i>                                            </button>
-                                                    <button class="btn btn-warning btn-sm ms-auto buttons" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
-                                                        <i class="bi bi-info-square"></i>
-                                                    </button>
+                                                    <div class="scrolling-container">
+                                                        <span 
+                                                            :class="{ marquee: room.name.length > 8 }" 
+                                                            class="scrolling-text">
+                                                            {{ room.name }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="ms-auto button-container">
+                                                        <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-sm buttons custom-btn" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
+                                                            <i class="bi bi-plus-lg custom-icon"></i>           
+                                                        </button>
+                                                        <button class="btn btn-sm buttons custom-btn" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                                                            <i class="bi bi-info-square custom-icon"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm buttons custom-btn" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                                                            <i class="bi bi-info-square custom-icon"></i>
+                                                        </button>
+                                                    </div>
+                                                </h4>
+
                                             </div>
-                                            </h4>
                                             <div v-for="key in getKey(room.rowid)" :key="key.rowid">
                                                 <hr>
                                                 <div class="d-flex align-items-center both-buttons"> 

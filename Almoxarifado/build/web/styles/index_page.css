@@ -44,6 +44,23 @@
     color: #333;
 }
 
+.custom-btn {
+    background-color: transparent;
+    border: none;
+}
+
+.custom-icon {
+    color: white;
+}
+
+.custom-btn:hover {
+    background-color: gray;
+}
+
+.custom-btn:hover .custom-icon {
+    color: #000;
+}
+
 .card-available {
     background-color: #00A451;
     color: #fff;
@@ -106,7 +123,7 @@
 @media (min-width: 992px) {
     .row-cols-lg-3 > .col {
         flex: 0 0 33.333%;
-        
+
     }
 }
 .config-container {
@@ -126,11 +143,11 @@
     display: inline-block;
     font-size: 14px;
     line-height: 1.5;
-    padding-left: 15px; 
+    padding-left: 15px;
 }
 
 .separator {
-   position: absolute;
+    position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);

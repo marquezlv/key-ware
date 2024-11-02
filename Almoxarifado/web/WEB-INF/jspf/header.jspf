@@ -38,8 +38,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="filters.jsp">Filtros</a>
                         </li>
-                        <li class="nav-item" v-if="data.role == 'ADMIN'">
-                            <a class="nav-link" href="users.jsp">Usuarios do sistema</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="material.jsp">Materiais</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="employees.jsp">Funcionarios</a>
@@ -48,10 +48,13 @@
                             <a class="nav-link" href="subjects.jsp">Matérias e cursos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="history.jsp">Historico de chaves</a>
+                            <a class="nav-link" href="history.jsp">Historico</a>
+                        </li>
+                        <li class="nav-item" v-if="data.role == 'ADMIN'">
+                            <a class="nav-link" href="users.jsp">Usuarios do sistema</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="showTV.jsp">TV</a>
+                            <a class="nav-link" href="showTV.jsp" target="_blank">TV</a>
                         </li>
                     </ul>
                     <div class="navbar-text-login">
