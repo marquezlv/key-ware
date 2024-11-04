@@ -19,7 +19,9 @@ import model.Employees_Subjects;
 import model.Filters_Rooms;
 import model.Reservation;
 import model.CurrentKey;
+import model.CurrentMaterial;
 import model.History;
+import model.HistoryMaterial;
 
 @WebListener
 public class AppListener implements ServletContextListener {
@@ -65,10 +67,14 @@ public class AppListener implements ServletContextListener {
             s.execute(Rooms.getCreateStatement());
 
             s.execute(History.getCreateStatement());
+            
+            s.execute(HistoryMaterial.getCreateStatement());
 
             s.execute(Users.getCreateStatement());
 
             s.execute(CurrentKey.getCreateStatement());
+            
+            s.execute(CurrentMaterial.getCreateStatement());
 
             s.execute(Employees_Subjects.getCreateStatement());
 

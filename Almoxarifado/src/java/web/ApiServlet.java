@@ -27,6 +27,8 @@ import model.Reservation;
 import model.CurrentKey;
 import model.History;
 import model.Material;
+import model.CurrentMaterial;
+import model.HistoryMaterial;
 import org.json.JSONArray;
 
 @WebServlet(name = "ApiServlet", urlPatterns = {"/api/*"})
@@ -74,7 +76,9 @@ public class ApiServlet extends HttpServlet {
                 processHistory(file, request, response);
             } else if (request.getRequestURI().endsWith("/api/material")) {
                 processMaterial(file, request, response);
-            } 
+            } else if (request.getRequestURI().endsWith("/api/current_material")) {
+                processCurrentMaterial(file, request, response);
+            }
 
         } catch (Exception ex) {
             response.sendError(500, "Internal Error: " + ex.getLocalizedMessage());
@@ -416,14 +420,12 @@ public class ApiServlet extends HttpServlet {
                 String subject = request.getParameter("subject");
                 String strdate = request.getParameter("date");
                 System.out.println("Data String " + strdate);
-                // Verifica se a data foi enviada
                 Date searchDate = null;
                 if (strdate != null && !strdate.isEmpty()) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    searchDate = dateFormat.parse(strdate);  // Converte a data se estiver presente
+                    searchDate = dateFormat.parse(strdate);
                 }
                 System.out.println("Data formatada: " + searchDate);
-                // Chama a função de pesquisa, passando os parâmetros, inclusive null se for o caso
                 file.put("list", new JSONArray(Reservation.getSearchReservations(
                         employee != null && !employee.isEmpty() ? employee : null,
                         subject != null && !subject.isEmpty() ? subject : null,
@@ -437,24 +439,28 @@ public class ApiServlet extends HttpServlet {
             long room = body.getLong("room");
             long subject = body.getLong("subject");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             String strDateTime = body.getString("date");
             String strDateTimeEnd = body.getString("end");
             Date dateTime = dateFormat.parse(strDateTime);
             Date dateTimeEnd = dateFormat.parse(strDateTimeEnd);
-            Reservation.insertReservation(employee, room, subject, dateTime, dateTimeEnd);
+            Reservation.insertReservation(employee, room, subject, dateTime, dateTimeEnd, 1);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             JSONObject body = getJSONBODY(request.getReader());
-            long employee = body.getLong("employee");
-            long room = body.getLong("room");
-            long subject = body.getLong("subject");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            String strDate = body.getString("date");
-            String strDateEnd = body.getString("end");
-            Date date = dateFormat.parse(strDate);
-            Date dateEnd = dateFormat.parse(strDateEnd);
+            int active = body.getInt("active");
             Long id = Long.parseLong(request.getParameter("id"));
-            Reservation.updateReservation(id, employee, room, subject, date, dateEnd);
+            if (active == 1) {
+                long employee = body.getLong("employee");
+                long room = body.getLong("room");
+                long subject = body.getLong("subject");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                String strDate = body.getString("date");
+                String strDateEnd = body.getString("end");
+                Date date = dateFormat.parse(strDate);
+                Date dateEnd = dateFormat.parse(strDateEnd);
+                Reservation.updateReservation(id, employee, room, subject, date, dateEnd);
+            } else if (active == 0){
+                Reservation.updateStatus(id, active);
+            }
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Reservation.deleteReservation(id);
@@ -484,9 +490,7 @@ public class ApiServlet extends HttpServlet {
     }
 
     private void processKeys(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (request.getSession().getAttribute("users") == null) {
-            response.sendError(401, "Unauthorized: No session");
-        } else if (request.getMethod().toLowerCase().equals("get")) {
+        if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
             if (pageParam == null) {
                 file.put("list", new JSONArray(CurrentKey.getKeys()));
@@ -553,7 +557,7 @@ public class ApiServlet extends HttpServlet {
             response.sendError(405, "Method not allowed");
         }
     }
-    
+
     private void processMaterial(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
@@ -581,6 +585,40 @@ public class ApiServlet extends HttpServlet {
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Material.deleteMaterial(id);
+        } else {
+            response.sendError(405, "Method not allowed");
+        }
+    }
+    
+    private void processCurrentMaterial(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getMethod().toLowerCase().equals("get")) {
+            String pageParam = request.getParameter("page");
+            if (pageParam == null) {
+                file.put("list", new JSONArray(CurrentMaterial.getMaterials()));
+            } else {
+                int page = Integer.parseInt(pageParam);
+                file.put("list", new JSONArray(CurrentMaterial.getMaterialPages(page, 8)));
+                file.put("total", CurrentKey.getTotalCurrentKey());
+            }
+        } else if (request.getMethod().toLowerCase().equals("post")) {
+            JSONObject body = getJSONBODY(request.getReader());
+            long material = body.getLong("material");
+            long employee = body.getLong("employee");
+            long user = body.getLong("user");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            String strDate = body.getString("start");
+            Date date = dateFormat.parse(strDate);
+            HistoryMaterial.insertHistoryMaterial(employee, material, "Retirada", new Date(), user);
+            CurrentMaterial.insertCurrentMaterial(employee, material, date);
+        } else if (request.getMethod().toLowerCase().equals("put")) {
+            response.sendError(401, "Update: This table cannot be update");
+        } else if (request.getMethod().toLowerCase().equals("delete")) {
+            Long id = Long.parseLong(request.getParameter("id"));
+            Long employee = Long.parseLong(request.getParameter("employee"));
+            Long material = Long.parseLong(request.getParameter("material"));
+            Long user = Long.parseLong(request.getParameter("user"));
+            HistoryMaterial.insertHistoryMaterial(employee, material, "Devolvido", new Date(), user);
+            CurrentMaterial.deleteCurrentMaterial(id);
         } else {
             response.sendError(405, "Method not allowed");
         }

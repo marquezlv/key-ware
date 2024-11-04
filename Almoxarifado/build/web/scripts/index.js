@@ -15,6 +15,7 @@ const app = Vue.createApp({
             isReservations: false,
             focusedCard: null,
             room: null,
+            selectedReservation: null,
             list: [],
             rooms: [],
             employees: [],
@@ -30,54 +31,109 @@ const app = Vue.createApp({
             return [...new Set(this.rooms.map(room => room.location))];
         },
         reservationsGroup() {
-            return this.groupedReservations(); // Call the method to return grouped reservations
+            return this.groupedReservations();
         }
 
     },
     methods: {
+        getRoomStatusClass(room) {
+            const currentDateTime = new Date();
+
+            // Encontra a reserva ativa para a sala atual
+            const activeReservation = this.reservations.find(reservation => {
+                // Verifica se a reserva é para o mesmo quarto e está ativa
+                if (reservation.roomid !== room.rowid || reservation.active !== 1)
+                    return false;
+
+                // Divide a string para obter data e hora de início e de término
+                const [startDate, startTime] = reservation.start.split(' - ').slice(1);
+                const [endDate, endTime] = reservation.end.split(' - ').slice(1);
+
+                // Converte data e hora de início para objeto Date
+                const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
+                const [startHour, startMinute] = startTime.split(':').map(Number);
+                const startDateTime = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
+
+                // Converte data e hora de término para objeto Date
+                const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
+                const [endHour, endMinute] = endTime.split(':').map(Number);
+                const endDateTime = new Date(endYear, endMonth - 1, endDay, endHour, endMinute);
+
+                // Retorna true se a data e hora atuais estão dentro do intervalo da reserva
+                return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
+            });
+
+            if (activeReservation) {
+                this.selectedReservation = activeReservation; // Armazena a reserva ativa
+                return 'custom-reservation';
+            } else if (room.status === 'DISPONIVEL') {
+                return 'card-available';
+            } else {
+                return 'card-unavailable';
+            }
+        },
+
+        async acceptReservation(reservation) {
+            const response = await this.request(`/Almoxarifado/api/reservations?id=${reservation.rowid}`, "PUT", {
+                active: 0
+            });
+            if (response) {
+                this.newEmployee = reservation.employeeid;
+                this.newRoom = reservation.roomid;
+                this.newSubject = reservation.subject;
+
+                await this.addKey();
+                await this.loadReservations();
+                
+                this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
+                this.selectedReservation = null;
+            } else {
+                console.error("Erro ao aceitar a reserva:", this.error);
+            }
+        },
+
+        async rejectReservation(reservation) {
+            const response = await this.request(`/Almoxarifado/api/reservations?id=${reservation.rowid}`, "PUT", {
+                active: 0
+            });
+            if (response) {
+                await this.loadReservations();
+                
+                this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
+                this.selectedReservation = null;
+            } else {
+                console.error("Erro ao recusar a reserva:", this.error);
+            }
+        },
         groupedReservations() {
-            const currentDate = new Date(); // Current date and time
+            const currentDate = new Date();
 
             const filteredReservations = this.reservations.filter(reservation => {
-                // Process the 'end' field from the reservation  
                 const endDateTimeStr = reservation.end;
-                console.log("String de data/hora:", endDateTimeStr);
 
-                // Separar a string e ignorar o primeiro elemento (dia da semana)
                 const parts = endDateTimeStr.split(' - ');
 
-                // Verifique se há pelo menos 3 partes (dia da semana, data, hora)
                 if (parts.length < 3) {
                     console.error("Formato inválido da string de data/hora.");
-                    return false; // Retorna falso se o formato não estiver correto
+                    return false;
                 }
 
-                // A data e a hora são as partes seguintes
-                const datePart = parts[1]; // 12/09/2024
-                const timePart = parts[2];  // 20:23
+                const datePart = parts[1];
+                const timePart = parts[2];
 
-                // Processar a parte da data
                 const [endDay, endMonth, endYear] = datePart.split('/').map(Number);
-                console.log(`Dia: ${endDay}, Mês: ${endMonth}, Ano: ${endYear}`);
 
-                // Processar a parte da hora
                 const [endHour, endMinute] = timePart.split(':').map(Number);
-                console.log(`Hora: ${endHour}, Minuto: ${endMinute}`);
 
-                // Verifique se os valores extraídos são válidos
                 if (isNaN(endDay) || isNaN(endMonth) || isNaN(endYear) || isNaN(endHour) || isNaN(endMinute)) {
                     console.error("Um dos valores é inválido.");
                     return false;
                 }
 
-                // Criar o objeto de data
                 const endDate = new Date(endYear, endMonth - 1, endDay, endHour || 23, endMinute || 59);
-                console.log("Data de término:", endDate, " - ", currentDate);
 
-                // Apenas retorna reservas onde a data e hora 'end' é maior que o tempo atual
                 return currentDate <= endDate;
             });
-            // Grouping reservations by room
             const grouped = filteredReservations.reduce((groups, reservation) => {
                 if (!groups[reservation.roomName]) {
                     groups[reservation.roomName] = [];
@@ -86,7 +142,6 @@ const app = Vue.createApp({
                 return groups;
             }, {});
 
-            // Sorting reservations by date (in descending order, latest first)
             Object.keys(grouped).forEach(roomName => {
                 grouped[roomName].sort((a, b) => {
                     const [dayA, monthA, yearA] = a.start.split(' - ')[1].split(' ')[0].split('/').map(Number);
@@ -103,7 +158,6 @@ const app = Vue.createApp({
                 });
             });
 
-            // Return the grouped reservations, sorted alphabetically by room name
             return Object.keys(grouped)
                     .sort((a, b) => a.localeCompare(b))
                     .reduce((sortedGroups, roomName) => {
@@ -117,7 +171,6 @@ const app = Vue.createApp({
         },
         groupByEmployee(reservationsGroup) {
             return reservationsGroup.reduce((groups, reservation) => {
-                // Agrupa reservas por nome do funcionário
                 if (!groups[reservation.employee]) {
                     groups[reservation.employee] = [];
                 }

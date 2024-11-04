@@ -129,8 +129,8 @@ const app = Vue.createApp({
                     room: this.newRoom,
                     subject: subjectValue,
                     date: currentStartDate,
-                    end: currentEndDate
-
+                    end: currentEndDate,
+                    active: 1
                 });
                 console.log(i, " - ", data);
                 console.log(i, " - ", currentEndDate);
@@ -157,7 +157,8 @@ const app = Vue.createApp({
                 room: this.newRoom,
                 subject: subjectValue,
                 date: this.newDate,
-                end: this.newEnd
+                end: this.newEnd,
+                active: 1
             });
             this.loadList(this.currentPage, this.column, this.direction);
         },
@@ -188,7 +189,8 @@ const app = Vue.createApp({
                 room: this.newRoom,
                 subject: this.newSubject,
                 date: this.newDate,
-                end: this.newEnd
+                end: this.newEnd,
+                active: 1
             });
             this.loadList(this.currentPage, this.column, this.direction);
             this.resetForm();

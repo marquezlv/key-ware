@@ -20,6 +20,7 @@ public class Reservation {
     private String location;
     private String start;
     private String end;
+    private int active;
     private long subject;
     private String subjectName;
     private String subjectPeriod;
@@ -32,6 +33,7 @@ public class Reservation {
                 + "cd_subject INTEGER,"
                 + "dt_start DATETIME,"
                 + "dt_end DATETIME,"
+                + "ic_active INTEGER,"
                 + "FOREIGN KEY(cd_employee) REFERENCES employees(cd_employee),"
                 + "FOREIGN KEY(cd_room) REFERENCES rooms(cd_room),"
                 + "FOREIGN KEY(cd_subject) REFERENCES subjects(cd_subject)"
@@ -117,6 +119,7 @@ public class Reservation {
             long employee = rs.getLong("cd_employee");
             long room = rs.getLong("cd_room");
             long subject = rs.getLong("cd_subject");
+            int active = rs.getInt("ic_active");
             String employeeName = rs.getString("nm_employee");
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
@@ -135,7 +138,7 @@ public class Reservation {
             String dateEnd = dateFormat.format(datetimeEnd);
 
             // Adiciona a reserva na lista
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
         }
 
         return list;
@@ -207,6 +210,7 @@ public class Reservation {
             long employee = rs.getLong("cd_employee");
             long room = rs.getLong("cd_room");
             long subject = rs.getLong("cd_subject");
+            int active = rs.getInt("ic_active");
             String employeeName = rs.getString("nm_employee");
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
@@ -219,7 +223,7 @@ public class Reservation {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
             String dateEnd = dateFormat.format(datetimeEnd);
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
         }
         rs.close();
         stmt.close();
@@ -246,6 +250,7 @@ public class Reservation {
             long employee = rs.getLong("cd_employee");
             long room = rs.getLong("cd_room");
             long subject = rs.getLong("cd_subject");
+            int active = rs.getInt("ic_active");
             String employeeName = rs.getString("nm_employee");
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
@@ -258,7 +263,7 @@ public class Reservation {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
             String dateEnd = dateFormat.format(datetimeEnd);
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
         }
         rs.close();
         stmt.close();
@@ -266,9 +271,9 @@ public class Reservation {
         return list;
     }
 
-    public static void insertReservation(long employee, long room, long subject, Date date, Date end) throws Exception {
+    public static void insertReservation(long employee, long room, long subject, Date date, Date end, int active) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "INSERT INTO reservations(cd_employee, cd_room, cd_subject, dt_start, dt_end) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO reservations(cd_employee, cd_room, cd_subject, dt_start, dt_end, ic_active) VALUES(?,?,?,?,?,?)";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setLong(1, employee);
@@ -278,6 +283,7 @@ public class Reservation {
         stmt.setDate(4, sqlDate);
         java.sql.Date sqlDateEnd = new java.sql.Date(end.getTime());
         stmt.setDate(5, sqlDateEnd);
+        stmt.setInt(6,active);
         stmt.execute();
 
         stmt.close();
@@ -303,6 +309,20 @@ public class Reservation {
         stmt.close();
         con.close();
     }
+    
+    public static void updateStatus(long id, int active) throws Exception {
+        Connection con = AppListener.getConnection();
+        String sql = "UPDATE reservations SET ic_active = ? WHERE cd_reservation = ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, active);
+        stmt.setLong(2, id);
+
+        stmt.execute();
+
+        stmt.close();
+        con.close();
+    }
 
     public static void deleteReservation(long id) throws Exception {
         Connection con = AppListener.getConnection();
@@ -317,7 +337,7 @@ public class Reservation {
         con.close();
     }
 
-    public Reservation(long rowid, long employeeid, String employee, long roomid, String roomName, String location, long subject, String subjectName, String subjectPeriod, String start, String end) {
+    public Reservation(long rowid, long employeeid, String employee, long roomid, String roomName, String location, long subject, String subjectName, String subjectPeriod, String start, String end, int active) {
         this.rowid = rowid;
         this.employeeid = employeeid;
         this.employee = employee;
@@ -329,6 +349,7 @@ public class Reservation {
         this.subjectName = subjectName;
         this.subjectPeriod = subjectPeriod;
         this.end = end;
+        this.active = active;
     }
 
     public long getRowid() {
@@ -417,6 +438,14 @@ public class Reservation {
 
     public void setSubjectPeriod(String subjectPeriod) {
         this.subjectPeriod = subjectPeriod;
+    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
     }
 
 }

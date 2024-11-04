@@ -18,6 +18,49 @@
                 </div>
                 <div v-else class="normal-page">
                     <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                        Cursos
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                                Adicionar
+                            </button>
+                        </div>
+                    </h2>
+                    <label for="registers" class="form-label"></label>
+                    <select class="mb-3" v-model="itemsPerPageCourse" id="registers" @change="reloadPageCourse">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>50</option>
+                    </select>
+                    <table class="table">
+                        <tr>
+                            <th @click="filterListCourse(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                            <th>AÇÕES</th>
+                        </tr>
+                        <tr v-for="item3 in course" :key="item3.rowid">
+                            <td>{{ item3.name}}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic Example">
+                                    <button type ="button" @click="setVariablesCourse(item3)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="bi bi-pen"></i></button>
+                                    <button type ="button" @click="removeCourse(item3.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                    </table>
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            <button @click="previousPageCourse" :disabled="currentPageCourse === 1">Anterior</button>
+                            <div v-if="totalPagesCourse > 1">
+                                <span v-for="page in paginationCourse()" :key="page">
+                                    <button v-if="page === 'prevJump'" @click="jumpPagesCourse(-5)">←</button>
+                                    <button v-else-if="page === 'nextJump'" @click="jumpPagesCourse(5)">→</button>
+                                    <button v-else @click="goToPageCourse(page)" :class="{ 'active': page === currentPageCourse }">{{ page }}</button>
+                                </span>
+                            </div>
+                            <button @click="nextPageCourse" :disabled="currentPageCourse === totalPagesCourse">Próxima</button>
+                        </div>
+                    </div>
+                    <br>
+                <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Materias
                         <div class="d-flex align-items-center">
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
@@ -64,51 +107,8 @@
                             <button @click="nextPageSub" :disabled="currentPageSub === totalPagesSub">Próxima</button>
                         </div>
                     </div>
-                    <br>
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                        Cursos
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addCourseModal">
-                                Adicionar
-                            </button>
-                        </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPageCourse" id="registers" @change="reloadPageCourse">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th @click="filterListCourse(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item3 in course" :key="item3.rowid">
-                            <td>{{ item3.name}}</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="setVariablesCourse(item3)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="bi bi-pen"></i></button>
-                                    <button type ="button" @click="removeCourse(item3.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPageCourse" :disabled="currentPageCourse === 1">Anterior</button>
-                            <div v-if="totalPagesCourse > 1">
-                                <span v-for="page in paginationCourse()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPagesCourse(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPagesCourse(5)">→</button>
-                                    <button v-else @click="goToPageCourse(page)" :class="{ 'active': page === currentPageCourse }">{{ page }}</button>
-                                </span>
-                            </div>
-                            <button @click="nextPageCourse" :disabled="currentPageCourse === totalPagesCourse">Próxima</button>
-                        </div>
                     </div>
-                    <br>
-                </div>
+                <br>
                 <div class="modal fade" id="addSubjectModal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">

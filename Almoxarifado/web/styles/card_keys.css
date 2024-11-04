@@ -1,0 +1,64 @@
+.body{
+    width: 140px;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.scrolling-container {
+    width: 70px; /* Define a área de rolagem fixa */
+    overflow: hidden; /* Oculta o texto fora da área */
+    white-space: nowrap; /* Impede quebra de linha no texto */
+    position: relative;
+    max-width: 100%;
+}
+
+.scrolling-text.marquee {
+    display: inline-block;
+    padding-right: 100%; /* Espaço extra para rolar */
+    animation: scroll-text 5s linear infinite;
+    animation-delay: 3s; /* Atraso de 3 segundos antes de iniciar a rolagem */
+}
+
+/* Defina a animação para começar estática e depois rolar */
+@keyframes scroll-text {
+    0%, 10% {
+        transform: translateX(0); /* Começa estático */
+    }
+    100% {
+        transform: translateX(-100%); /* Rola para a esquerda até desaparecer */
+    }
+}
+
+.button-container .custom-btn {
+    background-color: transparent;
+    border: none;
+    max-width: 100%;
+}
+
+.custom-icon {
+    color: white !important;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.custom-btn:hover {
+    background-color: gray !important;
+    transform: scale(1.4);
+}
+
+.custom-reservation {
+    background-color: orange;
+    color: #fff;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    width: 200px;
+    max-width: 100%;
+}
+

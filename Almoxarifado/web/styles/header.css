@@ -145,7 +145,7 @@ th, td {
 
 
 .offcanvas-closed .normal-page {
-    transform: translateX(-5%) translateY(30px) scale(1.1);
+    transform: translateX(-10%) translateY(30px) scale(1.1);
 }
 
 .normal-page {

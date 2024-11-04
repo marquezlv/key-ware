@@ -45,7 +45,7 @@
                             <a class="nav-link" href="employees.jsp">Funcionarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="subjects.jsp">Matérias e cursos</a>
+                            <a class="nav-link" href="subjects.jsp">Cursos e Materias</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="history.jsp">Historico</a>
@@ -54,7 +54,7 @@
                             <a class="nav-link" href="users.jsp">Usuarios do sistema</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="showTV.jsp" target="_blank">TV</a>
+                            <a class="nav-link" href="tv.jsp" target="_blank">TV</a>
                         </li>
                     </ul>
                     <div class="navbar-text-login">

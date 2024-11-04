@@ -1,7 +1,6 @@
 const app = Vue.createApp({
     data() {
         return {
-            shared: shared,
             error: null,
             list: [],
             currentPage: 1,

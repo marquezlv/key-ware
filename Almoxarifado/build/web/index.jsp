@@ -8,52 +8,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link rel="stylesheet" href="styles/index_page.css">
+        <link rel="stylesheet" href="styles/card_keys.css">
         <link rel="stylesheet" href="styles/card_reservation.css">
-        <style>
-            .card-title {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .scrolling-container {
-                width: 70px; /* Define a área de rolagem fixa */
-                overflow: hidden; /* Oculta o texto fora da área */
-                white-space: nowrap; /* Impede quebra de linha no texto */
-                position: relative;
-            }
-
-            .scrolling-text.marquee {
-                display: inline-block;
-                padding-right: 100%; /* Espaço extra para rolar */
-                animation: scroll-text 5s linear infinite;
-            }
-
-            @keyframes scroll-text {
-                0% {
-                    transform: translateX(100%); /* Começa à direita, fora da área visível */
-                }
-                100% {
-                    transform: translateX(-100%); /* Rola para a esquerda até desaparecer */
-                }
-            }
-
-            .button-container .custom-btn {
-                background-color: transparent;
-                border: none;
-            }
-
-            .custom-icon {
-                color: white !important;
-                transition: transform 0.2s ease, color 0.2s ease;
-            }
-
-            .custom-btn:hover {
-                background-color: gray !important;
-                transform: scale(1.4);
-            }
-
-        </style>
     </head>
     <body>
         <%@ include file="WEB-INF/jspf/header.jspf" %>
@@ -74,8 +30,10 @@
                         <div v-for="location in uniqueLocations" :key="location">
                             <h3>{{ location }}</h3>
                             <div class="row">
-                                <div class="col-md-2 mb-2" v-for="room in rooms.filter(room => room.location === location)" :key="room.rowid">
-                                    <div :class="room.status === 'DISPONIVEL' ? 'card-available' : 'card-unavailable'">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-2" 
+                                     v-for="room in rooms.filter(room => room.location === location)" 
+                                     :key="room.rowid">
+                                    <div :class="getRoomStatusClass(room)">
                                         <div class="card-body custom-card-body">
                                             <div class="both-buttons">
                                                 <h4 class="card-title">
@@ -87,26 +45,58 @@
                                                         </span>
                                                     </div>
                                                     <div class="ms-auto button-container">
-                                                        <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" class="btn btn-sm buttons custom-btn" type="button" @click="updateInputName(room)" data-bs-toggle="modal" data-bs-target="#addKeyModal">
+                                                        <button v-if="room.status !== 'INDISPONIVEL' && room.status !== 'OCUPADO'" 
+                                                                class="btn btn-sm buttons custom-btn" 
+                                                                type="button" 
+                                                                @click="updateInputName(room)" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#addKeyModal">
                                                             <i class="bi bi-plus-lg custom-icon"></i>           
                                                         </button>
-                                                        <button class="btn btn-sm buttons custom-btn" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
-                                                            <i class="bi bi-info-square custom-icon"></i>
+                                                        <button class="btn btn-sm buttons custom-btn" 
+                                                                type="button" 
+                                                                @click="addMaterial(room)" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#addMaterialModal">
+                                                            <i class="bi bi-inboxes custom-icon"></i>
                                                         </button>
-                                                        <button class="btn btn-sm buttons custom-btn" type="button" @click="viewRoom(room)" data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                                                        <button class="btn btn-sm buttons custom-btn" 
+                                                                type="button" 
+                                                                @click="viewRoom(room)" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#editRoomModal">
                                                             <i class="bi bi-info-square custom-icon"></i>
                                                         </button>
                                                     </div>
                                                 </h4>
-
                                             </div>
+                                            <div v-if="selectedReservation && selectedReservation.roomid === room.rowid">
+                                                <p>Reservado por: {{ selectedReservation.employee }}</p>
+                                                <button class="btn btn-sm btn-success" 
+                                                        @click="acceptReservation(selectedReservation)">
+                                                    <i class="bi bi-check-lg"></i> Aceitar
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" 
+                                                        @click="rejectReservation(selectedReservation)">
+                                                    <i class="bi bi-x-lg"></i> Recusar
+                                                </button>
+                                            </div>
+
                                             <div v-for="key in getKey(room.rowid)" :key="key.rowid">
                                                 <hr>
                                                 <div class="d-flex align-items-center both-buttons"> 
-                                                    <div class="card-text me-2"><i class="bi-style-key bi-key-fill"></i> {{ key.employeeName || "-" }}</div>
-                                                    <br>
+                                                    <i class="bi-style-key bi-key-fill"></i>
+                                                    <div class="card-text me-2 scrolling-container">
+                                                        <span :class="{ marquee: key.employeeName.length > 8 }" class="scrolling-text body">
+                                                            {{ key.employeeName || "-" }}
+                                                        </span>
+                                                    </div>
                                                     <div class="form-check ms-auto">
-                                                        <button class="btn btn-success btn-sm ms-auto buttons" type='button' @click='returnKey(key.rowid, key.room, key.employee, key.subject)'><i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i></button>
+                                                        <button class="btn btn-success btn-sm ms-auto buttons" 
+                                                                type="button" 
+                                                                @click="returnKey(key.rowid, key.room, key.employee, key.subject)">
+                                                            <i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
