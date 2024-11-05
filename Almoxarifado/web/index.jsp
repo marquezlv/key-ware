@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Painel de salas</title>
+        <title>Painel de Salas</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -16,7 +16,7 @@
         <div id="app" class="container">
             <div v-if="shared.session">
                 <div class="page-content"> 
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de salas
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de Salas
                         <button class="btn btn-warning btn-sm ms-auto buttons" @click="ChangeScreen()" type="button">
                             <div v-if="isReservations">
                                 Voltar
@@ -54,8 +54,8 @@
                                                             <i class="bi bi-plus-lg custom-icon"></i>           
                                                         </button>
                                                         <button class="btn btn-sm buttons custom-btn" 
-                                                                type="button" 
-                                                                @click="addMaterial(room)" 
+                                                                type="button"
+                                                                @click="updateInputName(room)" 
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#addMaterialModal">
                                                             <i class="bi bi-inboxes custom-icon"></i>
@@ -100,6 +100,15 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div v-if="currentMaterial.length > 0" class="d-flex align-items-center mt-3">
+                                                <i class="bi-box-seam" 
+                                                   v-for="material in currentMaterial" 
+                                                   :key="material.rowid"
+                                                   class="material-icon me-2"
+                                                   :title="`Material: ${material.materialName}`">
+                                                </i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -118,6 +127,7 @@
                                 <input type="date" v-model="searchDate" class="form-control" @change="loadReservation()">
                             </div>
                         </div>
+                        <br>
                         <div v-for="(reservationsGroup, roomName) in reservationsGroup" :key="roomName" class="stack-container">
                             <h4 class="card-title">{{ roomName }}</h4>
                             <div class="col-md-12 mb-2">
@@ -171,6 +181,56 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-primary" :disabled="!newEmployee" data-bs-dismiss="modal" @click="addKey()">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="addMaterialModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5">Emprestar materiais</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="inputRoom" class="form-label">Sala para retirar chave</label>
+                                    <input type="text" v-model="roomName" class="form-control" id="inputRoom" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputEmployee" class="form-label">Funcionario</label>
+                                    <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
+                                        <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputMaterial" class="form-label">Material</label>
+                                    <select class="form-select" v-model="selectedMaterial" id="inputMaterial">
+                                        <option v-for="item in material" :key="item.rowid" :value="item">{{ item.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-secondary" @click="addToBuffer">Adicionar a lista</button>
+                                </div>
+                                <div v-if="materialBuffer.length > 0" class="mb-3">
+                                    <h5>Materiais Selecionados:</h5>
+                                    <ul>
+                                        <li v-for="(item, index) in materialBuffer" :key="index">
+                                            {{ item.name }}
+                                            <button type="button" class="btn-close" @click="removeFromBuffer(index)" aria-label="Remove"></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetMaterial()">Cancelar</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" :disabled="!newEmployee" data-bs-dismiss="modal" @click="saveMaterials()">Salvar</button>
                             </div>
                         </div>
                     </div>

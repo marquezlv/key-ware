@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Gerenciamento de Filtros de sala</title>
+        <title>Gerenciamento de Filtros de Sala</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -18,7 +18,7 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Filtros de sala
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Filtros de Sala
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()"  type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal">
                                     Adicionar

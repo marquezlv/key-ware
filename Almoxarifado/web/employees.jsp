@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Funcionarios</title>
+        <title>Funcionários</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -18,7 +18,7 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Funcionarios
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Funcionários
                         <div class="d-flex align-items-center"> 
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
                                 Adicionar
@@ -36,7 +36,7 @@
                         <tr>
                             <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterList(2)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th>MATERIA LECIONADA</th>
+                            <th>MATÉRIA LECIONADA</th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
@@ -80,7 +80,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5">Novo Funcionario</h1>
+                                <h1 class="modal-title fs-5">Novo Funcionário</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -93,8 +93,8 @@
                                         <label for="inputRole" class="form-label">Função</label>
                                         <select class="form-select" v-model="newType">
                                             <option value="PROFESSOR">PROFESSOR</option>
-                                            <option value="FUNCIONARIO">FUNCIONARIO</option>
-                                            <option value="ESTAGIARIO">ESTAGIARIO</option>
+                                            <option value="FUNCIONARIO">FUNCIONÁRIO</option>
+                                            <option value="ESTAGIARIO">ESTAGIÁRIO</option>
                                             <option value="MONITOR">MONITOR</option>
                                         </select>
                                     </div>
@@ -115,17 +115,17 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5">Adicionar Materia</h1>
+                                <h1 class="modal-title fs-5">Adicionar Matéria</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div class="mb-3">
-                                        <label for="inputEmployee" class="form-label">Materia para o Professor</label>
+                                        <label for="inputEmployee" class="form-label">Matéria para o Professor</label>
                                         <input type="text" v-model="employeeName" class="form-control" id="inputEmployee" disabled>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="inputSubject" class="form-label">Materia</label>
+                                        <label for="inputSubject" class="form-label">Matéria</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
                                             <option v-for="item3 in subjects" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{ item3.period }} - {{ item3.courseName }}</option>
                                         </select>

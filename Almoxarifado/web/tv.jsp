@@ -18,7 +18,7 @@
                     <table class="table">
                         <tr>
                             <th>REQUISITANTE</th>
-                            <th>MATERIA</th>
+                            <th>MATÉRIA</th>
                             <th>SALA</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">

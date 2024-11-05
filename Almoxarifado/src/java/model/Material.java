@@ -29,10 +29,10 @@ public class Material {
         Connection con = AppListener.getConnection();
         Statement stmt = con.createStatement();
 
-        ResultSet rs = stmt.executeQuery("SELECT * FROM material ORDER BY nm_name");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM material ORDER BY nm_material");
 
         while (rs.next()) {
-            long rowId = rs.getLong("cd_filter");
+            long rowId = rs.getLong("cd_material");
             String name = rs.getString("nm_material");
             list.add(new Material(rowId, name));
         }

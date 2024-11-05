@@ -54,7 +54,11 @@ body.dark-mode .stack-card h5{
 }
 
 body.dark-mode .stack-card {
-    background-color: #95a0a8;
+    background-color: #454a52;
+}
+
+.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); 
 }
 
 body.dark-mode .form-label {

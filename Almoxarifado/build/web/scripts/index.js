@@ -23,7 +23,11 @@ const app = Vue.createApp({
             key: [],
             roomFilters: [],
             filters: [],
-            reservations: []
+            reservations: [],
+            material: [],
+            currentMaterial: [],
+            selectedMaterial: null,
+            materialBuffer: []
         };
     },
     computed: {
@@ -36,6 +40,44 @@ const app = Vue.createApp({
 
     },
     methods: {
+        addToBuffer() {
+            if (this.selectedMaterial) {
+                this.materialBuffer.push(this.selectedMaterial);
+                this.selectedMaterial = null;
+            } else {
+                console.warn("Nenhum material selecionado.");
+            }
+        },
+        removeFromBuffer(index) {
+            this.materialBuffer.splice(index, 1);
+        },
+        async saveMaterials() {
+            if (this.materialBuffer.length === 0) {
+                console.warn("Nenhum material no buffer para salvar.");
+                return;
+            }
+
+            const currentDateTime = new Date().toISOString();
+            for (const item of this.materialBuffer) {
+                const response = await this.request("/Almoxarifado/api/current_material", "POST", {
+                    employee: this.newEmployee,
+                    material: item.rowid,
+                    start: currentDateTime,
+                    user: this.shared.session.id,
+                    room: this.newRoom
+                });
+                if (!response) {
+                    console.error("Erro ao salvar material:", this.error);
+                    break;
+                }
+            }
+
+            this.materialBuffer = [];
+        },
+        resetMaterial() {
+            this.newEmployee = "";
+            this.materialBuffer = [];
+        },
         getRoomStatusClass(room) {
             const currentDateTime = new Date();
 
@@ -84,7 +126,7 @@ const app = Vue.createApp({
 
                 await this.addKey();
                 await this.loadReservations();
-                
+
                 this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
                 this.selectedReservation = null;
             } else {
@@ -98,7 +140,7 @@ const app = Vue.createApp({
             });
             if (response) {
                 await this.loadReservations();
-                
+
                 this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
                 this.selectedReservation = null;
             } else {
@@ -266,8 +308,15 @@ const app = Vue.createApp({
             if (dataRE) {
                 this.reservations = dataRE.list;
             }
-            console.log(this.reservations);
-
+            const dataM = await this.request(`/Almoxarifado/api/material`, "GET");
+            if (dataM) {
+                this.material = dataM.list;
+            }
+            const dataC = await this.request(`/Almoxarifado/api/current_material`, "GET");
+            if (dataC) {
+                this.currentMaterial = dataC.list;
+            }
+            console.log(this.currentMaterial);
         },
         async loadReservation() {
             search = "true";

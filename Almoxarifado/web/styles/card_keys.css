@@ -2,6 +2,12 @@
     width: 140px;
 }
 
+.material-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #007bff;
+}
+
 .card-title {
     display: flex;
     align-items: center;
@@ -10,7 +16,7 @@
 }
 
 .scrolling-container {
-    width: 70px; /* Define a área de rolagem fixa */
+    width: 100%; /* Define a área de rolagem fixa */
     overflow: hidden; /* Oculta o texto fora da área */
     white-space: nowrap; /* Impede quebra de linha no texto */
     position: relative;
@@ -20,8 +26,13 @@
 .scrolling-text.marquee {
     display: inline-block;
     padding-right: 100%; /* Espaço extra para rolar */
-    animation: scroll-text 5s linear infinite;
+    animation: scroll-text 3s linear infinite;
     animation-delay: 3s; /* Atraso de 3 segundos antes de iniciar a rolagem */
+}
+
+/* Pausa a animação ao passar o mouse */
+.scrolling-container:hover .scrolling-text.marquee {
+    animation-play-state: paused; /* Pausa a animação */
 }
 
 /* Defina a animação para começar estática e depois rolar */

@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Matérias e Cursos</title>
+        <title>Cursos e Matérias</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -61,7 +61,7 @@
                     </div>
                     <br>
                 <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                        Materias
+                        Matérias
                         <div class="d-flex align-items-center">
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
                                 Adicionar
@@ -80,7 +80,7 @@
                         <tr>
                             <th @click="filterListSub(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterListSub(2)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterListSub(3)" style="cursor: pointer;">PERIODO <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="filterListSub(3)" style="cursor: pointer;">PERÍODO <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
@@ -113,7 +113,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5">Nova materia</h1>
+                                <h1 class="modal-title fs-5">Nova matéria</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -129,7 +129,7 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="inputCourse" class="form-label">Periodo</label>
+                                        <label for="inputCourse" class="form-label">Período</label>
                                         <select class="form-select" v-model="newPeriod" id="period" required>
                                             <option value="MATUTINO">Matutino</option>
                                             <option value="VESPERTINO">Vespertino</option>

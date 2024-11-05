@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Historico de salas</title>
+        <title>Histórico de Salas</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" integrity="sha384-b6lVK+yci+bfDmaY1u0zE8YYJt0TZxLEAFyYSLHId4xoVvsrQu3INevFKo+Xir8e" crossorigin="anonymous">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -19,8 +19,8 @@
                 <div v-else class="normal-page">
                     <div class="wrapper">
                         <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                            Historico de chaves
-                            <button @click="exportToCSV" class="btn btn-warning">Baixar historico </button>
+                            Histórico de Chaves
+                            <button @click="exportToCSV" class="btn btn-warning">Baixar Histórico </button>
                         </h2>
                         <div class="row align-items-center">
                             <div class="col-md-2">
@@ -39,7 +39,7 @@
                                 <input type="text" v-model="searchEmployee" class="form-control mb-3" @change="loadList()" placeholder="Professor">
                             </div>
                             <div class="col-md-2">
-                                <label>Data inicio</label>
+                                <label>Data início</label>
                                 <input type="date" v-model="dateStart" class="form-control mb-3" @change="loadList()">
                             </div>
                             <div class="col-md-2">
@@ -59,12 +59,12 @@
                         <table class="table">
                             <tr>
                                 <th @click="filterList(1)" style="cursor: pointer;">DATA <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(2)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(3)" style="cursor: pointer;">MATERIA <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">FUNCIONÁRIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(3)" style="cursor: pointer;">MATÉRIA <i class="bi bi-arrow-down-up"></i></th>
                                 <th @click="filterList(4)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
                                 <th @click="filterList(5)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
                                 <th @click="filterList(6)" style="cursor: pointer;">TIPO <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(7)" style="cursor: pointer;">USUARIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(7)" style="cursor: pointer;">USUÁRIO <i class="bi bi-arrow-down-up"></i></th>
                             </tr>
                             <tr v-for="item in list" :key="item.rowid">
                                 <td> {{ item.date }} </td>

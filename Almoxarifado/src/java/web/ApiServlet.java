@@ -605,11 +605,12 @@ public class ApiServlet extends HttpServlet {
             long material = body.getLong("material");
             long employee = body.getLong("employee");
             long user = body.getLong("user");
+            long room = body.getLong("room");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             String strDate = body.getString("start");
             Date date = dateFormat.parse(strDate);
             HistoryMaterial.insertHistoryMaterial(employee, material, "Retirada", new Date(), user);
-            CurrentMaterial.insertCurrentMaterial(employee, material, date);
+            CurrentMaterial.insertCurrentMaterial(employee, material, room ,date);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
         } else if (request.getMethod().toLowerCase().equals("delete")) {

@@ -42,16 +42,16 @@
                             <a class="nav-link" href="material.jsp">Materiais</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="employees.jsp">Funcionarios</a>
+                            <a class="nav-link" href="employees.jsp">Funcionários</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="subjects.jsp">Cursos e Materias</a>
+                            <a class="nav-link" href="subjects.jsp">Cursos e Matérias</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="history.jsp">Historico</a>
+                            <a class="nav-link" href="history.jsp">Histórico</a>
                         </li>
                         <li class="nav-item" v-if="data.role == 'ADMIN'">
-                            <a class="nav-link" href="users.jsp">Usuarios do sistema</a>
+                            <a class="nav-link" href="users.jsp">Usuários do sistema</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="tv.jsp" target="_blank">TV</a>
@@ -99,7 +99,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Editar seus dados</h1>
+                        <h1 class="modal-title fs-5">Editar seus Dados</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

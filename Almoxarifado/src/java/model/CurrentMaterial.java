@@ -14,6 +14,7 @@ public class CurrentMaterial {
     private long rowid;
     private long employee;
     private long material;
+    private long room;
     private String start;
     private String employeeName;
     private String materialName;
@@ -23,9 +24,11 @@ public class CurrentMaterial {
                 + "cd_current_material INTEGER PRIMARY KEY,"
                 + "cd_material INTEGER,"
                 + "cd_employee INTEGER,"
+                + "cd_room INTEGER,"
                 + "dt_start DATETIME,"
                 + "FOREIGN KEY(cd_material) REFERENCES material(cd_material),"
-                + "FOREIGN KEY(cd_employee) REFERENCES employees(cd_employee)"
+                + "FOREIGN KEY(cd_employee) REFERENCES employees(cd_employee),"
+                + "FOREIGN KEY(cd_room) REFERENCES rooms(cd_room)"
                 + ")";
     }
 
@@ -48,10 +51,11 @@ public class CurrentMaterial {
         ArrayList<CurrentMaterial> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT c.*, m.cd_material, m.nm_material, e.cd_employee, e.nm_employee "
+        String sql = "SELECT c.*, r.cd_room ,m.cd_material, m.nm_material, e.cd_employee, e.nm_employee "
                 + "FROM currentMaterial c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN material m ON m.cd_material = c.cd_material "
+                + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
                 + "ORDER BY e.nm_employee, m.nm_material";
         PreparedStatement stmt = con.prepareStatement(sql);
 
@@ -60,13 +64,14 @@ public class CurrentMaterial {
             long rowid = rs.getLong("cd_current_material");
             long employee = rs.getLong("cd_employee");
             long material = rs.getLong("cd_material");
+            long room = rs.getLong("cd_room");
             String employeeName = rs.getString("nm_employee");
             String materialName = rs.getString("nm_material");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentMaterial(rowid, material, employee, date, employeeName, materialName));
+            list.add(new CurrentMaterial(rowid, material, employee, room , date, employeeName, materialName));
         }
         rs.close();
         stmt.close();
@@ -79,10 +84,11 @@ public class CurrentMaterial {
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT c.*, m.cd_material ,m.nm_material ,e.cd_employee, e.nm_employee "
+        String sql = "SELECT c.*, r.cd_room ,m.cd_material ,m.nm_material ,e.cd_employee, e.nm_employee "
                 + "FROM currentMaterial c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN material m ON m.cd_material = c.cd_material "
+                + "LEFT JOIN room r ON r.cd_room = c.cd_room "
                 + "ORDER BY e.nm_employee, m.nm_material "
                 + "LIMIT ?,?";
 
@@ -95,13 +101,14 @@ public class CurrentMaterial {
             long rowid = rs.getLong("cd_current_material");
             long employee = rs.getLong("cd_employee");
             long material = rs.getLong("cd_material");
+            long room = rs.getLong("cd_room");
             String employeeName = rs.getString("nm_employee");
             String materialName = rs.getString("nm_material");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentMaterial(rowid, material, employee, date, employeeName, materialName));
+            list.add(new CurrentMaterial(rowid, material, employee, room, date, employeeName, materialName));
         }
         rs.close();
         stmt.close();
@@ -109,15 +116,16 @@ public class CurrentMaterial {
         return list;
     }
 
-    public static void insertCurrentMaterial(long employee, long material, Date date) throws Exception {
+    public static void insertCurrentMaterial(long employee, long material, long room, Date date) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "INSERT INTO currentMaterial(cd_employee, cd_material, dt_start) VALUES(?,?,?)";
+        String sql = "INSERT INTO currentMaterial(cd_employee, cd_material, cd_room, dt_start) VALUES(?,?,?,?)";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setLong(1, employee);
         stmt.setLong(2, material);
+        stmt.setLong(3, room);
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-        stmt.setDate(3, sqlDate);
+        stmt.setDate(4, sqlDate);
         stmt.execute();
         
         stmt.close();
@@ -134,13 +142,14 @@ public class CurrentMaterial {
         con.close();
     }
 
-    public CurrentMaterial(long rowid, long material, long employee, String start, String employeeName, String materialName) {
+    public CurrentMaterial(long rowid, long material, long employee, long room, String start, String employeeName, String materialName) {
         this.rowid = rowid;
         this.material = material;
         this.employee = employee;
         this.start = start;
         this.employeeName = employeeName;
         this.materialName = materialName;
+        this.room = room;
     }
 
     public long getRowid() {
@@ -188,6 +197,14 @@ public class CurrentMaterial {
 
     public void setMaterialName(String materialName) {
         this.materialName = materialName;
+    }
+
+    public long getRoom() {
+        return room;
+    }
+
+    public void setRoom(long room) {
+        this.room = room;
     }
 
 }

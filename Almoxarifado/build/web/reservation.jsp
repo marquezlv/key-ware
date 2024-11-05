@@ -18,7 +18,7 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Reserva de Salas
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Reservas de Salas
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addReservModal">
                                     Adicionar
@@ -39,12 +39,12 @@
                         </div>
                         <table class="table">
                             <tr class="tr-style">
-                                <th @click="filterList(1)" style="cursor: pointer;">FUNCIONARIO <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(2)" style="cursor: pointer;">MATERIA  <i class="bi bi-arrow-down-up"></i></th> 
+                                <th @click="filterList(1)" style="cursor: pointer;">FUNCIONÁRIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">MATÉRIA  <i class="bi bi-arrow-down-up"></i></th> 
                                 <th @click="filterList(3)" style="cursor: pointer;">SALA <i class="bi bi-arrow-down-up"></i></th>
                                 <th @click="filterList(4)" style="cursor: pointer;">LOCAL <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(5)" style="cursor: pointer;">INICIO <i class="bi bi-arrow-down-up"></i></th>
-                                <th @click="filterList(6)" style="cursor: pointer;">TERMINO  <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(5)" style="cursor: pointer;">INÍCIO <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(6)" style="cursor: pointer;">TÉRMINO  <i class="bi bi-arrow-down-up"></i></th>
                                 <th>AÇÕES</th>
                             </tr>
                             <tr v-for="item in list" :key="item.rowid">
@@ -87,15 +87,15 @@
                             <div class="modal-body">
                                 <form>
                                     <div class="mb-3">
-                                        <label for="inputEmployee" class="form-label">Funcionario</label>
+                                        <label for="inputEmployee" class="form-label">Funcionário</label>
                                         <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
                                             <option v-for="item2 in employees" :key="item2.rowid" :value="item2.rowid">{{ item2.name }}</option>
                                         </select>
                                     </div>
                                     <div v-if='newEmployee !== ""' class="mb-3">
-                                        <label for="inputSubject" class="form-label">Materia</label>
+                                        <label for="inputSubject" class="form-label">Matéria</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-if="subjects.length === 0" value="0">Este funcionario não há materias</option>
+                                            <option v-if="subjects.length === 0" value="0">Este funcionário não possui matérias</option>
                                             <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.subjectPeriod }} - {{ item4.courseName }}</option>
                                         </select>
                                     </div>
@@ -110,11 +110,11 @@
                                         <input type="text" v-model="newLocation" class="form-control" id="inputLocation" disabled> 
                                     </div>
                                     <div class="mb-3">
-                                        <label for="inputDate" class="form-label">Data e Horário Inicio</label>
+                                        <label for="inputDate" class="form-label">Data e Horário de Início</label>
                                         <input type="datetime-local" v-model="newDate" class="form-control" id="inputDate" :min="minDate"> 
                                     </div>
                                     <div class="mb-3">
-                                        <label for="inputEnd" class="form-label">Data e Horário Término</label>
+                                        <label for="inputEnd" class="form-label">Data e Horário de Término</label>
                                         <input type="datetime-local" v-model="newEnd" class="form-control" id="inputEnd" :min="newDate || minDate"> 
                                     </div>
                                 </form>
