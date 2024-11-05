@@ -47,7 +47,7 @@ const session = Vue.createApp({
                 this.newName = this.shared.session.name;
             }
         },
-        async updateUser() {
+        async updateProfile() {
             const data = await this.request(`/Almoxarifado/api/users?id=${this.shared.session.id}`, "PUT", {
                 name: this.newName,
                 login: this.newLogin,
@@ -62,7 +62,7 @@ const session = Vue.createApp({
             try {
                 const updatedSession = await this.request("/Almoxarifado/api/session", "GET");
                 if (updatedSession) {
-                    this.shared.session = updatedSession;
+                    this.shared.session = updatedSession; // Atualiza somente a sessão do usuário logado
                     window.location.reload();
                 } else {
                     console.error("Erro ao atualizar a sessão do usuário: resposta da sessão é nula.");

@@ -201,6 +201,7 @@ const app = Vue.createApp({
         resetForm() {
             this.newName = '';
             this.newType = '';
+            this.employee = null;
         },
         resetForm2() {
             this.employeeId = '';

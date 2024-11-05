@@ -128,7 +128,7 @@
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="resetForm()">Cancelar</button>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-primary" :disabled="!isFormValid" data-bs-dismiss="modal" @click="updateUser()">Salvar</button>
+                            <button type="button" class="btn btn-primary" :disabled="!isFormValid" data-bs-dismiss="modal" @click="updateProfile()">Salvar</button>
                         </div>
                     </div>
                 </div>

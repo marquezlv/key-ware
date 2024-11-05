@@ -89,14 +89,16 @@ const app = Vue.createApp({
                     role: this.newRole,
                 };
             }
-            const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
+            const data = await this.request(`/Almoxarifado/api/users?id=${this.userId}`, "PUT", {
                 name: this.newName,
                 login: this.newLogin,
                 role: this.newRole,
             });
-            this.loadList(this.currentPage, this.column, this.direction);
-            this.resetForm();
-            this.user = null;
+
+            if (data) {
+                await this.loadList(this.currentPage, this.column, this.direction);
+                this.resetForm();
+            }
         },
         async updatePassword() {
             if (this.newPassword && this.userId) {
