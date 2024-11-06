@@ -48,7 +48,7 @@
                             <a class="nav-link" href="subjects.jsp">Cursos e Matérias</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="history.jsp">Histórico</a>
+                            <a class="nav-link" href="history.jsp">Histórico de Chaves</a>
                         </li>
                         <li class="nav-item" v-if="data.role == 'ADMIN'">
                             <a class="nav-link" href="users.jsp">Usuários do sistema</a>

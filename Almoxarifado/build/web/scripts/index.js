@@ -81,32 +81,26 @@ const app = Vue.createApp({
         getRoomStatusClass(room) {
             const currentDateTime = new Date();
 
-            // Encontra a reserva ativa para a sala atual
             const activeReservation = this.reservations.find(reservation => {
-                // Verifica se a reserva é para o mesmo quarto e está ativa
                 if (reservation.roomid !== room.rowid || reservation.active !== 1)
                     return false;
 
-                // Divide a string para obter data e hora de início e de término
                 const [startDate, startTime] = reservation.start.split(' - ').slice(1);
                 const [endDate, endTime] = reservation.end.split(' - ').slice(1);
 
-                // Converte data e hora de início para objeto Date
                 const [startDay, startMonth, startYear] = startDate.split('/').map(Number);
                 const [startHour, startMinute] = startTime.split(':').map(Number);
                 const startDateTime = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
 
-                // Converte data e hora de término para objeto Date
                 const [endDay, endMonth, endYear] = endDate.split('/').map(Number);
                 const [endHour, endMinute] = endTime.split(':').map(Number);
                 const endDateTime = new Date(endYear, endMonth - 1, endDay, endHour, endMinute);
 
-                // Retorna true se a data e hora atuais estão dentro do intervalo da reserva
                 return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
             });
 
             if (activeReservation) {
-                this.selectedReservation = activeReservation; // Armazena a reserva ativa
+                this.selectedReservation = activeReservation;
                 return 'custom-reservation';
             } else if (room.status === 'DISPONIVEL') {
                 return 'card-available';
@@ -119,13 +113,21 @@ const app = Vue.createApp({
             const response = await this.request(`/Almoxarifado/api/reservations?id=${reservation.rowid}`, "PUT", {
                 active: 0
             });
+
             if (response) {
                 this.newEmployee = reservation.employeeid;
                 this.newRoom = reservation.roomid;
                 this.newSubject = reservation.subject;
 
+                const existingKey = this.key.find(key => key.room === reservation.roomid);
+
+                if (existingKey) {
+                    await this.returnKey(existingKey.rowid, existingKey.room, existingKey.employee, existingKey.subject);
+                }
+
                 await this.addKey();
-                await this.loadReservations();
+
+                await this.loadList();
 
                 this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
                 this.selectedReservation = null;
@@ -133,13 +135,12 @@ const app = Vue.createApp({
                 console.error("Erro ao aceitar a reserva:", this.error);
             }
         },
-
         async rejectReservation(reservation) {
             const response = await this.request(`/Almoxarifado/api/reservations?id=${reservation.rowid}`, "PUT", {
                 active: 0
             });
             if (response) {
-                await this.loadReservations();
+                await this.loadList();
 
                 this.reservations = this.reservations.filter(r => r.rowid !== reservation.rowid);
                 this.selectedReservation = null;
@@ -318,21 +319,11 @@ const app = Vue.createApp({
             }
             console.log(this.currentMaterial);
         },
-        async loadReservation() {
-            search = "true";
-            console.log(this.searchDate);
-            const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${search}`, "GET");
-            if (dataRE) {
-                this.reservations = dataRE.list;
-            }
-            console.log(this.reservations);
-        },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
             if (dataS) {
                 this.subjects = dataS.list.filter(subject => subject.employee === this.newEmployee);
             }
-            console.log(this.subjects);
         },
         getRoomFilters(roomId) {
             this.filters = this.roomFilters.filter(filter => filter.roomid === roomId);

@@ -68,7 +68,9 @@ const app = Vue.createApp({
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);
-        }
+            }
+            console.log(data);
+            console.log(this.shared.session);
         },
         async addUser() {
             const data = await this.request("/Almoxarifado/api/users", "POST", {

@@ -18,7 +18,7 @@
     <body>
         <%@ include file="WEB-INF/jspf/header.jspf" %>
         <div id="app" class="container">
-            <div v-if="shared.session">
+            <div v-if="shared.session && shared.session.role == 'ADMIN'">
                 <div v-if="error" class="alert alert-danger m-2" role="alert">
                     {{error}}
                 </div>
@@ -27,7 +27,7 @@
                         <h2 class="mb-3 d-flex align-items-center justify-content-between">
                             Usuários do sistema
                             <div class="d-flex align-items-center">                            
-                                <button @click="resetForm()" type ="button" class="btn btn-success btn-sm ms-auto buttons" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                <button v-if="shared.session.role == 'ADMIN'" @click="resetForm()" type ="button" class="btn btn-success btn-sm ms-auto buttons" data-bs-toggle="modal" data-bs-target="#addUserModal">
                                     Adicionar
                                 </button>
                             </div>
@@ -54,8 +54,8 @@
                                     <!-- Botões de edit e remove  -->
                                     <div class="btn-group" role="group" aria-label="Basic Example">
                                         <button type ="button" @click="password(item.rowid)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editPasswordModal"><i class="bi bi-lock-fill"></i></button>
-                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-pen"></i></button>
-                                        <button v-if="item.role!='ADMIN'" type ="button" @click="removeUser(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                        <button v-if="item.login == shared.session.login" type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-pen"></i></button>
+                                        <button v-if="item.role!='ADMIN' && shared.session.role == 'ADMIN'" type ="button" @click="removeUser(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                                     </div>
                                 </td>
                         </table>
@@ -140,6 +140,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div v-else>
+                <div class="alert alert-danger m-2" role="alert">
+                    Somente Administrador pode acessar os usuarios
                 </div>
             </div>
         </div>
