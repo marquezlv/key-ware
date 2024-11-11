@@ -53,9 +53,8 @@
                                                                 data-bs-target="#addKeyModal">
                                                             <i class="bi bi-plus-lg custom-icon"></i>           
                                                         </button>
-                                                        <button class="btn btn-sm buttons custom-btn" 
-                                                                type="button"
-                                                                @click="updateInputName(room)" 
+                                                        <button v-if="shouldShowAddMaterialButton(room.rowid)" class="btn btn-sm buttons custom-btn" 
+                                                                type="button" @click="updateInputName(room)"  
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#addMaterialModal">
                                                             <i class="bi bi-inboxes custom-icon"></i>
@@ -100,14 +99,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div v-if="currentMaterial.length > 0" class="d-flex align-items-center mt-3">
-                                                <i class="bi-box-seam" 
-                                                   v-for="material in currentMaterial" 
-                                                   :key="material.rowid"
-                                                   class="material-icon me-2"
-                                                   :title="`Material: ${material.materialName}`">
+                                            <div v-if="currentMaterial.some(material => material.room === room.rowid)" class="d-flex align-items-center justify-content-center mt-3">
+                                                <i 
+                                                    class="bi bi-inboxes custom-icon me-2" 
+                                                    :title="getMaterialsTooltip(room.rowid)"
+                                                    style="font-size:30px;">
                                                 </i>
+                                                <button 
+                                                    class="btn btn-success btn-sm buttons" 
+                                                    type="button" 
+                                                    @click="returnAllMaterialsForRoom(room.rowid)">
+                                                    <i class="bi bi-arrow-90deg-left"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

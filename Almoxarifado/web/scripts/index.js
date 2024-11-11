@@ -40,6 +40,18 @@ const app = Vue.createApp({
 
     },
     methods: {
+        getMaterialsTooltip(roomId) {
+            return this.currentMaterial
+                    .filter(material => material.room === roomId)
+                    .map(material => material.materialName)
+                    .join(", ");
+        },
+
+        // Modifique a lógica de verificação se há materiais na sala
+        shouldShowAddMaterialButton(roomId) {
+            // Verifica se há materiais presentes na sala
+            return !this.currentMaterial.some(material => material.room === roomId);
+        },
         addToBuffer() {
             if (this.selectedMaterial) {
                 this.materialBuffer.push(this.selectedMaterial);
@@ -71,7 +83,7 @@ const app = Vue.createApp({
                     break;
                 }
             }
-
+            this.loadList();
             this.materialBuffer = [];
         },
         resetMaterial() {
@@ -258,12 +270,42 @@ const app = Vue.createApp({
         },
         async returnKey(id, room, employee, subject) {
             try {
-                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/current_material?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
             } catch (error) {
                 console.error("Erro ao devolver chave:", error);
+            }
+        },
+        async returnAllMaterialsForRoom(roomId) {
+            // Filtra todos os materiais que pertencem à sala
+            const materialsInRoom = this.currentMaterial.filter(mat => mat.room === roomId);
+
+            if (materialsInRoom.length > 0) {
+                // Chama a função returnMaterial para cada material encontrado na sala
+                for (const material of materialsInRoom) {
+                    await this.returnMaterial(material.rowid, material.room, material.employee);
+                }
+            } else {
+                console.warn("Nenhum material encontrado para esta sala.");
+            }
+        },
+
+        async returnMaterial(id, room, employee) {
+            try {
+                const material = this.currentMaterial.find(mat => mat.rowid === id && mat.room === room && mat.employee === employee);
+
+                const data = await this.request(
+                        `/Almoxarifado/api/current_material?id=${material.rowid}&employee=${material.employee}&material=${material.material}&user=${this.shared.session.id}`,
+                        "DELETE"
+                        );
+
+                if (data) {
+                    await this.loadList(); // Recarrega a lista para atualizar o estado
+                }
+            } catch (error) {
+                console.error("Erro ao devolver material:", error);
             }
         },
         async updateRoom() {

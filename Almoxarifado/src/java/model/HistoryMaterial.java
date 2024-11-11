@@ -41,7 +41,7 @@ public class HistoryMaterial {
 
         String baseSql = "SELECT COUNT(*) AS total FROM historyMaterial h "
                 + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
-                + "LEFT JOIN material m ON m.cd_room = h.cd_material "
+                + "LEFT JOIN material m ON m.cd_material = h.cd_material "
                 + "LEFT JOIN users u ON u.rowid = h.cd_user ";
 
         StringBuilder whereClause = new StringBuilder("WHERE 1=1 ");
@@ -92,7 +92,7 @@ public class HistoryMaterial {
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String baseSql = "SELECT h.*, e.nm_employee, m.nm_material, u.rowid, u.name FROM history h "
+        String baseSql = "SELECT h.*, e.nm_employee, m.nm_material, u.rowid, u.name FROM historyMaterial h "
                 + "LEFT JOIN employees e ON e.cd_employee = h.cd_employee "
                 + "LEFT JOIN material m ON m.cd_material = h.cd_material "
                 + "LEFT JOIN users u ON u.rowid = h.cd_user ";

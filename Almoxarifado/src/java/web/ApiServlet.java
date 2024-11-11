@@ -78,6 +78,8 @@ public class ApiServlet extends HttpServlet {
                 processMaterial(file, request, response);
             } else if (request.getRequestURI().endsWith("/api/current_material")) {
                 processCurrentMaterial(file, request, response);
+            } else if (request.getRequestURI().endsWith("/api/history_material")) {
+                processHistoryMaterial(file, request, response);
             }
 
         } catch (Exception ex) {
@@ -547,6 +549,38 @@ public class ApiServlet extends HttpServlet {
             } else {
                 file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort, null, null, null, null, null)));
                 file.put("total", History.getTotalHistory(null, null, null, null, null));  // Chamada sem filtros
+            }
+        } else if (request.getMethod().toLowerCase().equals("post")) {
+            response.sendError(401, "Insert: This table cannot be inserted directly");
+        } else if (request.getMethod().toLowerCase().equals("put")) {
+            response.sendError(401, "Update: This table cannot be update");
+        } else if (request.getMethod().toLowerCase().equals("delete")) {
+            response.sendError(401, "Delete: History cannot be deleted directly");
+        } else {
+            response.sendError(405, "Method not allowed");
+        }
+    }
+    
+    private void processHistoryMaterial(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute("users") == null) {
+            response.sendError(401, "Unauthorized: No session");
+        } else if (request.getMethod().toLowerCase().equals("get")) {
+            String searchParam = request.getParameter("employee");
+            String searchMaterial = request.getParameter("material");
+            String strDateStart = request.getParameter("dateStart");
+            String strDateEnd = request.getParameter("dateEnd");
+
+            int page = Integer.parseInt(request.getParameter("page"));
+            int itemsPerPage = Integer.parseInt(request.getParameter("items"));
+            int column = Integer.parseInt(request.getParameter("column"));
+            int sort = Integer.parseInt(request.getParameter("sort"));
+
+            if (searchParam != null && !searchParam.isEmpty() || strDateStart != null && !strDateStart.isEmpty() || strDateEnd != null && !strDateEnd.isEmpty() || searchMaterial != null && !searchMaterial.isEmpty()) {
+                file.put("list", new JSONArray(HistoryMaterial.getHistoryMaterial(page, itemsPerPage, column, sort, searchParam, searchMaterial ,strDateStart, strDateEnd)));
+                file.put("total", HistoryMaterial.getTotalHistoryMaterial(searchParam, searchMaterial, strDateStart, strDateEnd));
+            } else {
+                file.put("list", new JSONArray(HistoryMaterial.getHistoryMaterial(page, itemsPerPage, column, sort, null, null, null, null)));
+                file.put("total", HistoryMaterial.getTotalHistoryMaterial(null, null, null, null)); 
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             response.sendError(401, "Insert: This table cannot be inserted directly");
