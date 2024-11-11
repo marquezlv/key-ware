@@ -296,15 +296,13 @@ public class ApiServlet extends HttpServlet {
             JSONObject body = getJSONBODY(request.getReader());
             String name = body.getString("name");
             long course = body.getLong("course");
-            String period = body.getString("period");
-            Subjects.insertSubject(name, course, period);
+            Subjects.insertSubject(name, course);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             JSONObject body = getJSONBODY(request.getReader());
             String name = body.getString("name");
             long course = body.getLong("course");
-            String period = body.getString("period");
             Long id = Long.parseLong(request.getParameter("id"));
-            Subjects.updateSubject(id, name, course, period);
+            Subjects.updateSubject(id, name, course);
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Subjects.deleteSubject(id);
@@ -481,7 +479,8 @@ public class ApiServlet extends HttpServlet {
             JSONObject body = getJSONBODY(request.getReader());
             long employee = body.getLong("employee");
             long subject = body.getLong("subject");
-            Employees_Subjects.insertEmployeeSubject(employee, subject);
+            String period = body.getString("period");
+            Employees_Subjects.insertEmployeeSubject(employee, subject, period);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
         } else if (request.getMethod().toLowerCase().equals("delete")) {

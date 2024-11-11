@@ -6,6 +6,7 @@ const app = Vue.createApp({
             newType: '',
             newName: '',
             newSubject: '',
+            newPeriod: '',
             employeeId: '',
             employeeName: '',
             subjects: [],
@@ -74,7 +75,8 @@ const app = Vue.createApp({
         async addEmployeeSubject() {
             const data = await this.request("/Almoxarifado/api/employee_subject", "POST", {
                 employee: this.employeeId,
-                subject: this.newSubject
+                subject: this.newSubject,
+                period: this.newPeriod
             });
             this.loadList(this.currentPage, this.column, this.direction);
         },
@@ -183,6 +185,7 @@ const app = Vue.createApp({
             this.loadList(this.currentPage, this.column, this.direction);
         },
         getEmployeesSubjects(employeeId) {
+            console.log(this.employeeSubject.filter(employee => employee.employee === employeeId));
             return this.employeeSubject.filter(employee => employee.employee === employeeId);
         },
         updateInputName(item) {

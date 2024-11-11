@@ -12,8 +12,8 @@ public class Employees_Subjects {
     private long rowid;
     private long employee;
     private long subject;
+    private String period;
     private String subjectName;
-    private String subjectPeriod;
     private String courseName;
 
     public static String getCreateStatement() {
@@ -21,6 +21,7 @@ public class Employees_Subjects {
                 + "cd_dumb INTEGER PRIMARY KEY,"
                 + "cd_employee INTEGER NOT NULL,"
                 + "cd_subject INTEGER NOT NULL,"
+                + "nm_period VARCHAR(30) NOT NULL,"
                 + "FOREIGN KEY(cd_employee) REFERENCES employees(cd_employee),"
                 + "FOREIGN KEY(cd_subject) REFERENCES subjects(cd_subject)"
                 + ")";
@@ -30,11 +31,11 @@ public class Employees_Subjects {
         ArrayList<Employees_Subjects> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         Statement stmt = con.createStatement();
-        String query = "SELECT es.*, s.nm_subject, s.nm_period, c.nm_course FROM employees_subjects es "
+        String query = "SELECT es.*, s.nm_subject, c.nm_course FROM employees_subjects es "
                 + "LEFT JOIN subjects s ON s.cd_subject = es.cd_subject "
                 + "LEFT JOIN employees e ON e.cd_employee = es.cd_employee "
                 + "LEFT JOIN courses c ON c.cd_course = s.cd_course "
-                + "ORDER BY s.nm_subject, c.nm_course, s.nm_period";
+                + "ORDER BY s.nm_subject, c.nm_course, es.nm_period";
         ResultSet rs = stmt.executeQuery(query);
 
         while (rs.next()) {
@@ -52,13 +53,14 @@ public class Employees_Subjects {
         return list;
     }
 
-    public static void insertEmployeeSubject(long employee, long subject) throws Exception {
+    public static void insertEmployeeSubject(long employee, long subject, String period) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "INSERT INTO employees_subjects(cd_employee, cd_subject) VALUES(?,?)";
+        String sql = "INSERT INTO employees_subjects(cd_employee, cd_subject, nm_period) VALUES(?,?,?)";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setLong(1, employee);
         stmt.setLong(2, subject);
+        stmt.setString(3, period);
 
         stmt.execute();
 
@@ -79,12 +81,12 @@ public class Employees_Subjects {
         con.close();
     }
 
-    public Employees_Subjects(long rowid, long employee, long subject, String subjectName, String subjectPeriod, String courseName) {
+    public Employees_Subjects(long rowid, long employee, long subject, String subjectName, String period, String courseName) {
         this.rowid = rowid;
         this.employee = employee;
         this.subject = subject;
         this.subjectName = subjectName;
-        this.subjectPeriod = subjectPeriod;
+        this.period = period;
         this.courseName = courseName;
     }
 
@@ -120,14 +122,6 @@ public class Employees_Subjects {
         this.subjectName = subjectName;
     }
 
-    public String getSubjectPeriod() {
-        return subjectPeriod;
-    }
-
-    public void setSubjectPeriod(String subjectPeriod) {
-        this.subjectPeriod = subjectPeriod;
-    }
-
     public String getCourseName() {
         return courseName;
     }
@@ -136,4 +130,11 @@ public class Employees_Subjects {
         this.courseName = courseName;
     }
 
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
 }

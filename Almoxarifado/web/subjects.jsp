@@ -1,4 +1,4 @@
- <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,13 +25,18 @@
                             </button>
                         </div>
                     </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPageCourse" id="registers" @change="reloadPageCourse">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <label>Qtd. Registros</label>
+                            <select class="form-control mb-2" v-model="itemsPerPageCourse" id="registers" @change="reloadPageCourse">
+                                <option value=5>5</option>
+                                <option value=10>10</option>
+                                <option value=20>20</option>
+                                <option value=50>50</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <table class="table">
                         <tr>
                             <th @click="filterListCourse(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
@@ -60,7 +65,7 @@
                         </div>
                     </div>
                     <br>
-                <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">
                         Matérias
                         <div class="d-flex align-items-center">
                             <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
@@ -68,25 +73,26 @@
                             </button>
                         </div>
                     </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPageSub" id="registers" @change="reloadPageSub">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <label>Qtd. Registros</label>
+                            <select class="form-control mb-2" v-model="itemsPerPageSub" id="registers" @change="reloadPageSub">
+                                <option value=5>5</option>
+                                <option value=10>10</option>
+                                <option value=20>20</option>
+                                <option value=50>50</option>
+                            </select>
+                        </div>
+                    </div>
                     <table class="table">
                         <tr>
                             <th @click="filterListSub(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="filterListSub(2)" style="cursor: pointer;">CURSO <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterListSub(3)" style="cursor: pointer;">PERÍODO <i class="bi bi-arrow-down-up"></i></th>
                             <th>AÇÕES</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
                             <td>{{ item.name}}</td>
                             <td>{{ item.courseName }}</td>
-                            <td>{{ item.period }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic Example">
                                     <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-pen"></i></button>
@@ -107,7 +113,7 @@
                             <button @click="nextPageSub" :disabled="currentPageSub === totalPagesSub">Próxima</button>
                         </div>
                     </div>
-                    </div>
+                </div>
                 <br>
                 <div class="modal fade" id="addSubjectModal" tabindex="-1">
                     <div class="modal-dialog">
@@ -126,14 +132,6 @@
                                         <label for="inputCourse" class="form-label">Curso</label>
                                         <select class="form-select" v-model="newCourse" id="course" required>
                                             <option v-for="item2 in course" :key="item2.rowid" :value="item2.rowid">{{ item2.name }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="inputCourse" class="form-label">Período</label>
-                                        <select class="form-select" v-model="newPeriod" id="period" required>
-                                            <option value="MATUTINO">Matutino</option>
-                                            <option value="VESPERTINO">Vespertino</option>
-                                            <option value="NOTURNO">Noturno</option>
                                         </select>
                                     </div>
                                 </form>
@@ -175,8 +173,8 @@
                         </div>
                     </div>
                 </div>
-                </div> 
-            </div>
+            </div> 
+        </div>
 
         <script src="scripts/subjects.js"></script>
 

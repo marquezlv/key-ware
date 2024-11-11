@@ -5,7 +5,6 @@ const app = Vue.createApp({
             error: null,
             newName: '',
             newCourse: '',
-            newPeriod: '',
             CourseAdd: '',
             subject: null,
             editCourse: null,
@@ -25,7 +24,7 @@ const app = Vue.createApp({
     },
     computed: {
         isFormValid() {
-            return this.newName && this.newCourse && this.newPeriod;
+            return this.newName && this.newCourse;
         }
     },
     methods: {
@@ -93,8 +92,7 @@ const app = Vue.createApp({
         async addSubject() {
             const data = await this.request("/Almoxarifado/api/subjects", "POST", {
                 name: this.newName,
-                course: this.newCourse,
-                period: this.newPeriod
+                course: this.newCourse
             });
             this.loadListSub(this.currentPageSub, this.columnSub, this.directionSub);
         },
@@ -130,14 +128,12 @@ const app = Vue.createApp({
                 this.list[index] = {
                     ...this.list[index],
                     name: this.newName,
-                    course: this.newCourse,
-                    period: this.newPeriod
+                    course: this.newCourse
                 };
             }
             const data = await this.request(`/Almoxarifado/api/subjects?id=${this.subject.rowid}`, "PUT", {
                 name: this.newName,
-                course: this.newCourse,
-                period: this.newPeriod
+                course: this.newCourse
             });
             this.resetForm();
             this.subject = null;
@@ -282,7 +278,6 @@ const app = Vue.createApp({
                 this.subject = {...subject};
                 this.newName = this.subject.name;
                 this.newCourse = this.subject.course;
-                this.newPeriod = this.subject.period;
             } else {
                 this.resetForm();
             }
@@ -298,7 +293,6 @@ const app = Vue.createApp({
         resetForm() {
             this.newName = '';
             this.newCourse = '';
-            this.newPeriod = '';
             this.CourseAdd = '';
         }
     },

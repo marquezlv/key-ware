@@ -19,67 +19,71 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                        Salas
-                        <div class="d-flex align-items-center">
-                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-                                Adicionar
-                            </button>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                            Salas
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                                    Adicionar
+                                </button>
+                            </div>
+                        </h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label>Qtd. Registros</label>
+                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                    <option value=5>5</option>
+                                    <option value=10>10</option>
+                                    <option value=20>20</option>
+                                    <option value=50>50</option>
+                                </select>
+                            </div>
                         </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th  @click="filterList(1)" style="cursor: pointer;">NOME DA SALA <i class="bi bi-arrow-down-up"></i></th>
-                            <th  @click="filterList(2)" style="cursor: pointer;">LOCALIZAÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th  @click="filterList(3)" style="cursor: pointer;">FILTROS <i class="bi bi-arrow-down-up"></i> </th>
-                            <th  @click="filterList(4)" style="cursor: pointer;">STATUS <i class="bi bi-arrow-down-up"></i></th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid" class="tr-style">
-                            <td>{{ item.name}}</td>
-                            <td>{{ item.location }}</td>
-                            <td>
-                                <div v-for="item2 in getRoomFilters(item.rowid)" :key="item2.rowid" class="filter-container">
-                                    {{ item2.filterName }}
-                                    <button class="btn btn-danger btn-sm buttons" type="button" @click="removeFilter(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
-                                </div>
-                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-lg"></i></i></button>
-                            </td>
+                        <table class="table">
+                            <tr>
+                                <th  @click="filterList(1)" style="cursor: pointer;">NOME DA SALA <i class="bi bi-arrow-down-up"></i></th>
+                                <th  @click="filterList(2)" style="cursor: pointer;">LOCALIZAÇÃO <i class="bi bi-arrow-down-up"></i></th>
+                                <th  @click="filterList(3)" style="cursor: pointer;">FILTROS <i class="bi bi-arrow-down-up"></i> </th>
+                                <th  @click="filterList(4)" style="cursor: pointer;">STATUS <i class="bi bi-arrow-down-up"></i></th>
+                                <th>AÇÕES</th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid" class="tr-style">
+                                <td>{{ item.name}}</td>
+                                <td>{{ item.location }}</td>
+                                <td>
+                                    <div v-for="item2 in getRoomFilters(item.rowid)" :key="item2.rowid" class="filter-container">
+                                        {{ item2.filterName }}
+                                        <button class="btn btn-danger btn-sm buttons" type="button" @click="removeFilter(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                    <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addFilterModal"><i class="bi bi-plus-lg"></i></i></button>
+                                </td>
 
-                            <td>{{ item.status }}</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addRoomModal"><i class="bi bi-pen"></i></button>
-                                    <button type ="button" @click="removeRoom(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                    </table>         
-                    <div class="pagination-container">
-                        <div class="pagination"> 
-                            <button @click="previousPage" :disabled="currentPage === 
-                                     1">Anterior</button> 
-                            <div v-if="totalPages > 1"> 
-                                <span v-for="page in pagination()" :key="page"> 
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button> 
-                                    <button v-else-if="page === 'nextJump'" 
-                                            @click="jumpPages(5)">→</button> 
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page 
-                                            === currentPage }">{{ page }}</button> 
-                                </span> 
-                            </div> 
-                            <button @click="nextPage" :disabled="currentPage === 
-                                     totalPages">Próxima</button> 
+                                <td>{{ item.status }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic Example">
+                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addRoomModal"><i class="bi bi-pen"></i></button>
+                                        <button type ="button" @click="removeRoom(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </td>
+                        </table>         
+                        <div class="pagination-container">
+                            <div class="pagination"> 
+                                <button @click="previousPage" :disabled="currentPage === 
+                                         1">Anterior</button> 
+                                <div v-if="totalPages > 1"> 
+                                    <span v-for="page in pagination()" :key="page"> 
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button> 
+                                        <button v-else-if="page === 'nextJump'" 
+                                                @click="jumpPages(5)">→</button> 
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page 
+                                                === currentPage }">{{ page }}</button> 
+                                    </span> 
+                                </div> 
+                                <button @click="nextPage" :disabled="currentPage === 
+                                         totalPages">Próxima</button> 
+                            </div>
                         </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
                 </div>
                 <div class="modal fade" id="addRoomModal" tabindex="-1">
                     <div class="modal-dialog">

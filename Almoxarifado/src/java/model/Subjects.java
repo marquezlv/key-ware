@@ -9,14 +9,12 @@ public class Subjects {
     private long rowid;
     private String name;
     private long course;
-    private String period;
     private String courseName;
 
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS subjects("
                 + "cd_subject INTEGER PRIMARY KEY,"
                 + "nm_subject VARCHAR(50) NOT NULL,"
-                + "nm_period VARCHAR(50) NOT NULL,"
                 + "cd_course INTEGER,"
                 + "FOREIGN KEY(cd_course) REFERENCES courses(cd_course)"
                 + ")";
@@ -33,9 +31,8 @@ public class Subjects {
             long rowId = rs.getLong("cd_subject");
             String name = rs.getString("nm_subject");
             long course = rs.getLong("cd_course");
-            String period = rs.getString("nm_period");
             String courseName = rs.getString("nm_course");
-            list.add(new Subjects(rowId, name, course, courseName, period));
+            list.add(new Subjects(rowId, name, course, courseName));
         }
         rs.close();
         stmt.close();
@@ -46,72 +43,43 @@ public class Subjects {
     public static ArrayList<Subjects> getSubjectsPages(int page, int recordsPerPage, int column, int sort) throws Exception {
         ArrayList<Subjects> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
+
         int startIndex = (page - 1) * recordsPerPage;
-        String sql = "";
-        if (sort == 0) {
-            column = 0;
-        }
+
+        StringBuilder sql = new StringBuilder("SELECT s.*, c.nm_course FROM subjects s ")
+                .append("JOIN courses c ON c.cd_course = s.cd_course ");
+
+        String orderColumn;
         switch (column) {
             case 1:
-                if (sort == 1) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY s.nm_subject ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY s.nm_subject DESC "
-                            + "LIMIT ?,?";
-                }
+                orderColumn = "s.nm_subject";
                 break;
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY c.nm_course ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY c.nm_course DESC "
-                            + "LIMIT ?,?";
-                }
-                break;
-            case 3:
-                if (sort == 1) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY s.nm_period ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT s.*, c.nm_course FROM subjects s "
-                            + "JOIN courses c ON c.cd_course = s.cd_course "
-                            + "ORDER BY s.nm_period DESC "
-                            + "LIMIT ?,?";
-                }
+                orderColumn = "c.nm_course";
                 break;
             default:
-                sql = "SELECT s.*, c.nm_course FROM subjects s "
-                        + "JOIN courses c ON c.cd_course = s.cd_course "
-                        + "ORDER BY s.nm_subject "
-                        + "LIMIT ?,?";
-                break;
+                orderColumn = "s.nm_subject";
         }
+        String orderDirection = (sort == 2) ? "DESC" : "ASC";
 
-        PreparedStatement stmt = con.prepareStatement(sql);
+        sql.append("ORDER BY ").append(orderColumn).append(" ").append(orderDirection)
+                .append(" LIMIT ?, ?");
+
+        PreparedStatement stmt = con.prepareStatement(sql.toString());
         stmt.setInt(1, startIndex);
         stmt.setInt(2, recordsPerPage);
+
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
             long rowId = rs.getLong("cd_subject");
             String name = rs.getString("nm_subject");
             long course = rs.getLong("cd_course");
-            String period = rs.getString("nm_period");
             String courseName = rs.getString("nm_course");
-            list.add(new Subjects(rowId, name, course, courseName, period));
+
+            list.add(new Subjects(rowId, name, course, courseName));
         }
+
         rs.close();
         stmt.close();
         con.close();
@@ -133,27 +101,25 @@ public class Subjects {
         return total;
     }
 
-    public static void insertSubject(String name, long course, String period) throws Exception {
+    public static void insertSubject(String name, long course) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "INSERT INTO subjects(nm_subject, cd_course, nm_period)"
-                + "VALUES(?,?,?)";
+        String sql = "INSERT INTO subjects(nm_subject, cd_course)"
+                + "VALUES(?,?)";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, name);
         stmt.setLong(2, course);
-        stmt.setString(3, period);
         stmt.execute();
         stmt.close();
         con.close();
     }
 
-    public static void updateSubject(long id, String name, long course, String period) throws Exception {
+    public static void updateSubject(long id, String name, long course) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "UPDATE subjects SET nm_subject=?, cd_course=?, nm_period=? WHERE cd_subject=?";
+        String sql = "UPDATE subjects SET nm_subject=?, cd_course=? WHERE cd_subject=?";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, name);
         stmt.setLong(2, course);
-        stmt.setString(3, period);
-        stmt.setLong(4, id);
+        stmt.setLong(3, id);
         stmt.execute();
         stmt.close();
         con.close();
@@ -169,12 +135,11 @@ public class Subjects {
         con.close();
     }
 
-    public Subjects(long id, String name, long course, String courseName, String period) {
+    public Subjects(long id, String name, long course, String courseName) {
         this.rowid = id;
         this.name = name;
         this.course = course;
         this.courseName = courseName;
-        this.period = period;
     }
 
     public long getRowid() {
@@ -207,13 +172,5 @@ public class Subjects {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
     }
 }

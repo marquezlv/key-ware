@@ -25,13 +25,18 @@
                                 </button>
                             </div>
                         </h2>
-                        <label for="registers" class="form-label"></label>
-                        <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                            <option value=5>5</option>
-                            <option value=10>10</option>
-                            <option value=20>20</option>
-                            <option value=50>50</option>
-                        </select>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label>Qtd. Registros</label>
+                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                    <option value=5>5</option>
+                                    <option value=10>10</option>
+                                    <option value=20>20</option>
+                                    <option value=50>50</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <table class="table">
                             <tr>
                                 <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>

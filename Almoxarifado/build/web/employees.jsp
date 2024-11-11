@@ -18,63 +18,68 @@
                 </div>
                 <div v-else class="normal-page">
                     <div class="wrapper">
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Funcionários
-                        <div class="d-flex align-items-center"> 
-                            <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                                Adicionar
-                            </button>
-                        </div>
-                    </h2>
-                    <label for="registers" class="form-label"></label>
-                    <select class="mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                        <option value=5>5</option>
-                        <option value=10>10</option>
-                        <option value=20>20</option>
-                        <option value=50>50</option>
-                    </select>
-                    <table class="table">
-                        <tr>
-                            <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="filterList(2)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
-                            <th>MATÉRIA LECIONADA</th>
-                            <th>AÇÕES</th>
-                        </tr>
-                        <tr v-for="item in list" :key="item.rowid">
-                            <td>{{ item.name}}</td>
-                            <td>{{ item.type }}</td>
-                            <td>
-                                <div v-for="item2 in getEmployeesSubjects(item.rowid)" :key="item2.rowid" class="filter-container">
-                                    {{ item2.subjectName }} - {{ item2.subjectPeriod }} - {{ item2.courseName}}
-                                    <button class="btn btn-danger btn-sm buttons" type="button" @click="removeSubject(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
-                                </div>
-                                <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-lg"></i></button>
-                            </td>
-
-
-
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic Example">
-                                    <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i class="bi bi-pen"></i></button>
-                                    <button type ="button" @click="removeEmployee(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="pagination-container">
-                        <div class="pagination">
-                            <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
-                            <div v-if="totalPages > 1">
-                                <span v-for="page in pagination()" :key="page">
-                                    <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
-                                    <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
-                                    <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
-                                </span>
+                        <h2 class="mb-3 d-flex align-items-center justify-content-between">Funcionários
+                            <div class="d-flex align-items-center"> 
+                                <button class="btn btn-success btn-sm ms-auto buttons" @click="resetForm()" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                                    Adicionar
+                                </button>
                             </div>
-                            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                        </h2>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label>Qtd. Registros</label>
+                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                    <option value=5>5</option>
+                                    <option value=10>10</option>
+                                    <option value=20>20</option>
+                                    <option value=50>50</option>
+                                </select>
+                            </div>
                         </div>
+
+                        <table class="table">
+                            <tr>
+                                <th @click="filterList(1)" style="cursor: pointer;">NOME <i class="bi bi-arrow-down-up"></i></th>
+                                <th @click="filterList(2)" style="cursor: pointer;">FUNÇÃO <i class="bi bi-arrow-down-up"></i></th>
+                                <th>MATÉRIA LECIONADA</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                            <tr v-for="item in list" :key="item.rowid">
+                                <td>{{ item.name}}</td>
+                                <td>{{ item.type }}</td>
+                                <td>
+                                    <div v-for="item2 in getEmployeesSubjects(item.rowid)" :key="item2.rowid" class="filter-container">
+                                        {{ item2.subjectName }}  - {{ item2.courseName}} - {{ item2.period }}
+                                        <button class="btn btn-danger btn-sm buttons" type="button" @click="removeSubject(item2.rowid)" type="button"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                    <button class="btn btn-success btn-sm ms-auto buttons" type="button" @click="updateInputName(item)" type="button" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-lg"></i></button>
+                                </td>
+
+
+
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic Example">
+                                        <button type ="button" @click="setVariables(item)" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i class="bi bi-pen"></i></button>
+                                        <button type ="button" @click="removeEmployee(item.rowid)" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="pagination-container">
+                            <div class="pagination">
+                                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                                <div v-if="totalPages > 1">
+                                    <span v-for="page in pagination()" :key="page">
+                                        <button v-if="page === 'prevJump'" @click="jumpPages(-5)">←</button>
+                                        <button v-else-if="page === 'nextJump'" @click="jumpPages(5)">→</button>
+                                        <button v-else @click="goToPage(page)" :class="{ 'active': page === currentPage }">{{ page }}</button>
+                                    </span>
+                                </div>
+                                <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+                            </div>
+                        </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
                 </div>
                 <div class="modal fade" id="addEmployeeModal" tabindex="-1">
                     <div class="modal-dialog">
@@ -128,11 +133,16 @@
                                     <div class="mb-3">
                                         <label for="inputSubject" class="form-label">Matéria</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
-                                            <option v-for="item3 in subjects" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{ item3.period }} - {{ item3.courseName }}</option>
+                                            <option v-for="item3 in subjects" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{ item3.courseName }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
-
+                                        <label for="inputCourse" class="form-label">Período</label>
+                                        <select class="form-select" v-model="newPeriod" id="period" required>
+                                            <option value="MATUTINO">Matutino</option>
+                                            <option value="VESPERTINO">Vespertino</option>
+                                            <option value="NOTURNO">Noturno</option>
+                                        </select>
                                     </div>
                                 </form>
                             </div>

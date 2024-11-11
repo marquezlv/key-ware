@@ -69,11 +69,12 @@ public class Reservation {
         Connection con = AppListener.getConnection();
 
         // Montar o SQL dinamicamente
-        StringBuilder sql = new StringBuilder("SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period ")
+        StringBuilder sql = new StringBuilder("SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period ")
                 .append("FROM reservations r ")
                 .append("LEFT JOIN employees e ON e.cd_employee = r.cd_employee ")
                 .append("LEFT JOIN rooms ro ON ro.cd_room = r.cd_room ")
-                .append("LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ");
+                .append("LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ")
+                .append("LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject ");
 
         boolean whereAdded = false;
 
@@ -151,11 +152,12 @@ public class Reservation {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         int startIndex = (page - 1) * recordsPerPage;
-        String baseSQL = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
+        String baseSQL = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period "
                 + "FROM reservations r "
                 + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
                 + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ";
+                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
+                + "LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject ";
 
         String orderClause = "";
         String dateFilter = "";
@@ -235,11 +237,12 @@ public class Reservation {
         ArrayList<Reservation> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, s.nm_period "
+        String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period "
                 + "FROM reservations r "
                 + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
                 + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
                 + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
+                + "LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject "
                 + "ORDER BY r.dt_start, e.nm_employee";
 
         PreparedStatement stmt = con.prepareStatement(sql);

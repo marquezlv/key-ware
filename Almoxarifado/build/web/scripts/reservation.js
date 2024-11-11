@@ -217,6 +217,7 @@ const app = Vue.createApp({
             if (dataS) {
                 this.subjects = dataS.list.filter(subject => subject.employee === this.newEmployee);
             }
+            console.log(this.subjects);
         },
         setVariables(reservation) {
             if (reservation) {

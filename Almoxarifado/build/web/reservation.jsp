@@ -25,17 +25,23 @@
                                 </button>
                             </div>
                         </h2>
-                        <div>
-                            <select class="mb-3 me-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
-                                <option value=5>5</option>
-                                <option value=10>10</option>
-                                <option value=20>20</option>
-                                <option value=50>50</option>
-                            </select>
-                            <select class="mb-3 me-3 w-25" v-model="listReservation" id="filter-reservation" @change="reloadPage">
-                                <option value=1>Mostrar Futuras</option>
-                                <option value=2>Mostrar Anteriores</option>
-                            </select>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label>Qtd. Registros</label>
+                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                    <option value=5>5</option>
+                                    <option value=10>10</option>
+                                    <option value=20>20</option>
+                                    <option value=50>50</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label></label>
+                                <select class="form-control mb-2" v-model="listReservation" id="filter-reservation" @change="reloadPage">
+                                    <option value=1>Mostrar Futuras</option>
+                                    <option value=2>Mostrar Anteriores</option>
+                                </select>
+                            </div>      
                         </div>
                         <table class="table">
                             <tr class="tr-style">
@@ -96,7 +102,7 @@
                                         <label for="inputSubject" class="form-label">Matéria</label>
                                         <select class="form-select" v-model="newSubject" id="inputSubject">
                                             <option v-if="subjects.length === 0" value="0">Este funcionário não possui matérias</option>
-                                            <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.subjectPeriod }} - {{ item4.courseName }}</option>
+                                            <option v-for="item4 in subjects" :key="item4.subject" :value="item4.subject">{{ item4.subjectName }} - {{ item4.courseName }} - {{ item4.period }}</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
