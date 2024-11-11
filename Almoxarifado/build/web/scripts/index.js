@@ -270,7 +270,7 @@ const app = Vue.createApp({
         },
         async returnKey(id, room, employee, subject) {
             try {
-                const data = await this.request(`/Almoxarifado/api/current_material?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
