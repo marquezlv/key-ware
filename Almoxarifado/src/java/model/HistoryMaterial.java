@@ -29,7 +29,7 @@ public class HistoryMaterial {
                 + "cd_material INTEGER,"
                 + "cd_user INTEGER,"
                 + "dt_history DATETIME,"
-                + "nm_type VARCHAR(30)"
+                + "nm_type VARCHAR(30),"
                 + "FOREIGN KEY(cd_material) REFERENCES material(cd_material),"
                 + "FOREIGN KEY(cd_employee) REFERENCES employees(cd_employee),"
                 + "FOREIGN KEY(cd_user) REFERENCES users(rowid)"

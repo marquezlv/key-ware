@@ -15,7 +15,7 @@ public class Material {
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS material("
                 + "cd_material INTEGER PRIMARY KEY,"
-                + "nm_material VARCHAR(50) NOT NULL,"
+                + "nm_material VARCHAR(50) NOT NULL"
                 + ")";
     }
 

@@ -108,10 +108,10 @@
                                     <div class="mb-3">
                                         <label for="inputRoom" class="form-label">Sala</label>
                                         <select class="form-select" v-model="newRoom" id="inputRoom" @change="updateInputLocation">
-                                            <option v-for="item3 in rooms" :key="item3.rowid" :value="item3.rowid">{{ item3.name }}</option>
+                                            <option v-for="item3 in rooms" :key="item3.rowid" :value="item3.rowid">{{ item3.name }} - {{item3.location}}</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3" style="display:none;">
                                         <label for="inputLocation" class="form-label">Localização</label>
                                         <input type="text" v-model="newLocation" class="form-control" id="inputLocation" disabled> 
                                     </div>

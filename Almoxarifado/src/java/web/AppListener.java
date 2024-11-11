@@ -68,9 +68,11 @@ public class AppListener implements ServletContextListener {
 
             s.execute(History.getCreateStatement());
             
-            s.execute(HistoryMaterial.getCreateStatement());
-
+            s.execute(Material.getCreateStatement());
+            
             s.execute(Users.getCreateStatement());
+            
+            s.execute(HistoryMaterial.getCreateStatement());
 
             s.execute(CurrentKey.getCreateStatement());
             
@@ -84,7 +86,7 @@ public class AppListener implements ServletContextListener {
 
             s.execute(Filters.getCreateStatement());
             
-            s.execute(Material.getCreateStatement());
+            
 
             s.execute(Subjects.getCreateStatement());
 

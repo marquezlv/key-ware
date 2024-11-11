@@ -210,7 +210,6 @@ const app = Vue.createApp({
             if (dataR) {
                 this.rooms = dataR.list;
             }
-            console.log(data);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
