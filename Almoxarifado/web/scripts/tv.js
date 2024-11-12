@@ -44,7 +44,7 @@ const app = Vue.createApp({
             const data = await this.request(`/Almoxarifado/api/keys?page=${page}`, "GET");
             if (data) {
                 this.list = data.list;
-                this.totalPages = Math.ceil(data.total / 8)
+                this.totalPages = Math.ceil(data.total / 5)
             }
         }
     },

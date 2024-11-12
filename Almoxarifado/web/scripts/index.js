@@ -90,12 +90,11 @@ const app = Vue.createApp({
             this.newEmployee = "";
             this.materialBuffer = [];
         },
-        getRoomStatusClass(room) {
+        getActiveReservationForRoom(roomId) {
             const currentDateTime = new Date();
-
-            const activeReservation = this.reservations.find(reservation => {
-                if (reservation.roomid !== room.rowid || reservation.active !== 1)
-                    return false;
+            return this.reservations.find(reservation => {
+                // Verifique se a reserva está ativa e pertence à sala específica
+                if (reservation.roomid !== roomId || reservation.active !== 1) return false;
 
                 const [startDate, startTime] = reservation.start.split(' - ').slice(1);
                 const [endDate, endTime] = reservation.end.split(' - ').slice(1);
@@ -109,10 +108,12 @@ const app = Vue.createApp({
                 const endDateTime = new Date(endYear, endMonth - 1, endDay, endHour, endMinute);
 
                 return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
-            });
-
+            }) || null; // Retorna `null` se não houver reserva ativa
+        },
+        
+        getRoomStatusClass(room) {
+            const activeReservation = this.getActiveReservationForRoom(room.rowid);
             if (activeReservation) {
-                this.selectedReservation = activeReservation;
                 return 'custom-reservation';
             } else if (room.status === 'DISPONIVEL') {
                 return 'card-available';

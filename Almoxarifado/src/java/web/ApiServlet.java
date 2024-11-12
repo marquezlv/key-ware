@@ -501,7 +501,7 @@ public class ApiServlet extends HttpServlet {
                 file.put("list", new JSONArray(CurrentKey.getKeys()));
             } else {
                 int page = Integer.parseInt(pageParam);
-                file.put("list", new JSONArray(CurrentKey.getKeysPages(page, 8)));
+                file.put("list", new JSONArray(CurrentKey.getKeysPages(page, 5)));
                 file.put("total", CurrentKey.getTotalCurrentKey());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
