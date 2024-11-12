@@ -9,6 +9,7 @@ const app = Vue.createApp({
             newSubject: '',
             newDate: '',
             newEnd: '',
+            search:'',
             reservation: null,
             list: [],
             rooms: [],
@@ -189,7 +190,7 @@ const app = Vue.createApp({
             this.reservation = null;
         },
         async loadList(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&order=${this.listReservation}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/reservations?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&order=${this.listReservation}&filter=${this.search}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);

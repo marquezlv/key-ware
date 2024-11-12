@@ -41,7 +41,11 @@
                                     <option value=1>Mostrar Futuras</option>
                                     <option value=2>Mostrar Anteriores</option>
                                 </select>
-                            </div>      
+                            </div>
+                            <div class="col-md-2">
+                                <label></label>
+                                <input type="text" class="form-control mb-2" v-model="search" @change="reloadPage" placeholder="Procurar">
+                            </div>
                         </div>
                         <table class="table">
                             <tr class="tr-style">

@@ -405,17 +405,19 @@ public class ApiServlet extends HttpServlet {
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String searchParam = request.getParameter("search");
             String pageParam = request.getParameter("page");
-            if (pageParam == null && searchParam == null) {
+            String today = request.getParameter("today");
+            if (pageParam == null && searchParam == null && today == null) {
                 file.put("list", new JSONArray(Reservation.getReservationsAll()));
-            } else if (searchParam == null) {
+            } else if (searchParam == null && today == null) {
                 int page = Integer.parseInt(pageParam);
+                String filter = request.getParameter("filter");
                 int itemPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
                 int order = Integer.parseInt(request.getParameter("order"));
-                file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort, order)));
-                file.put("total", Reservation.getTotalReservations(order));
-            } else {
+                file.put("list", new JSONArray(Reservation.getReservations(page, itemPage, column, sort, order, filter)));
+                file.put("total", Reservation.getTotalReservations(order, filter));
+            } else if(today == null){
                 String employee = request.getParameter("employee");
                 String subject = request.getParameter("subject");
                 String strdate = request.getParameter("date");
@@ -431,6 +433,8 @@ public class ApiServlet extends HttpServlet {
                         subject != null && !subject.isEmpty() ? subject : null,
                         searchDate
                 )));
+            } else{
+                file.put("list", new JSONArray(Reservation.getReservationsToday()));
             }
 
         } else if (request.getMethod().toLowerCase().equals("post")) {
@@ -439,7 +443,6 @@ public class ApiServlet extends HttpServlet {
             long room = body.getLong("room");
             long subject = body.getLong("subject");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             String strDateTime = body.getString("date");
             String strDateTimeEnd = body.getString("end");
             Date dateTime = dateFormat.parse(strDateTime);

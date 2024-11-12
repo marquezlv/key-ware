@@ -121,13 +121,13 @@
                     <div v-if="isReservations === true">
                         <div class="row">
                             <div class="col-md-3">
-                                <input type="text" v-model="searchEmployee" class="form-control" @change="loadList()" placeholder="Pesquisar por professor">
+                                <input type="text" v-model="searchEmployee" class="form-control" @change="loadReservations()" placeholder="Pesquisar por professor">
                             </div>
                             <div class="col-md-3">
-                                <input type="text" v-model="searchSubject" class="form-control" @change="loadList()" placeholder="Pesquisar por matéria">
+                                <input type="text" v-model="searchSubject" class="form-control" @change="loadReservations()" placeholder="Pesquisar por matéria">
                             </div>
                             <div class="col-md-3">
-                                <input type="date" v-model="searchDate" class="form-control" @change="loadList()">
+                                <input type="date" v-model="searchDate" class="form-control" @change="loadReservations()">
                             </div>
                         </div>
                         <br>
@@ -135,8 +135,8 @@
                             <h4 class="card-title">{{ roomName }}</h4>
                             <div class="col-md-12 mb-2">
                                 <div v-for="employeeReservations in groupByEmployee(reservationsGroup)" :key="employeeReservations[0].employee" class="card-body custom-card-body card-stack">
-                                    <div v-for="(reservation, index) in employeeReservations.reverse().slice(0, 5).reverse()" :key="reservation.rowid" :style="{ top: index * 40 + 'px' }" class="stack-card">
-                                        <h5>{{ reservation.employee }} - {{ reservation.start.split(' - ')[1].split('/').slice(0, 2).join('/') }}</h5>
+                                    <div v-for="(reservation, index) in employeeReservations.reverse().slice(0, 5).reverse()" :key="reservation.rowid" :style="{ top: index * 55 + 'px' }" class="stack-card">
+                                        <h5>{{ reservation.employee }} <br> {{ reservation.start.split(' - ')[1].split('/').slice(0, 2).join('/') }}</h5>
                                         <p style="font-size: 14px; margin-left: 15px;">Inicio: {{ reservation.start.split(' - ')[2] }}<br>Terminio: {{ reservation.end.split(' - ')[2] }}<br>Matéria: {{ reservation.subjectName}}</p>
                                     </div>
                                     <div v-if="employeeReservations.length > 5" class="extra-count">

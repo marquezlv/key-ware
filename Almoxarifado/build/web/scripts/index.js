@@ -221,8 +221,14 @@ const app = Vue.createApp({
                     }, {});
         },
         ChangeScreen() {
-            this.isReservations = !this.isReservations;
             console.log(this.isReservations);
+            if(this.isReservations){
+                this.loadList();
+            } else{
+                this.loadReservations();
+                console.log("caiu aqui");
+            }
+            this.isReservations = !this.isReservations;
         },
         groupByEmployee(reservationsGroup) {
             return reservationsGroup.reduce((groups, reservation) => {
@@ -347,10 +353,6 @@ const app = Vue.createApp({
             if (dataRF) {
                 this.roomFilters = dataRF.list;
             }
-            const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${1}`, "GET");
-            if (dataRE) {
-                this.reservations = dataRE.list;
-            }
             const dataM = await this.request(`/Almoxarifado/api/material`, "GET");
             if (dataM) {
                 this.material = dataM.list;
@@ -359,7 +361,19 @@ const app = Vue.createApp({
             if (dataC) {
                 this.currentMaterial = dataC.list;
             }
-            console.log(this.currentMaterial);
+            this.loadReservationsToday();
+        },
+        async loadReservations(){
+            const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${1}`, "GET");
+            if (dataRE) {
+                this.reservations = dataRE.list;
+            }
+        },
+        async loadReservationsToday(){
+            const dataRE = await this.request(`/Almoxarifado/api/reservations?today=${1}`, "GET");
+            if (dataRE) {
+                this.reservations = dataRE.list;
+            }
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
