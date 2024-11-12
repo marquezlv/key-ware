@@ -347,7 +347,7 @@ const app = Vue.createApp({
             if (dataRF) {
                 this.roomFilters = dataRF.list;
             }
-            const dataRE = await this.request(`/Almoxarifado/api/reservations`, "GET");
+            const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${1}`, "GET");
             if (dataRE) {
                 this.reservations = dataRE.list;
             }

@@ -121,13 +121,13 @@
                     <div v-if="isReservations === true">
                         <div class="row">
                             <div class="col-md-3">
-                                <input type="text" v-model="searchEmployee" class="form-control" @change="loadReservation()" placeholder="Pesquisar por professor">
+                                <input type="text" v-model="searchEmployee" class="form-control" @change="loadList()" placeholder="Pesquisar por professor">
                             </div>
                             <div class="col-md-3">
-                                <input type="text" v-model="searchSubject" class="form-control" @change="loadReservation()" placeholder="Pesquisar por matéria">
+                                <input type="text" v-model="searchSubject" class="form-control" @change="loadList()" placeholder="Pesquisar por matéria">
                             </div>
                             <div class="col-md-3">
-                                <input type="date" v-model="searchDate" class="form-control" @change="loadReservation()">
+                                <input type="date" v-model="searchDate" class="form-control" @change="loadList()">
                             </div>
                         </div>
                         <br>
