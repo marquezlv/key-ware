@@ -222,12 +222,10 @@ const app = Vue.createApp({
                     }, {});
         },
         ChangeScreen() {
-            console.log(this.isReservations);
             if(this.isReservations){
                 this.loadList();
             } else{
                 this.loadReservations();
-                console.log("caiu aqui");
             }
             this.isReservations = !this.isReservations;
         },

@@ -19,14 +19,14 @@
                         <tr>
                             <th>REQUISITANTE</th>
                             <th>MATÉRIA</th>
-                            <th>SALA</th>
+                            <th class="room">SALA</th>
                         </tr>
                         <tr v-for="item in list" :key="item.rowid">
                             <td v-if="item.employeeType === 'PROFESSOR' || item.employeeType === 'MONITOR'"> {{ item.employeeName }} </td>
                             <td v-if="item.employeeType === 'PROFESSOR' || item.employeeType === 'MONITOR'"> {{ item.subjectName }} </td>
-                            <td v-if="item.employeeType === 'PROFESSOR' || item.employeeType === 'MONITOR'"> {{ item.roomName }} </td>
+                            <td v-if="item.employeeType === 'PROFESSOR' || item.employeeType === 'MONITOR'" class="room"> {{ item.roomName }} </td>
                         </tr>
-                    </table>                   
+                    </table>
                 </div>
             </div>
         </div>
