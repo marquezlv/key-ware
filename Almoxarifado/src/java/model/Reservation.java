@@ -23,7 +23,6 @@ public class Reservation {
     private int active;
     private long subject;
     private String subjectName;
-    private String subjectPeriod;
 
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS reservations("
@@ -69,12 +68,11 @@ public class Reservation {
         Connection con = AppListener.getConnection();
 
         // Montar o SQL dinamicamente
-        StringBuilder sql = new StringBuilder("SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period ")
+        StringBuilder sql = new StringBuilder("SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject ")
                 .append("FROM reservations r ")
                 .append("LEFT JOIN employees e ON e.cd_employee = r.cd_employee ")
                 .append("LEFT JOIN rooms ro ON ro.cd_room = r.cd_room ")
-                .append("LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ")
-                .append("LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject ");
+                .append("LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ");
 
         boolean whereAdded = false;
 
@@ -125,7 +123,6 @@ public class Reservation {
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
-            String subjectPeriod = rs.getString("nm_period");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Timestamp timestampEnd = rs.getTimestamp("dt_end");
 
@@ -139,7 +136,7 @@ public class Reservation {
             String dateEnd = dateFormat.format(datetimeEnd);
 
             // Adiciona a reserva na lista
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, date, dateEnd, active));
         }
 
         return list;
@@ -152,18 +149,17 @@ public class Reservation {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         int startIndex = (page - 1) * recordsPerPage;
-        String baseSQL = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period "
+        String baseSQL = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject "
                 + "FROM reservations r "
                 + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
                 + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
-                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                + "LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject ";
+                + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject ";
 
         String orderClause = "";
         String dateFilter = "";
 
         if (order == 1) {
-            dateFilter = " WHERE r.dt_start > ? ";
+            dateFilter = " WHERE r.dt_start >= ? ";
         } else if (order == 2) {
             dateFilter = " WHERE r.dt_start < ? ";
         }
@@ -202,9 +198,16 @@ public class Reservation {
 
         PreparedStatement stmt = con.prepareStatement(sql);
 
-        stmt.setTimestamp(1, currentTimestamp);
-        stmt.setInt(2, startIndex);
-        stmt.setInt(3, recordsPerPage);
+        if (!dateFilter.isEmpty()) {
+            stmt = con.prepareStatement(sql);
+            stmt.setTimestamp(1, currentTimestamp);
+            stmt.setInt(2, startIndex);
+            stmt.setInt(3, recordsPerPage);
+        } else {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, startIndex);
+            stmt.setInt(2, recordsPerPage);
+        }
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
@@ -217,7 +220,6 @@ public class Reservation {
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
-            String subjectPeriod = rs.getString("nm_period");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Timestamp timestampend = rs.getTimestamp("dt_end");
             Date datetime = new Date(timestamp.getTime());
@@ -225,7 +227,7 @@ public class Reservation {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
             String dateEnd = dateFormat.format(datetimeEnd);
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, date, dateEnd, active));
         }
         rs.close();
         stmt.close();
@@ -237,12 +239,11 @@ public class Reservation {
         ArrayList<Reservation> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject, es.nm_period "
+        String sql = "SELECT r.*, e.cd_employee, e.nm_employee, ro.cd_room, ro.nm_room, ro.nm_location, s.nm_subject "
                 + "FROM reservations r "
                 + "LEFT JOIN employees e ON e.cd_employee = r.cd_employee "
                 + "LEFT JOIN rooms ro ON ro.cd_room = r.cd_room "
                 + "LEFT JOIN subjects s ON s.cd_subject = r.cd_subject "
-                + "LEFT JOIN employees_subjects es ON es.cd_subject = s.cd_subject "
                 + "ORDER BY r.dt_start, e.nm_employee";
 
         PreparedStatement stmt = con.prepareStatement(sql);
@@ -258,7 +259,6 @@ public class Reservation {
             String roomName = rs.getString("nm_room");
             String roomLocation = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
-            String subjectPeriod = rs.getString("nm_period");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Timestamp timestampend = rs.getTimestamp("dt_end");
             Date datetime = new Date(timestamp.getTime());
@@ -266,7 +266,7 @@ public class Reservation {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
             String dateEnd = dateFormat.format(datetimeEnd);
-            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, subjectPeriod, date, dateEnd, active));
+            list.add(new Reservation(rowid, employee, employeeName, room, roomName, roomLocation, subject, subjectName, date, dateEnd, active));
         }
         rs.close();
         stmt.close();
@@ -286,9 +286,8 @@ public class Reservation {
         stmt.setDate(4, sqlDate);
         java.sql.Date sqlDateEnd = new java.sql.Date(end.getTime());
         stmt.setDate(5, sqlDateEnd);
-        stmt.setInt(6,active);
+        stmt.setInt(6, active);
         stmt.execute();
-
         stmt.close();
         con.close();
     }
@@ -312,7 +311,7 @@ public class Reservation {
         stmt.close();
         con.close();
     }
-    
+
     public static void updateStatus(long id, int active) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "UPDATE reservations SET ic_active = ? WHERE cd_reservation = ?";
@@ -338,9 +337,8 @@ public class Reservation {
 
         stmt.close();
         con.close();
-    }
-
-    public Reservation(long rowid, long employeeid, String employee, long roomid, String roomName, String location, long subject, String subjectName, String subjectPeriod, String start, String end, int active) {
+    }    
+    public Reservation(long rowid, long employeeid, String employee, long roomid, String roomName, String location, long subject, String subjectName, String start, String end, int active) {
         this.rowid = rowid;
         this.employeeid = employeeid;
         this.employee = employee;
@@ -350,7 +348,6 @@ public class Reservation {
         this.start = start;
         this.subject = subject;
         this.subjectName = subjectName;
-        this.subjectPeriod = subjectPeriod;
         this.end = end;
         this.active = active;
     }
@@ -433,14 +430,6 @@ public class Reservation {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
-    }
-
-    public String getSubjectPeriod() {
-        return subjectPeriod;
-    }
-
-    public void setSubjectPeriod(String subjectPeriod) {
-        this.subjectPeriod = subjectPeriod;
     }
 
     public int getActive() {

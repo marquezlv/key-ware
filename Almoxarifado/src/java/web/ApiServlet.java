@@ -439,7 +439,7 @@ public class ApiServlet extends HttpServlet {
             long room = body.getLong("room");
             long subject = body.getLong("subject");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("America/Sao_Paulo"));
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             String strDateTime = body.getString("date");
             String strDateTimeEnd = body.getString("end");
             Date dateTime = dateFormat.parse(strDateTime);

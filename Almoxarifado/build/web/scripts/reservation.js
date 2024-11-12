@@ -116,12 +116,10 @@ const app = Vue.createApp({
             const startDate = new Date(this.newDate);
             const endDate = new Date(this.newEnd);
 
-            // Loop para cada semana recorrente
             for (let i = 0; i < this.recurringWeeks; i++) {
                 const currentStartDate = new Date(startDate);
                 const currentEndDate = new Date(endDate);
 
-                // Adiciona a quantidade de semanas
                 currentStartDate.setDate(startDate.getDate() + (i * 7));
                 currentEndDate.setDate(endDate.getDate() + (i * 7));
                 const data = await this.request("/Almoxarifado/api/reservations", "POST", {
@@ -129,14 +127,8 @@ const app = Vue.createApp({
                     room: this.newRoom,
                     subject: subjectValue,
                     date: currentStartDate,
-                    end: currentEndDate,
-                    active: 1
+                    end: currentEndDate
                 });
-                console.log(i, " - ", data);
-                console.log(i, " - ", currentEndDate);
-                console.log(i, " - ", currentStartDate);
-                console.log(i, " - ", this.endDate);
-                console.log(i, " - ", this.newDate);
 
 
                 if (!data) {
@@ -210,6 +202,7 @@ const app = Vue.createApp({
             if (dataR) {
                 this.rooms = dataR.list;
             }
+            console.log(this.list);
         },
         async getSubjects() {
             const dataS = await this.request(`/Almoxarifado/api/employee_subject`, "GET");
