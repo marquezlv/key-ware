@@ -9,7 +9,7 @@ const app = Vue.createApp({
             newSubject: '',
             newDate: '',
             newEnd: '',
-            search:'',
+            search: '',
             reservation: null,
             list: [],
             rooms: [],
@@ -109,7 +109,7 @@ const app = Vue.createApp({
 
         async addRecurringReservations() {
             if (!this.newEmployee) {
-                console.error("Um funcionario é necessário para reservar a chave");
+                console.error("Um funcionário é necessário para reservar a chave");
                 return;
             }
 
@@ -123,19 +123,23 @@ const app = Vue.createApp({
 
                 currentStartDate.setDate(startDate.getDate() + (i * 7));
                 currentEndDate.setDate(endDate.getDate() + (i * 7));
+
+                const formattedStartDate = `${currentStartDate.getFullYear()}-${String(currentStartDate.getMonth() + 1).padStart(2, '0')}-${String(currentStartDate.getDate()).padStart(2, '0')}T${String(currentStartDate.getHours()).padStart(2, '0')}:${String(currentStartDate.getMinutes()).padStart(2, '0')}`;
+                const formattedEndDate = `${currentEndDate.getFullYear()}-${String(currentEndDate.getMonth() + 1).padStart(2, '0')}-${String(currentEndDate.getDate()).padStart(2, '0')}T${String(currentEndDate.getHours()).padStart(2, '0')}:${String(currentEndDate.getMinutes()).padStart(2, '0')}`;
+
                 const data = await this.request("/Almoxarifado/api/reservations", "POST", {
                     employee: this.newEmployee,
                     room: this.newRoom,
                     subject: subjectValue,
-                    date: currentStartDate,
-                    end: currentEndDate
+                    date: formattedStartDate,
+                    end: formattedEndDate
                 });
-
 
                 if (!data) {
                     console.error("Erro ao adicionar reserva para a semana " + (i + 1));
                 }
             }
+
             this.loadList(this.currentPage, this.column, this.direction);
         },
 

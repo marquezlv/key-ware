@@ -120,13 +120,13 @@
                     </div>
                     <div v-if="isReservations === true">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3" style="width: 265px !important;">
                                 <input type="text" v-model="searchEmployee" class="form-control" @change="loadReservations()" placeholder="Pesquisar por professor">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3" style="width: 265px !important;">
                                 <input type="text" v-model="searchSubject" class="form-control" @change="loadReservations()" placeholder="Pesquisar por matéria">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3" style="width: 265px !important;">
                                 <input type="date" v-model="searchDate" class="form-control" @change="loadReservations()">
                             </div>
                         </div>

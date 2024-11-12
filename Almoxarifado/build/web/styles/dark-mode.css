@@ -57,7 +57,8 @@ body.dark-mode .stack-card {
     background-color: #454a52;
 }
 
-.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator,
+body.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator{
     filter: invert(1); 
 }
 
