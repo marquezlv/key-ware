@@ -33,13 +33,12 @@ th, td {
     transform: rotate(45deg);
 }
 
-.navbar-text-login{
+.navbar-text-login {
     display: flex;
+    flex-wrap: wrap;  /* Allow content to wrap */
     font-size: 1.5vw;
-    margin-right: 4%;
-    align-items: center;
-    gap: 3%;
-    justify-content: flex-end;
+    width: 100%;
+    gap: 10px;  /* Space between rows and elements */
 }
 
 .navbar-text-login-button{
@@ -151,3 +150,26 @@ th, td {
 .normal-page {
     transition: transform 0.3s ease;
 }
+
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;  /* Make user section take full width to force buttons to next line */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.buttons-section {
+    display: flex;
+    gap: 5px;
+    width: 100%;  /* Take full width */
+    justify-content: flex-start;  /* Align buttons to the right */
+}
+
+.icons {
+    margin-right: 5px; 
+}
+
