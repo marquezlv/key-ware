@@ -25,7 +25,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-2">
                                 <label>Qtd. Registro</label>
-                                <select class="form-select mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                <select class="form-control mb-3" v-model="itemsPerPage" id="registers" @change="reloadPage">
                                     <option value=5>5</option>
                                     <option value=10>10</option>
                                     <option value=20>20</option>
