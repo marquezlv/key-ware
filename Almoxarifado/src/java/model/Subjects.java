@@ -40,7 +40,7 @@ public class Subjects {
         return list;
     }
 
-    public static ArrayList<Subjects> getSubjectsPages(int page, int recordsPerPage, int column, int sort) throws Exception {
+    public static ArrayList<Subjects> getSubjectsPages(int page, int recordsPerPage, int column, int sort, String search) throws Exception {
         ArrayList<Subjects> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
@@ -48,6 +48,11 @@ public class Subjects {
 
         StringBuilder sql = new StringBuilder("SELECT s.*, c.nm_course FROM subjects s ")
                 .append("JOIN courses c ON c.cd_course = s.cd_course ");
+
+        // Adiciona a condição de busca nas colunas nm_subject e nm_course, se 'search' não for nulo ou vazio
+        if (search != null && !search.isEmpty()) {
+            sql.append("WHERE s.nm_subject LIKE ? OR c.nm_course LIKE ? ");
+        }
 
         String orderColumn;
         switch (column) {
@@ -60,14 +65,25 @@ public class Subjects {
             default:
                 orderColumn = "s.nm_subject";
         }
+
         String orderDirection = (sort == 2) ? "DESC" : "ASC";
 
         sql.append("ORDER BY ").append(orderColumn).append(" ").append(orderDirection)
                 .append(" LIMIT ?, ?");
 
         PreparedStatement stmt = con.prepareStatement(sql.toString());
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+        int paramIndex = 1;
+
+        // Define os parâmetros de pesquisa, se aplicável
+        if (search != null && !search.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
+        // Parâmetros de paginação
+        stmt.setInt(paramIndex++, startIndex);
+        stmt.setInt(paramIndex, recordsPerPage);
 
         ResultSet rs = stmt.executeQuery();
 
@@ -86,15 +102,35 @@ public class Subjects {
         return list;
     }
 
-    public static int getTotalSubjects() throws Exception {
+    public static int getTotalSubjects(String search) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM subjects";
+        String baseSQL = "SELECT COUNT(*) AS total FROM subjects s "
+                + "JOIN courses c ON c.cd_course = s.cd_course ";
+        String searchFilter = "";
+
+        // Adiciona o filtro de pesquisa, se `search` não for nulo ou vazio
+        if (search != null && !search.isEmpty()) {
+            searchFilter = "WHERE s.nm_subject LIKE ? OR c.nm_course LIKE ? ";
+        }
+
+        String sql = baseSQL + searchFilter;
+
         PreparedStatement stmt = con.prepareStatement(sql);
+        int paramIndex = 1;
+
+        // Adiciona os parâmetros de pesquisa, se o filtro não estiver vazio
+        if (!searchFilter.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
             total = rs.getInt("total");
         }
+
         rs.close();
         stmt.close();
         con.close();

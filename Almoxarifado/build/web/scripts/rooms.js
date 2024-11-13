@@ -9,6 +9,8 @@ const app = Vue.createApp({
             newFilter: '',
             newLocation: '',
             newStatus: 'DISPONIVEL',
+            search: '',
+            searchFilter: '',
             room: null,
             list: [],
             filters: [],
@@ -26,20 +28,16 @@ const app = Vue.createApp({
         }
     },
     methods: {
-        filterList(column){
-            if(this.direction === 0){
+        filterList(column) {
+            if (this.direction === 0) {
                 this.direction = 1;
-            } else if(this.direction === 1){
+            } else if (this.direction === 1) {
                 this.direction = 2;
-            } else{
+            } else {
                 this.direction = 0;
             }
             this.column = column;
             this.loadList(this.currentPage, this.column, this.direction);
-        },
-        reloadPage(){
-            this.currentPage = 1;
-            this.loadList(this.currentPage, this.column ,this.direction);
         },
         previousPage() {
             if (this.currentPage > 1) {
@@ -141,7 +139,7 @@ const app = Vue.createApp({
             this.room = null;
         },
         async loadList(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/rooms?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/rooms?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&search=${this.search}&filter=${this.searchFilter}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);
@@ -154,6 +152,9 @@ const app = Vue.createApp({
             if (dataF) {
                 this.filters = dataF.list;
         }
+        console.log(this.list);
+        console.log(this.roomFilters);
+        console.log(this.filters);
         },
         pagination() {
             const pages = [];

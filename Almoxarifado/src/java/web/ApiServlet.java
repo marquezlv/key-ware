@@ -212,15 +212,16 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            String search = request.getParameter("search");
+            if (pageParam == null && search == null) {
                 file.put("list", new JSONArray(Filters.getFilters()));
             } else {
                 int itemsPerPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
                 int page = Integer.parseInt(pageParam);
-                file.put("list", new JSONArray(Filters.getFiltersPages(page, itemsPerPage, column, sort)));
-                file.put("total", Filters.getTotalFilters());
+                file.put("list", new JSONArray(Filters.getFiltersPages(page, itemsPerPage, column, sort, search)));
+                file.put("total", Filters.getTotalFilters(search));
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
@@ -246,15 +247,17 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            String search = request.getParameter("search");
+            String filter = request.getParameter("filter"); 
+            if (pageParam == null && search == null && filter == null) {
                 file.put("list", new JSONArray(Rooms.getRoomsAll()));
             } else {
                 int itemsPerPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
                 int page = Integer.parseInt(pageParam);
-                file.put("list", new JSONArray(Rooms.getRooms(page, itemsPerPage, column, sort)));
-                file.put("total", Rooms.getTotalRooms());
+                file.put("list", new JSONArray(Rooms.getRooms(page, itemsPerPage, column, sort, search, filter)));
+                file.put("total", Rooms.getTotalRooms(search, filter));
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
@@ -282,15 +285,16 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            String search = request.getParameter("search");
+            if (pageParam == null && search == null) {
                 file.put("list", new JSONArray(Subjects.getSubjects()));
             } else {
                 int page = Integer.parseInt(pageParam);
                 int itemsPerPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
-                file.put("list", new JSONArray(Subjects.getSubjectsPages(page, itemsPerPage, column, sort)));
-                file.put("total", Subjects.getTotalSubjects());
+                file.put("list", new JSONArray(Subjects.getSubjectsPages(page, itemsPerPage, column, sort, search)));
+                file.put("total", Subjects.getTotalSubjects(search));
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
@@ -348,15 +352,17 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            String search = request.getParameter("search");
+            String searchSubject = request.getParameter("subject");
+            if (pageParam == null && search == null && searchSubject == null) {
                 file.put("list", new JSONArray(Employees.getEmployees()));
             } else {
                 int page = Integer.parseInt(pageParam);
                 int itemsPerPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
-                file.put("list", new JSONArray(Employees.getEmployeesPages(page, itemsPerPage, column, sort)));
-                file.put("total", Employees.getTotalEmployees());
+                file.put("list", new JSONArray(Employees.getEmployeesPages(page, itemsPerPage, column, sort, search, searchSubject)));
+                file.put("total", Employees.getTotalEmployees(search, searchSubject));
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
@@ -501,7 +507,7 @@ public class ApiServlet extends HttpServlet {
                 file.put("list", new JSONArray(CurrentKey.getKeys()));
             } else {
                 int page = Integer.parseInt(pageParam);
-                file.put("list", new JSONArray(CurrentKey.getKeysPages(page, 5)));
+                file.put("list", new JSONArray(CurrentKey.getKeysPages(page, 6)));
                 file.put("total", CurrentKey.getTotalCurrentKey());
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
@@ -600,15 +606,16 @@ public class ApiServlet extends HttpServlet {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String pageParam = request.getParameter("page");
-            if (pageParam == null) {
+            String search = request.getParameter("search");
+            if (pageParam == null && search == null) {
                 file.put("list", new JSONArray(Material.getMaterials()));
             } else {
                 int itemsPerPage = Integer.parseInt(request.getParameter("items"));
                 int column = Integer.parseInt(request.getParameter("column"));
                 int sort = Integer.parseInt(request.getParameter("sort"));
                 int page = Integer.parseInt(pageParam);
-                file.put("list", new JSONArray(Material.getMaterialPages(page, itemsPerPage, column, sort)));
-                file.put("total", Material.getTotalMaterial());
+                file.put("list", new JSONArray(Material.getMaterialPages(page, itemsPerPage, column, sort, search)));
+                file.put("total", Material.getTotalMaterial(search));
             }
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());

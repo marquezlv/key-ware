@@ -83,6 +83,11 @@
                                 <option value=50>50</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <label></label>
+                            <input type="text" class="form-control mb-2" v-model="search" @change="reloadPageSub()" placeholder="Procurar">
+                        </div>
+
                     </div>
                     <table class="table">
                         <tr>

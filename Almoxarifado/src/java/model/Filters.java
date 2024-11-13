@@ -70,38 +70,49 @@ public class Filters {
         return list;
     }
 
-    public static ArrayList<Filters> getFiltersPages(int page, int recordsPerPage, int column, int sort) throws Exception {
+    public static ArrayList<Filters> getFiltersPages(int page, int recordsPerPage, int column, int sort, String search) throws Exception {
         ArrayList<Filters> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "";
-        if (sort == 0) {
-            column = 0;
+        String baseSQL = "SELECT * FROM filters ";
+        String searchFilter = "";
+        String orderClause = "";
+
+        // Adiciona o filtro de pesquisa, se `search` não for nulo ou vazio
+        if (search != null && !search.isEmpty()) {
+            searchFilter = "WHERE nm_type LIKE ? OR ds_filter LIKE ? ";
         }
+
+        // Define a cláusula de ordenação com base no valor de `column` e `sort`
         switch (column) {
             case 1:
-                if (sort == 1) {
-                    sql = "SELECT * FROM filters ORDER BY nm_type ASC LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM filters ORDER BY nm_type DESC LIMIT ?,?";
-                }
+                orderClause = "ORDER BY nm_type " + (sort == 2 ? "DESC" : "ASC") + " ";
                 break;
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT * FROM filters ORDER BY ds_filter ASC LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM filters ORDER BY ds_filter DESC LIMIT ?,?";
-                }
+                orderClause = "ORDER BY ds_filter " + (sort == 2 ? "DESC" : "ASC") + " ";
                 break;
             default:
-                sql = "SELECT * FROM filters ORDER BY nm_type LIMIT ?,?";
+                orderClause = "ORDER BY nm_type ASC ";
                 break;
         }
 
+        // Monta a consulta final com filtro e paginação
+        String sql = baseSQL + searchFilter + orderClause + "LIMIT ?, ?";
+
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+        int paramIndex = 1;
+
+        // Adiciona os parâmetros de pesquisa, se o filtro não estiver vazio
+        if (!searchFilter.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
+        // Parâmetros de paginação
+        stmt.setInt(paramIndex++, startIndex);
+        stmt.setInt(paramIndex, recordsPerPage);
 
         ResultSet rs = stmt.executeQuery();
 
@@ -117,15 +128,34 @@ public class Filters {
         return list;
     }
 
-    public static int getTotalFilters() throws Exception {
+    public static int getTotalFilters(String search) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM filters";
+        String baseSQL = "SELECT COUNT(*) AS total FROM filters ";
+        String searchFilter = "";
+
+        // Adiciona o filtro de pesquisa, se `search` não for nulo ou vazio
+        if (search != null && !search.isEmpty()) {
+            searchFilter = "WHERE nm_type LIKE ? OR ds_filter LIKE ? ";
+        }
+
+        String sql = baseSQL + searchFilter;
+
         PreparedStatement stmt = con.prepareStatement(sql);
+        int paramIndex = 1;
+
+        // Adiciona os parâmetros de pesquisa, se o filtro não estiver vazio
+        if (!searchFilter.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
             total = rs.getInt("total");
         }
+
         rs.close();
         stmt.close();
         con.close();

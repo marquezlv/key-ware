@@ -34,55 +34,102 @@ public class Employees {
         con.close();
         return list;
     }
-    
-    public static int getTotalEmployees() throws Exception {
+
+    public static int getTotalEmployees(String search, String searchSubject) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM employees";
+        String baseSQL = "SELECT COUNT(DISTINCT employees.cd_employee) AS total FROM employees "
+                + "LEFT JOIN employees_subjects es ON employees.cd_employee = es.cd_employee "
+                + "LEFT JOIN subjects s ON es.cd_subject = s.cd_subject ";
+        String whereClause = "";
+
+        // Adiciona o filtro de pesquisa para `nm_employee`, se `search` não for vazio
+        if (search != null && !search.isEmpty()) {
+            whereClause += "WHERE employees.nm_employee LIKE ? ";
+        }
+
+        // Adiciona o filtro de pesquisa para `nm_subject`, se `searchSubject` não for vazio
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            whereClause += (whereClause.isEmpty() ? "WHERE " : "AND ") + "s.nm_subject LIKE ? ";
+        }
+
+        String sql = baseSQL + whereClause;
+
         PreparedStatement stmt = con.prepareStatement(sql);
+        int paramIndex = 1;
+
+        // Adiciona parâmetros de pesquisa para `nm_employee` e `nm_subject`, se aplicável
+        if (search != null && !search.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + search + "%");
+        }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchSubject + "%");
+        }
+
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
             total = rs.getInt("total");
         }
+
         rs.close();
         stmt.close();
         con.close();
         return total;
     }
-    
-    public static ArrayList<Employees> getEmployeesPages(int page, int recordsPerPage, int column, int sort) throws Exception {
+
+    public static ArrayList<Employees> getEmployeesPages(int page, int recordsPerPage, int column, int sort, String search, String searchSubject) throws Exception {
         ArrayList<Employees> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
         int startIndex = (page - 1) * recordsPerPage;
-        
-        String sql = "";
-        if (sort == 0) {
-            column = 0;
+
+        String baseSQL = "SELECT DISTINCT employees.cd_employee, employees.nm_employee, employees.nm_type "
+                + "FROM employees "
+                + "LEFT JOIN employees_subjects es ON employees.cd_employee = es.cd_employee "
+                + "LEFT JOIN subjects s ON es.cd_subject = s.cd_subject ";
+        String whereClause = "";
+        String orderClause = "";
+
+        // Adiciona o filtro de pesquisa para `nm_employee`, se `search` não for vazio
+        if (search != null && !search.isEmpty()) {
+            whereClause += "WHERE employees.nm_employee LIKE ? ";
         }
+
+        // Adiciona o filtro de pesquisa para `nm_subject`, se `searchSubject` não for vazio
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            whereClause += (whereClause.isEmpty() ? "WHERE " : "AND ") + "s.nm_subject LIKE ? ";
+        }
+
+        // Define a cláusula de ordenação com base nos valores de `column` e `sort`
         switch (column) {
             case 1:
-                if (sort == 1) {
-                    sql = "SELECT * FROM employees ORDER BY nm_employee ASC LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM employees ORDER BY nm_employee DESC LIMIT ?,?";
-                }
+                orderClause = "ORDER BY employees.nm_employee " + (sort == 2 ? "DESC" : "ASC") + " ";
                 break;
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT * FROM employees ORDER BY nm_type ASC LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM employees ORDER BY nm_type DESC LIMIT ?,?";
-                }
+                orderClause = "ORDER BY employees.nm_type " + (sort == 2 ? "DESC" : "ASC") + " ";
                 break;
             default:
-                sql = "SELECT * FROM employees ORDER BY nm_employee LIMIT ?,?";
+                orderClause = "ORDER BY employees.nm_employee ASC ";
                 break;
         }
-        
+
+        // Monta a consulta final com filtro, ordenação e paginação
+        String sql = baseSQL + whereClause + orderClause + "LIMIT ?, ?";
+
         PreparedStatement stmt = con.prepareStatement(sql);
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+        int paramIndex = 1;
+
+        // Adiciona parâmetros de pesquisa para `nm_employee` e `nm_subject`, se aplicável
+        if (search != null && !search.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + search + "%");
+        }
+        if (searchSubject != null && !searchSubject.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + searchSubject + "%");
+        }
+
+        // Parâmetros de paginação
+        stmt.setInt(paramIndex++, startIndex);
+        stmt.setInt(paramIndex, recordsPerPage);
 
         ResultSet rs = stmt.executeQuery();
 
@@ -97,7 +144,7 @@ public class Employees {
         con.close();
         return list;
     }
-    
+
     public static Employees getEmployee(long id) throws Exception {
         Employees employee = null;
         Connection con = AppListener.getConnection();
@@ -115,7 +162,7 @@ public class Employees {
         con.close();
         return employee;
     }
-    
+
     public static void insertEmployee(String name, String type) throws Exception {
         Connection con = AppListener.getConnection();
         String sql = "INSERT INTO employees(nm_employee, nm_type)"

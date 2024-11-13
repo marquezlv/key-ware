@@ -9,6 +9,8 @@ const app = Vue.createApp({
             newPeriod: '',
             employeeId: '',
             employeeName: '',
+            search: '',
+            searchSubject: '',
             subjects: [],
             employeeSubject: [],
             list: [],
@@ -118,7 +120,7 @@ const app = Vue.createApp({
             this.employee = null;
         },
         async loadList(page = 1,  column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/employees?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/employees?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&search=${this.search}&subject=${this.searchSubject}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);

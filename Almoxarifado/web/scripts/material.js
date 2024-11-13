@@ -4,6 +4,7 @@ const app = Vue.createApp({
             shared: shared,
             error: null,
             newName: '',
+            search: '',
             material: null,
             list: [],
             currentPage: 1,
@@ -85,7 +86,7 @@ const app = Vue.createApp({
             this.material = null;
         },
         async loadList(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/material?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/material?page=${page}&items=${this.itemsPerPage}&column=${column}&sort=${sort}&search=${this.search}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPages = Math.ceil(data.total / this.itemsPerPage);

@@ -95,12 +95,12 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="inputLogin" class="form-label">Login</label>
-                                        <input type="text" v-model="newLogin" class="form-control" id="inputLogin">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="inputName" class="form-label">Nome</label>
                                         <input type="text" v-model="newName" class="form-control" id="inputName">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="inputLogin" class="form-label">Login</label>
+                                        <input type="text" v-model="newLogin" class="form-control" id="inputLogin">
                                     </div>
                                     <div v-if="user ===null" class="mb-3">
                                         <label for="inputPass" class="form-label">Senha</label>

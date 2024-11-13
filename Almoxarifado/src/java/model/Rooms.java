@@ -59,76 +59,129 @@ public class Rooms {
         this.status = status;
     }
 
-    public static int getTotalRooms() throws Exception {
+    public static int getTotalRooms(String search, String filter) throws Exception {
         Connection con = AppListener.getConnection();
-        String sql = "SELECT COUNT(*) AS total FROM rooms";
+        String baseSQL = "SELECT COUNT(DISTINCT rooms.cd_room) AS total FROM rooms "
+                + "LEFT JOIN filters_rooms ON rooms.cd_room = filters_rooms.cd_room "
+                + "LEFT JOIN filters ON filters_rooms.cd_filter = filters.cd_filter ";
+        String whereClause = "";
+
+        // Filtro de pesquisa
+        if (search != null && !search.isEmpty()) {
+            whereClause += "WHERE (rooms.nm_room LIKE ? OR rooms.nm_location LIKE ?) ";
+        }
+
+        // Filtro por nm_type em filters
+        if (filter != null && !filter.isEmpty()) {
+            if (!whereClause.isEmpty()) {
+                whereClause += "AND ";
+            } else {
+                whereClause += "WHERE ";
+            }
+            whereClause += "filters.nm_type LIKE ? ";
+        }
+
+        // Construir SQL final
+        String sql = baseSQL + whereClause;
+
         PreparedStatement stmt = con.prepareStatement(sql);
+        int paramIndex = 1;
+
+        // Parâmetros de pesquisa
+        if (search != null && !search.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
+        // Parâmetro de filtro
+        if (filter != null && !filter.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + filter + "%");
+        }
+
         ResultSet rs = stmt.executeQuery();
         int total = 0;
         if (rs.next()) {
             total = rs.getInt("total");
         }
+
         rs.close();
         stmt.close();
         con.close();
         return total;
     }
 
-    public static ArrayList<Rooms> getRooms(int page, int recordsPerPage, int column, int sort) throws Exception {
+    public static ArrayList<Rooms> getRooms(int page, int recordsPerPage, int column, int sort, String search, String filter) throws Exception {
         ArrayList<Rooms> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
         int startIndex = (page - 1) * recordsPerPage;
+        String baseSQL = "SELECT DISTINCT rooms.cd_room, rooms.nm_room, rooms.nm_location, rooms.nm_status "
+                + "FROM rooms "
+                + "LEFT JOIN filters_rooms ON rooms.cd_room = filters_rooms.cd_room "
+                + "LEFT JOIN filters ON filters_rooms.cd_filter = filters.cd_filter ";
+        String whereClause = "";
+        String orderClause = "";
 
-        String sql = "";
-        if (sort == 0) {
-            column = 0;
-        }
+        // Ordenação por coluna
         switch (column) {
             case 1:
-                if (sort == 1) {
-                    sql = "SELECT * FROM rooms "
-                            + "ORDER BY nm_room ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM rooms "
-                            + "ORDER BY nm_room DESC "
-                            + "LIMIT ?,?";
-                }
+                orderClause = " ORDER BY rooms.nm_room ";
                 break;
             case 2:
-                if (sort == 1) {
-                    sql = "SELECT * FROM rooms "
-                            + "ORDER BY nm_location ASC "
-                            + "LIMIT ?,?";
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM rooms "
-                            + "ORDER BY nm_location DESC "
-                            + "LIMIT ?,?";
-                }
+                orderClause = " ORDER BY rooms.nm_location ";
                 break;
             case 4:
-                if (sort == 1) {
-                    sql = "SELECT * FROM rooms "
-                + "ORDER BY nm_status ASC "
-                + "LIMIT ?,?";  
-                } else if (sort == 2) {
-                    sql = "SELECT * FROM rooms "
-                + "ORDER BY nm_status DESC "
-                + "LIMIT ?,?";
-                }
+                orderClause = " ORDER BY rooms.nm_status ";
                 break;
             default:
-                sql = "SELECT * FROM rooms "
-                        + "ORDER BY nm_location, nm_room "
-                        + "LIMIT ?,?";
+                orderClause = " ORDER BY rooms.nm_location, CAST(SUBSTR(rooms.nm_room, INSTR(rooms.nm_room, ' ') + 1) AS INTEGER) ";
                 break;
         }
 
-        PreparedStatement stmt = con.prepareStatement(sql);
+        // Direção da ordenação
+        if (sort == 2) {
+            orderClause += "DESC ";
+        } else {
+            orderClause += "ASC ";
+        }
 
-        stmt.setInt(1, startIndex);
-        stmt.setInt(2, recordsPerPage);
+        // Filtro de pesquisa
+        if (search != null && !search.isEmpty()) {
+            whereClause += "WHERE (rooms.nm_room LIKE ? OR rooms.nm_location LIKE ?) ";
+        }
+
+        // Filtro por nm_type em filters
+        if (filter != null && !filter.isEmpty()) {
+            if (!whereClause.isEmpty()) {
+                whereClause += "AND ";
+            } else {
+                whereClause += "WHERE ";
+            }
+            whereClause += "filters.nm_type LIKE ? ";
+        }
+
+        // Construir SQL final com paginação
+        String sql = baseSQL + whereClause + orderClause + "LIMIT ?, ?";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        int paramIndex = 1;
+
+        // Adicionar parâmetros de pesquisa
+        if (search != null && !search.isEmpty()) {
+            String searchPattern = "%" + search + "%";
+            stmt.setString(paramIndex++, searchPattern);
+            stmt.setString(paramIndex++, searchPattern);
+        }
+
+        // Adicionar filtro
+        if (filter != null && !filter.isEmpty()) {
+            stmt.setString(paramIndex++, "%" + filter + "%");
+        }
+
+        // Adicionar parâmetros de paginação
+        stmt.setInt(paramIndex++, startIndex);
+        stmt.setInt(paramIndex, recordsPerPage);
 
         ResultSet rs = stmt.executeQuery();
 
@@ -149,8 +202,8 @@ public class Rooms {
         ArrayList<Rooms> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT * FROM rooms "
-                + "ORDER BY nm_location, nm_room";
+        String sql = "SELECT * FROM rooms " +
+             "ORDER BY nm_location, CAST(SUBSTR(nm_room, INSTR(nm_room, ' ') + 1) AS INTEGER)";
 
         PreparedStatement stmt = con.prepareStatement(sql);
 

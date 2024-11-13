@@ -6,6 +6,7 @@ const app = Vue.createApp({
             newName: '',
             newCourse: '',
             CourseAdd: '',
+            search: '',
             subject: null,
             editCourse: null,
             list: [],
@@ -155,7 +156,7 @@ const app = Vue.createApp({
             this.loadListCourse(this.currentPageCourse, this.columnCourse, this.directionCourse);
         },
         async loadListSub(page = 1, column = 0, sort = 1) {
-            const data = await this.request(`/Almoxarifado/api/subjects?page=${page}&items=${this.itemsPerPageSub}&column=${column}&sort=${sort}`, "GET");
+            const data = await this.request(`/Almoxarifado/api/subjects?page=${page}&items=${this.itemsPerPageSub}&column=${column}&sort=${sort}&search=${this.search}`, "GET");
             if (data) {
                 this.list = data.list;
                 this.totalPagesSub = Math.ceil(data.total / this.itemsPerPageSub);

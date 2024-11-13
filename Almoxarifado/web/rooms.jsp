@@ -30,12 +30,20 @@
                         <div class="row align-items-center">
                             <div class="col-md-2">
                                 <label>Qtd. Registros</label>
-                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="reloadPage">
+                                <select class="form-control mb-2" v-model="itemsPerPage" id="registers" @change="loadList()">
                                     <option value=5>5</option>
                                     <option value=10>10</option>
                                     <option value=20>20</option>
                                     <option value=50>50</option>
                                 </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label></label>
+                                <input type="text" class="form-control mb-2" v-model="search" @change="loadList()" placeholder="Procurar">
+                            </div>
+                            <div class="col-md-3">
+                                <label></label>
+                                <input type="text" class="form-control mb-2" v-model="searchFilter" @change="loadList()" placeholder="Procurar por filtro">
                             </div>
                         </div>
                         <table class="table">

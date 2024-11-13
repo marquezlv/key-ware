@@ -20,6 +20,7 @@ public class CurrentKey {
     private String employeeName;
     private String employeeType;
     private String roomName;
+    private String location;
     private String subjectName;
 
     public static String getCreateStatement() {
@@ -54,7 +55,7 @@ public class CurrentKey {
         ArrayList<CurrentKey> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT c.*, s.nm_subject, e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+        String sql = "SELECT c.*, s.nm_subject, r.nm_location ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
@@ -71,12 +72,13 @@ public class CurrentKey {
             String employeeName = rs.getString("nm_employee");
             String employeeType = rs.getString("nm_type");
             String roomName = rs.getString("nm_room");
+            String location = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName));
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location));
         }
         rs.close();
         stmt.close();
@@ -89,7 +91,7 @@ public class CurrentKey {
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT c.*, s.nm_subject ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+        String sql = "SELECT c.*, s.nm_subject, r.nm_location ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
@@ -110,12 +112,13 @@ public class CurrentKey {
             String employeeName = rs.getString("nm_employee");
             String employeeType = rs.getString("nm_type");
             String roomName = rs.getString("nm_room");
+            String location = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName));
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location));
         }
         rs.close();
         stmt.close();
@@ -151,7 +154,7 @@ public class CurrentKey {
         con.close();
     }
 
-    public CurrentKey(long rowid, long room, long employee, long subject, String start, String employeeName, String roomName, String employeeType, String subjectName) {
+    public CurrentKey(long rowid, long room, long employee, long subject, String start, String employeeName, String roomName, String employeeType, String subjectName, String location) {
         this.rowid = rowid;
         this.room = room;
         this.employee = employee;
@@ -161,6 +164,7 @@ public class CurrentKey {
         this.roomName = roomName;
         this.employeeType = employeeType;
         this.subjectName = subjectName;
+        this.location = location;
     }
 
     public long getRowid() {
@@ -233,6 +237,14 @@ public class CurrentKey {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
 }

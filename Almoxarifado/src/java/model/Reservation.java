@@ -224,14 +224,6 @@ public class Reservation {
                 break;
         }
 
-        // Definir a direção da ordenação
-        if (sort == 2) {
-            orderClause += "DESC ";
-        } else {
-            orderClause += "ASC ";
-        }
-
-        // Aplicar filtro de pesquisa geral, se presente
         if (filter != null && !filter.isEmpty()) {
             searchFilter = " AND (e.nm_employee LIKE ? OR s.nm_subject LIKE ? OR ro.nm_room LIKE ? OR ro.nm_location LIKE ?) ";
         }
