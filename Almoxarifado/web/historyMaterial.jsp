@@ -30,8 +30,8 @@
                                     <option value=10>10</option>
                                     <option value=20>20</option>
                                     <option value=50>50</option>
-                                    <option value=50>100</option>
-                                    <option value=50>500</option>
+                                   <!-- <option value=50>100</option>--> 
+                                   <!-- <option value=50>500</option> -->
                                 </select>
                             </div>
                             <div class="col-md-2">
