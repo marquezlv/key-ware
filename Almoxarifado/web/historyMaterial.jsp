@@ -19,7 +19,7 @@
                 <div v-else class="normal-page">
                     <div class="wrapper">
                         <h2 class="mb-3 d-flex align-items-center justify-content-between">
-                            Histórico de Equipamentos
+                            Histórico de Material
                             <button @click="exportToCSV" class="btn btn-warning">Baixar Histórico </button>
                         </h2>
                         <div class="row align-items-center">

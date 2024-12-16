@@ -42,7 +42,6 @@ public class AppListener implements ServletContextListener {
         try {
             Connection c = AppListener.getConnection();
             Statement s = c.createStatement();
-            s.execute("PRAGMA encoding = 'UTF-8'");
 
             // Deletar todas as tabelas existentes
 //            try {
@@ -56,7 +55,7 @@ public class AppListener implements ServletContextListener {
 //                s.execute("DROP TABLE IF EXISTS courses");
 //                s.execute("DROP TABLE IF EXISTS employees");
 //                s.execute("DROP TABLE IF EXISTS currentKey");
-//                s.execute("DROP TABLE IF EXISTS history");
+//             s.execute("DROP TABLE IF EXISTS history");
 //            } catch (SQLException e) {
 //                initializeLog += new Date() + ": Error during table deletion: " + e.getMessage();
 //                e.printStackTrace();
@@ -96,6 +95,8 @@ public class AppListener implements ServletContextListener {
             if (Users.getUsersAll().isEmpty()) {
                 Users.insertUser("admin", "Administrador", "ADMIN", "1234");
             }
+            
+            s.execute("PRAGMA encoding = 'UTF-8'");
         } catch (Exception ex) {
             initializeLog += new Date() + ": Error during database initialization: " + ex.getMessage();
             exception = ex;

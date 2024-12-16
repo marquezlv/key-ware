@@ -22,6 +22,7 @@ public class CurrentKey {
     private String roomName;
     private String location;
     private String subjectName;
+    private String courseName;
 
     public static String getCreateStatement() {
         return "CREATE TABLE IF NOT EXISTS currentKey("
@@ -55,11 +56,13 @@ public class CurrentKey {
         ArrayList<CurrentKey> list = new ArrayList<>();
         Connection con = AppListener.getConnection();
 
-        String sql = "SELECT c.*, s.nm_subject, r.nm_location ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+        String sql = "SELECT c.*, s.nm_subject, r.nm_location, e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room, "
+                + "cr.nm_course "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
                 + "LEFT JOIN subjects s ON s.cd_subject = c.cd_subject "
+                + "LEFT JOIN courses cr ON cr.cd_course = s.cd_course "
                 + "ORDER BY r.nm_room, e.nm_employee";
         PreparedStatement stmt = con.prepareStatement(sql);
 
@@ -74,11 +77,12 @@ public class CurrentKey {
             String roomName = rs.getString("nm_room");
             String location = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
+            String courseName = rs.getString("nm_course");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location));
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location, courseName)); // Adiciona courseName ao construtor
         }
         rs.close();
         stmt.close();
@@ -91,11 +95,12 @@ public class CurrentKey {
         Connection con = AppListener.getConnection();
         int startIndex = (page - 1) * recordsPerPage;
 
-        String sql = "SELECT c.*, s.nm_subject, r.nm_location ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room "
+        String sql = "SELECT c.*, s.nm_subject, r.nm_location ,e.cd_employee, e.nm_employee, e.nm_type, r.cd_room, r.nm_room, cr.nm_course "
                 + "FROM currentKey c "
                 + "LEFT JOIN employees e ON e.cd_employee = c.cd_employee "
                 + "LEFT JOIN rooms r ON r.cd_room = c.cd_room "
                 + "LEFT JOIN subjects s ON s.cd_subject = c.cd_subject "
+                + "LEFT JOIN courses cr ON cr.cd_course = s.cd_course "
                 + "ORDER BY r.nm_room, e.nm_employee "
                 + "LIMIT ?,?";
 
@@ -114,11 +119,12 @@ public class CurrentKey {
             String roomName = rs.getString("nm_room");
             String location = rs.getString("nm_location");
             String subjectName = rs.getString("nm_subject");
+            String courseName = rs.getString("nm_course");
             Timestamp timestamp = rs.getTimestamp("dt_start");
             Date datetime = new Date(timestamp.getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE - dd/MM/yyyy - HH:mm", new Locale("pt", "BR"));
             String date = dateFormat.format(datetime);
-            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location));
+            list.add(new CurrentKey(rowid, room, employee, subject, date, employeeName, roomName, employeeType, subjectName, location, courseName));
         }
         rs.close();
         stmt.close();
@@ -154,7 +160,7 @@ public class CurrentKey {
         con.close();
     }
 
-    public CurrentKey(long rowid, long room, long employee, long subject, String start, String employeeName, String roomName, String employeeType, String subjectName, String location) {
+    public CurrentKey(long rowid, long room, long employee, long subject, String start, String employeeName, String roomName, String employeeType, String subjectName, String location, String courseName) {
         this.rowid = rowid;
         this.room = room;
         this.employee = employee;
@@ -165,6 +171,7 @@ public class CurrentKey {
         this.employeeType = employeeType;
         this.subjectName = subjectName;
         this.location = location;
+        this.courseName = courseName;
     }
 
     public long getRowid() {
@@ -245,6 +252,14 @@ public class CurrentKey {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
 }

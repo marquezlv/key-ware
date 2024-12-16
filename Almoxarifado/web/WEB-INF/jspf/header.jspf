@@ -21,7 +21,7 @@
             </div>
             <div :class="{ 'offcanvas offcanvas-start': true, 'dark-navbar': isDarkTheme }" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <a class="navbar-brand" href="index.jsp"><i class="bi bi-key"></i>&nbsp;Almoxarifado</a>
+                    <a class="navbar-brand" href="index.jsp"><i class="bi bi-key"></i>&nbsp;KeyWare</a>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" @click="closeOffcanvas"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -82,7 +82,7 @@
             <div class="card-container">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="header-title"><i class="bi bi-key bi-style"></i>&nbsp;Almoxarifado</h1>
+                        <h1 class="header-title"><i class="bi bi-key bi-style"></i>&nbsp;KeyWare</h1>
                     </div>
                     <div class="card-body">
                         <form>

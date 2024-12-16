@@ -4,14 +4,17 @@ const app = Vue.createApp({
             shared: shared,
             error: null,
             newEmployee: '',
+            employeeName: '',
             newRoom: '',
             newSubject: "",
             roomName: '',
             roomLocation: '',
             roomStatus: '',
+            search: '',
             searchDate: '',
             searchEmployee: '',
             searchSubject: '',
+            courseName: '',
             isReservations: false,
             focusedCard: null,
             room: null,
@@ -94,7 +97,8 @@ const app = Vue.createApp({
             const currentDateTime = new Date();
             return this.reservations.find(reservation => {
                 // Verifique se a reserva está ativa e pertence à sala específica
-                if (reservation.roomid !== roomId || reservation.active !== 1) return false;
+                if (reservation.roomid !== roomId || reservation.active !== 1)
+                    return false;
 
                 const [startDate, startTime] = reservation.start.split(' - ').slice(1);
                 const [endDate, endTime] = reservation.end.split(' - ').slice(1);
@@ -110,7 +114,7 @@ const app = Vue.createApp({
                 return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
             }) || null; // Retorna `null` se não houver reserva ativa
         },
-        
+
         getRoomStatusClass(room) {
             const activeReservation = this.getActiveReservationForRoom(room.rowid);
             if (activeReservation) {
@@ -128,14 +132,18 @@ const app = Vue.createApp({
             });
 
             if (response) {
+                this.employeeName = reservation.employee;
+                this.roomName = reservation.roomName;
+                this.subjectName = reservation.subjectName;
                 this.newEmployee = reservation.employeeid;
                 this.newRoom = reservation.roomid;
                 this.newSubject = reservation.subject;
+                this.courseName = reservation.courseName;
 
                 const existingKey = this.key.find(key => key.room === reservation.roomid);
 
                 if (existingKey) {
-                    await this.returnKey(existingKey.rowid, existingKey.room, existingKey.employee, existingKey.subject);
+                    await this.returnKey(existingKey.rowid, existingKey.room, existingKey.roomName ,existingKey.employeeName, existingKey.subjectName, existingKey.courseName);
                 }
 
                 await this.addKey();
@@ -222,9 +230,9 @@ const app = Vue.createApp({
                     }, {});
         },
         ChangeScreen() {
-            if(this.isReservations){
+            if (this.isReservations) {
                 this.loadList();
-            } else{
+            } else {
                 this.loadReservations();
             }
             this.isReservations = !this.isReservations;
@@ -261,21 +269,25 @@ const app = Vue.createApp({
                 return;
             }
             const currentDateTime = new Date().toISOString();
-            const subjectToSend = this.newSubject || 0;
+            const subjectToSend = this.newSubject || "0";
             const data = await this.request("/Almoxarifado/api/keys", "POST", {
                 room: this.newRoom,
+                roomName: this.roomName,
                 employee: this.newEmployee,
+                employeeName: this.employeeName,
                 subject: subjectToSend,
+                subjectName: this.subjectName,
                 start: currentDateTime,
-                user: this.shared.session.id
+                userName: this.shared.session.name,
+                courseName: this.courseName
             });
             if (data) {
                 this.loadList();
             }
         },
-        async returnKey(id, room, employee, subject) {
+        async returnKey(id, room, roomName, employee, subject, course) {
             try {
-                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&employee=${employee}&subject=${subject}&user=${this.shared.session.id}`, "DELETE");
+                const data = await this.request(`/Almoxarifado/api/keys?id=${id}&room=${room}&roomName=${roomName}&employeeName=${employee}&subjectName=${subject}&userName=${this.shared.session.name}&courseName=${course}`, "DELETE");
                 if (data) {
                     await this.loadList();
                 }
@@ -362,13 +374,14 @@ const app = Vue.createApp({
             }
             this.loadReservationsToday();
         },
-        async loadReservations(){
+        async loadReservations() {
             const dataRE = await this.request(`/Almoxarifado/api/reservations?employee=${this.searchEmployee}&subject=${this.searchSubject}&date=${this.searchDate}&search=${1}`, "GET");
             if (dataRE) {
                 this.reservations = dataRE.list;
             }
+
         },
-        async loadReservationsToday(){
+        async loadReservationsToday() {
             const dataRE = await this.request(`/Almoxarifado/api/reservations?today=${1}`, "GET");
             if (dataRE) {
                 this.reservations = dataRE.list;
@@ -384,8 +397,9 @@ const app = Vue.createApp({
             this.filters = this.roomFilters.filter(filter => filter.roomid === roomId);
         },
         getKey(id) {
-            return this.key.filter(filter => filter.room === id);
+            return this.key.filter(filter => filter.room === id && filter.employeeName);
         },
+
         viewRoom(room) {
             this.room = room;
             this.roomid = room.rowid;
@@ -397,6 +411,20 @@ const app = Vue.createApp({
         updateInputName(room) {
             this.roomName = room.name;
             this.newRoom = room.rowid;
+        },
+        updateInputEmployee() {
+            const selectedEmployee = this.employees.find(employee => employee.rowid === this.newEmployee);
+            if (selectedEmployee) {
+                this.employeeName = selectedEmployee.name;
+                this.getSubjects();
+            }
+        },
+        updateInputSubject() {
+            const selectedSubject = this.subjects.find(subject => subject.subject === this.newSubject);
+            if (selectedSubject) {
+                this.subjectName = selectedSubject.subjectName;
+                this.courseName = selectedSubject.courseName;
+            }
         },
         resetKey() {
             this.newRoom = '';
@@ -412,6 +440,7 @@ const app = Vue.createApp({
     },
     mounted() {
         this.loadList();
+        
     }
 });
 app.mount('#app');

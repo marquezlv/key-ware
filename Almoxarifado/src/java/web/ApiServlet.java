@@ -406,7 +406,7 @@ public class ApiServlet extends HttpServlet {
     }
 
     private void processReservation(JSONObject file, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (request.getSession().getAttribute("users") == null) {
+            if (request.getSession().getAttribute("users") == null) {
             response.sendError(401, "Unauthorized: No session");
         } else if (request.getMethod().toLowerCase().equals("get")) {
             String searchParam = request.getParameter("search");
@@ -513,23 +513,29 @@ public class ApiServlet extends HttpServlet {
         } else if (request.getMethod().toLowerCase().equals("post")) {
             JSONObject body = getJSONBODY(request.getReader());
             long room = body.getLong("room");
+            String roomName = body.getString("roomName");
             long employee = body.getLong("employee");
+            String employeeName = body.getString("employeeName");
             long subject = body.getLong("subject");
-            long user = body.getLong("user");
+            String subjectName = body.getString("subjectName");
+            String courseName = body.getString("courseName");
+            String userName = body.getString("userName");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             String strDate = body.getString("start");
             Date date = dateFormat.parse(strDate);
-            History.insertHistory(employee, room, subject, "Retirada", new Date(), user);
+            History.insertHistory(employeeName, roomName, subjectName, "Retirada", new Date(), userName, courseName);
             CurrentKey.insertKey(employee, room, subject, date);
         } else if (request.getMethod().toLowerCase().equals("put")) {
             response.sendError(401, "Update: This table cannot be update");
         } else if (request.getMethod().toLowerCase().equals("delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            Long employee = Long.parseLong(request.getParameter("employee"));
             Long room = Long.parseLong(request.getParameter("room"));
-            Long subject = Long.parseLong(request.getParameter("subject"));
-            Long user = Long.parseLong(request.getParameter("user"));
-            History.insertHistory(employee, room, subject, "Devolvido", new Date(), user);
+            String roomName = request.getParameter("roomName");
+            String employeeName = request.getParameter("employeeName");
+            String subjectName = request.getParameter("subjectName");
+            String userName = request.getParameter("userName");
+            String courseName = request.getParameter("courseName");
+            History.insertHistory(employeeName, roomName, subjectName, "Devolvido", new Date(), userName, courseName);
             CurrentKey.deleteKey(id, room);
         } else {
             response.sendError(405, "Method not allowed");
@@ -551,7 +557,8 @@ public class ApiServlet extends HttpServlet {
             int column = Integer.parseInt(request.getParameter("column"));
             int sort = Integer.parseInt(request.getParameter("sort"));
 
-            if (searchParam != null && !searchParam.isEmpty() || searchSubject != null && !searchSubject.isEmpty() || searchCourse != null && !searchCourse.isEmpty() || strDateStart != null && !strDateStart.isEmpty() || strDateEnd != null && !strDateEnd.isEmpty()) {
+            if (searchParam != null && !searchParam.isEmpty() || searchSubject != null && !searchSubject.isEmpty() 
+                    || searchCourse != null && !searchCourse.isEmpty() || strDateStart != null && !strDateStart.isEmpty() || strDateEnd != null && !strDateEnd.isEmpty()) {
                 file.put("list", new JSONArray(History.getHistory(page, itemsPerPage, column, sort, searchParam, searchSubject, searchCourse, strDateStart, strDateEnd)));
                 file.put("total", History.getTotalHistory(searchParam, searchSubject, searchCourse, strDateStart, strDateEnd));  // Chamada atualizada com filtros
             } else {

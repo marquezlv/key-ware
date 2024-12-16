@@ -16,8 +16,18 @@
         <div id="app" class="container">
             <div v-if="shared.session">
                 <div class="page-content"> 
-                    <h2 class="mb-3 d-flex align-items-center justify-content-between">Painel de Salas
-                        <button class="btn btn-warning btn-sm ms-auto buttons" @click="ChangeScreen()" type="button">
+                    <h2 class="mb-3 d-flex align-items-center justify-content-between">
+                        <div v-if="!isReservations">
+                            Painel de Salas    
+                        </div>
+                        <div v-else>
+                            Painel de Reservas
+                        </div>
+                        <div style="margin-left: 30px">
+                            <label></label>
+                            <input type="text" class="form-control mb-2" v-model="search" @change="loadList()" placeholder="Procurar">
+                        </div>
+                        <button class="btn btn-warning btn-sm ms-auto buttons w-25" @click="ChangeScreen()" type="button" style="font-size: 32px; margin-top: 20px">
                             <div v-if="isReservations">
                                 Voltar
                             </div>
@@ -93,7 +103,7 @@
                                                     <div class="form-check ms-auto">
                                                         <button class="btn btn-success btn-sm ms-auto buttons" 
                                                                 type="button" 
-                                                                @click="returnKey(key.rowid, key.room, key.employee, key.subject)">
+                                                                @click="returnKey(key.rowid, key.room, key.roomName, key.employeeName, key.subjectName, key.courseName)">
                                                             <i class="bi-style-key bi-key"></i><i class="bi bi-check2"></i>
                                                         </button>
                                                     </div>
@@ -163,15 +173,19 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="inputEmployee" class="form-label">Funcionario</label>
-                                    <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
-                                        <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
+                                    <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="updateInputEmployee">
+                                        <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">
+                                            {{ employee.name }}
+                                        </option>
                                     </select>
                                 </div>
                                 <div v-if="newEmployee !== ''" class="mb-3">
                                     <label for="inputSubject" class="form-label">Materia</label>
-                                    <select class="form-select" v-model="newSubject" id="inputSubject">
-                                        <option v-if="subjects.length === 0" value="0">Sem matérias para este funcionario</option> 
-                                        <option v-for="subject in subjects" :key="subject.subject" :value="subject.subject">{{ subject.subjectName }} - {{ subject.courseName }} - {{ subject.period }}</option>
+                                    <select class="form-select" v-model="newSubject" id="inputSubject" @change="updateInputSubject">
+                                        <option v-if="subjects.length === 0" value="0">Sem matérias para este funcionário</option> 
+                                        <option v-for="subject in subjects" :key="subject.subject" :value="subject.subject">
+                                            {{ subject.subjectName }} - {{ subject.courseName }} - {{ subject.period }}
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -205,7 +219,7 @@
                                 <div class="mb-3">
                                     <label for="inputEmployee" class="form-label">Funcionario</label>
                                     <select class="form-select" v-model="newEmployee" id="inputEmployee" @change="getSubjects()">
-                                        <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid">{{ employee.name }}</option>
+                                        <option v-for="employee in employees" :key="employee.rowid" :value="employee.rowid" @change="updateInputEmployee(employee)">{{ employee.name }}</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
