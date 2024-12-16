@@ -23,10 +23,10 @@
                         <div v-else>
                             Painel de Reservas
                         </div>
-                        <div style="margin-left: 30px">
+                        <!-- <div style="margin-left: 30px">
                             <label></label>
                             <input type="text" class="form-control mb-2" v-model="search" @change="loadList()" placeholder="Procurar">
-                        </div>
+                        </div> -->
                         <button class="btn btn-warning btn-sm ms-auto buttons w-25" @click="ChangeScreen()" type="button" style="font-size: 32px; margin-top: 20px">
                             <div v-if="isReservations">
                                 Voltar
